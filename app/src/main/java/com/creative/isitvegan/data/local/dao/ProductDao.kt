@@ -13,13 +13,10 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProduct(product: ProductEntity): Long
 
-    @Query("SELECT * FROM products WHERE id = :id")
-    suspend fun getProductById(id: String): ProductEntity?
-
     @Query("SELECT * FROM products WHERE barcode = :barcode")
     suspend fun getProductByBarcode(barcode: String): ProductEntity?
 
-    @Query("SELECT * FROM products ORDER BY id DESC")
+    @Query("SELECT * FROM products ORDER BY timestamp DESC")
     fun getAllProducts(): Flow<List<ProductEntity>>
 
     @Delete

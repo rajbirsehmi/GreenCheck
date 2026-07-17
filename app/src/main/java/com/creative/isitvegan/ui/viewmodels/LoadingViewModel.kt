@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.creative.isitvegan.data.mapper.toEntity
-import com.creative.isitvegan.data.mapper.toResponse
-import com.creative.isitvegan.data.remote.dto.ProductResponse
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.domain.repo.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +15,7 @@ import javax.inject.Inject
 sealed interface LoadingUiState {
     object Idle : LoadingUiState
     object Loading : LoadingUiState
-    data class Success(val product: ProductResponse) : LoadingUiState
+    data class Success(val product: Product) : LoadingUiState
     data class Error(val message: String) : LoadingUiState
 }
 
@@ -41,23 +39,21 @@ class LoadingViewModel @Inject constructor(
             val localProduct = repository.getProductFromDb(barcode)
             if (localProduct != null) {
                 Log.d(TAG, "Database Hit: ${localProduct.name}")
-                uiState = LoadingUiState.Success(localProduct.toResponse())
+                uiState = LoadingUiState.Success(localProduct)
                 return@launch
             }
 
             // 2. Fallback to API
             Log.d(TAG, "Fetching from API: $barcode")
             repository.getProduct(barcode)
-                .onSuccess { response ->
-                    Log.d(TAG, "API Success: ${response.product?.name}")
-                    response.product?.let { details ->
-                        try {
-                            repository.saveProduct(details.toEntity())
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Database Save Error: ${e.message}")
-                        }
+                .onSuccess { product ->
+                    Log.d(TAG, "API Success: ${product.name}")
+                    try {
+                        repository.saveProduct(product)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Database Save Error: ${e.message}")
                     }
-                    uiState = LoadingUiState.Success(response)
+                    uiState = LoadingUiState.Success(product)
                 }
                 .onFailure { e ->
                     Log.e(TAG, "API Failure: ${e.message}")
@@ -66,5 +62,3 @@ class LoadingViewModel @Inject constructor(
         }
     }
 }
-
-

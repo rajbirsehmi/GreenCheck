@@ -62,7 +62,6 @@ class ProductScreenTest : BaseRobotTest<MainActivity>(MainActivity::class.java) 
     }
 
     private val veganProduct = ProductEntity(
-        id = null,
         barcode = "543216789",
         name = "Vegan Delight",
         brands = "Green Earth",
@@ -87,11 +86,11 @@ class ProductScreenTest : BaseRobotTest<MainActivity>(MainActivity::class.java) 
         smallUrl = null,
         thumbUrl = null,
         url = null,
-        ingredients = emptyList<Ingredients>()
+        ingredients = emptyList<Ingredients>(),
+        timestamp = 1000L
     )
 
     private val nonVeganProduct = ProductEntity(
-        id = null,
         barcode = "987654321",
         name = "Beef Jerky",
         brands = "Meat Co",
@@ -116,6 +115,7 @@ class ProductScreenTest : BaseRobotTest<MainActivity>(MainActivity::class.java) 
         smallUrl = null,
         thumbUrl = null,
         url = null,
-        ingredients = emptyList<Ingredients>()
+        ingredients = emptyList<Ingredients>(),
+        timestamp = 2000L
     )
 }

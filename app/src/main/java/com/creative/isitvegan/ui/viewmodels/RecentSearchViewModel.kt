@@ -2,7 +2,7 @@ package com.creative.isitvegan.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.creative.isitvegan.data.local.entity.ProductEntity
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.domain.repo.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,14 +15,14 @@ import javax.inject.Inject
 class RecentSearchViewModel @Inject constructor(
     private val repository: Repository
 ): ViewModel() {
-    val products: StateFlow<List<ProductEntity>> = repository.getAllProducts()
+    val products: StateFlow<List<Product>> = repository.getAllProducts()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
 
-    fun deleteProduct(product: ProductEntity) {
+    fun deleteProduct(product: Product) {
         viewModelScope.launch {
             repository.deleteProduct(product)
         }

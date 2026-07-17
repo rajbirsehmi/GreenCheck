@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -15,15 +14,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.creative.isitvegan.data.local.entity.ProductEntity
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.ui.components.SimpleRecentProductItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecentScreen(
-    products: List<ProductEntity>,
+    products: List<Product>,
     onProductClick: (String) -> Unit,
-    onDeleteProduct: (ProductEntity) -> Unit
+    onDeleteProduct: (Product) -> Unit
 ) {
     if (products.isEmpty()) {
         EmptyRecentState()
@@ -43,7 +42,7 @@ fun RecentScreen(
             }
             itemsIndexed(
                 items = products,
-                key = { _, product -> product.id ?: product.barcode ?: "" }
+                key = { _, product -> product.barcode }
             ) { _, product ->
                 val dismissState = rememberSwipeToDismissBoxState(
                     confirmValueChange = {
@@ -84,7 +83,7 @@ fun RecentScreen(
                 ) {
                     SimpleRecentProductItem(
                         product = product,
-                        onClick = { product.barcode?.let { onProductClick(it) } }
+                        onClick = { onProductClick(product.barcode) }
                     )
                 }
             }

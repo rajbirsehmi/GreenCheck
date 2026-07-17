@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.creative.isitvegan.data.local.entity.ProductEntity
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.ui.components.TopAppBarHome
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.RecentSearchViewModel
 
 @Composable
 fun HomeScaffolding(
-    searches: List<ProductEntity>,
+    searches: List<Product>,
     onScanClick: () -> Unit,
     onProductClick: (String) -> Unit,
     viewModel: RecentSearchViewModel = hiltViewModel()

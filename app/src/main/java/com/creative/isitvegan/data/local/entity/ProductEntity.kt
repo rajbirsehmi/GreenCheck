@@ -8,9 +8,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(tableName = "products")
 data class ProductEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long?,
-    val barcode: String?,
+    @PrimaryKey
+    val barcode: String,
     val name: String?,
     val brands: String?,
     val quantity: String?,
@@ -34,5 +33,6 @@ data class ProductEntity(
     val smallUrl: String?,
     val thumbUrl: String?,
     val url: String?,
-    val ingredients: List<Ingredients>? // Nested DTO from image_a93c3c.png
+    val ingredients: List<Ingredients>?,
+    val timestamp: Long = System.currentTimeMillis()
 )

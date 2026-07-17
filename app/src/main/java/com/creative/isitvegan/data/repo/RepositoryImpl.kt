@@ -2,10 +2,13 @@ package com.creative.isitvegan.data.repo
 
 import android.util.Log
 import com.creative.isitvegan.data.local.AppDatabase
-import com.creative.isitvegan.data.local.entity.ProductEntity
+import com.creative.isitvegan.data.mapper.toDomain
+import com.creative.isitvegan.data.mapper.toEntity
 import com.creative.isitvegan.data.remote.OpenFoodFactsApi
-import com.creative.isitvegan.data.remote.dto.ProductResponse
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.domain.repo.Repository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,11 +20,11 @@ class RepositoryImpl @Inject constructor(
 
     private val TAG = "RepositoryImpl"
 
-    override suspend fun getProduct(barcode: String): Result<ProductResponse> {
+    override suspend fun getProduct(barcode: String): Result<Product> {
         return try {
             val response = api.getProduct(barcode)
-            if (response.isFound) {
-                Result.success(response)
+            if (response.isFound && response.product != null) {
+                Result.success(response.product.toDomain())
             } else {
                 Result.failure(Exception(response.statusVerbose ?: "Product not found"))
             }
@@ -31,19 +34,21 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveProduct(product: ProductEntity): Long {
-        return database.productDao().insertProduct(product)
+    override suspend fun saveProduct(product: Product) {
+        database.productDao().insertProduct(product.toEntity())
     }
 
-    override suspend fun getProductFromDb(barcode: String): ProductEntity? {
-        return database.productDao().getProductByBarcode(barcode)
+    override suspend fun getProductFromDb(barcode: String): Product? {
+        return database.productDao().getProductByBarcode(barcode)?.toDomain()
     }
 
-    override fun getAllProducts(): kotlinx.coroutines.flow.Flow<List<ProductEntity>> {
-        return database.productDao().getAllProducts()
+    override fun getAllProducts(): Flow<List<Product>> {
+        return database.productDao().getAllProducts().map { entities ->
+            entities.map { it.toDomain() }
+        }
     }
 
-    override suspend fun deleteProduct(product: ProductEntity) {
-        database.productDao().deleteProduct(product)
+    override suspend fun deleteProduct(product: Product) {
+        database.productDao().deleteProduct(product.toEntity())
     }
 }
