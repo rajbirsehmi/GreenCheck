@@ -1,15 +1,11 @@
 package com.creative.isitvegan.ui.screens
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Info
@@ -18,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -28,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.creative.isitvegan.data.local.entity.ProductEntity
-import com.creative.isitvegan.data.remote.dto.Ingredients
+import com.creative.isitvegan.domain.model.Ingredient
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.ProductViewModel
 
@@ -98,7 +93,7 @@ private fun ProductContent(uiState: com.creative.isitvegan.ui.viewmodels.Product
 }
 
 @Composable
-fun ProductDetailsList(product: ProductEntity) {
+fun ProductDetailsList(product: Product) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -134,7 +129,7 @@ fun ProductDetailsList(product: ProductEntity) {
 }
 
 @Composable
-fun ProductHeader(product: ProductEntity) {
+fun ProductHeader(product: Product) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -145,7 +140,7 @@ fun ProductHeader(product: ProductEntity) {
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             AsyncImage(
-                model = product.frontUrl,
+                model = product.imageUrl,
                 contentDescription = product.name,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -173,26 +168,22 @@ fun ProductHeader(product: ProductEntity) {
 }
 
 @Composable
-fun VeganStatusBanner(product: ProductEntity) {
-    val veganStatus = product.ingredientsAnalysisTags?.find { it.contains("vegan") }
-    val isVegan = veganStatus?.contains("en:vegan") == true
-    val isNonVegan = veganStatus?.contains("en:non-vegan") == true
-    
+fun VeganStatusBanner(product: Product) {
     val (statusText, icon, color, description) = when {
-        isVegan -> Quad(
-            "Certified Vegan Friendly", 
+        product.isVegan -> Quad(
+            product.statusText, 
             Icons.Default.Eco, 
             MaterialTheme.colorScheme.primary,
             "This product contains no animal-derived ingredients."
         )
-        isNonVegan -> Quad(
-            "Contains Non-Vegan Ingredients", 
+        product.isNonVegan -> Quad(
+            product.statusText, 
             Icons.Default.Close, 
             Color(0xFFF44336),
             "Animal products were detected in this item."
         )
         else -> Quad(
-            "Vegan Status Uncertain", 
+            product.statusText, 
             Icons.Default.Info, 
             Color(0xFFFF9800),
             "We couldn't definitively determine the vegan status."
@@ -235,7 +226,7 @@ fun VeganStatusBanner(product: ProductEntity) {
 }
 
 @Composable
-fun ProductInformationSection(product: ProductEntity) {
+fun ProductInformationSection(product: Product) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
             text = "Information",
@@ -249,7 +240,7 @@ fun ProductInformationSection(product: ProductEntity) {
             shape = MaterialTheme.shapes.medium
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                InfoItem("Barcode", product.barcode ?: "N/A")
+                InfoItem("Barcode", product.barcode)
                 InfoItem("Quantity", product.quantity ?: "N/A")
                 InfoItem("Eco-Score", product.ecoScoreGrade?.uppercase() ?: "N/A")
             }
@@ -269,7 +260,7 @@ fun InfoItem(label: String, value: String) {
 }
 
 @Composable
-fun IngredientItem(ingredient: Ingredients) {
+fun IngredientItem(ingredient: Ingredient) {
     val vegan = ingredient.vegan
     val vegetarian = ingredient.vegetarian
     

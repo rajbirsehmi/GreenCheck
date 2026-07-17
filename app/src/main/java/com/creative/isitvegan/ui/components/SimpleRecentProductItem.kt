@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Info
@@ -23,20 +22,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.creative.isitvegan.data.local.entity.ProductEntity
+import com.creative.isitvegan.domain.model.Product
 
 @Composable
 fun SimpleRecentProductItem(
-    product: ProductEntity,
+    product: Product,
     onClick: () -> Unit
 ) {
-    val veganStatus = product.ingredientsAnalysisTags?.find { it.contains("vegan") }
-    val isVegan = veganStatus?.contains("en:vegan") == true
-    val isNonVegan = veganStatus?.contains("en:non-vegan") == true
-
     val (statusIcon, statusColor) = when {
-        isVegan -> Icons.Default.Eco to MaterialTheme.colorScheme.primary
-        isNonVegan -> Icons.Default.NoFood to Color(0xFFF44336)
+        product.isVegan -> Icons.Default.Eco to MaterialTheme.colorScheme.primary
+        product.isNonVegan -> Icons.Default.NoFood to Color(0xFFF44336)
         else -> Icons.Default.Info to Color(0xFFFF9800)
     }
 
@@ -56,7 +51,7 @@ fun SimpleRecentProductItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = product.frontThumbUrl ?: product.frontUrl,
+                model = product.thumbUrl ?: product.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .size(56.dp)

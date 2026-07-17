@@ -1,7 +1,6 @@
 package com.creative.isitvegan
 
-import com.creative.isitvegan.data.remote.dto.ProductDetails
-import com.creative.isitvegan.data.remote.dto.ProductResponse
+import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.domain.repo.Repository
 import com.creative.isitvegan.ui.viewmodels.RecentViewModel
 import io.mockk.coEvery
@@ -35,44 +34,50 @@ class RecentViewModelTest {
     }
 
     @Test
-    fun `getProduct success updates productResponse`() = runTest {
+    fun `getProduct success updates product`() = runTest {
         // Given
         val barcode = "123456"
-        val expectedResponse = ProductResponse(
-            status = 1,
-            statusVerbose = "Product found",
-            product = ProductDetails(
-                id = 123456L,
-                barcode = barcode,
-                name = "Vegan Milk",
-                brands = "Vegan Brand"
-            )
+        val expectedProduct = Product(
+            barcode = barcode,
+            name = "Vegan Milk",
+            brands = "Vegan Brand",
+            quantity = null,
+            productType = null,
+            keywords = null,
+            categories = null,
+            dataSources = null,
+            ingredientsAnalysisTags = null,
+            labelsTags = null,
+            ecoScoreGrade = null,
+            ecoScore = null,
+            imageUrl = null,
+            thumbUrl = null,
+            ingredientsImageUrl = null,
+            nutritionImageUrl = null,
+            ingredients = null
         )
-        coEvery { repository.getProduct(barcode) } returns Result.success(expectedResponse)
+        coEvery { repository.getProduct(barcode) } returns Result.success(expectedProduct)
 
         // When
         viewModel.getProduct(barcode)
         advanceUntilIdle() // Wait for the coroutine to finish
 
         // Then
-        assertEquals(expectedResponse, viewModel.productResponse)
+        assertEquals(expectedProduct, viewModel.product)
     }
 
-    @Test(expected = Exception::class)
-    fun `getProduct failure throws exception and sets productResponse to null`() = runTest {
+    @Test
+    fun `getProduct failure sets product to null`() = runTest {
         // Given
         val barcode = "123456"
         val exception = Exception("Network error")
         coEvery { repository.getProduct(barcode) } returns Result.failure(exception)
 
         // When
-        try {
-            viewModel.getProduct(barcode)
-            advanceUntilIdle()
-        } catch (e: Exception) {
-            // Then
-            assertNull(viewModel.productResponse)
-            throw e // Re-throw to satisfy the @Test(expected)
-        }
+        viewModel.getProduct(barcode)
+        advanceUntilIdle()
+
+        // Then
+        assertNull(viewModel.product)
     }
 }
