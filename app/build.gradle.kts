@@ -8,16 +8,17 @@ plugins {
 
 android {
     namespace = "com.creative.isitvegan"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.creative.isitvegan"
-        minSdk = 24
+        minSdk = 30
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.creative.isitvegan.core.testing.HiltTestRunner"
+        testInstrumentationRunner = "com.creative.isitvegan.HiltTestRunner"
+        missingDimensionStrategy("di", "hilt")
     }
 
     buildTypes {
@@ -30,8 +31,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -42,12 +43,14 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "META-INF/LICENSE.md"
             excludes += "META-INF/LICENSE-notice.md"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/LICENSE*"
+            excludes += "/META-INF/NOTICE*"
         }
     }
 }
 
 dependencies {
-    lintChecks(project(":lint-rules"))
     // Core & Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -82,13 +85,10 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
-    androidTestImplementation(project(":core-engine"))
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.hilt.testing)
     androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.androidx.test.rules)
     kspAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
@@ -100,4 +100,13 @@ dependencies {
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
+
+    // UI Testing Egnine
+    androidTestImplementation(libs.uiengine) {
+        artifact {
+            type = "aar"
+            classifier = "hiltDebug"
+        }
+    }
+    lintChecks(libs.engine.lint)
 }

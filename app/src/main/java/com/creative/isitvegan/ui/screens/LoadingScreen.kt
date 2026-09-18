@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -109,14 +110,18 @@ private fun LoadingContent() {
                     imageVector = Icons.Default.Eco,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier
+                        .size(48.dp)
+                        .testTag("loading_icon_eco")
                 )
             }
             
             Spacer(modifier = Modifier.height(32.dp))
             
             CircularProgressIndicator(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier
+                    .size(32.dp)
+                    .testTag("loading_progress_bar"),
                 strokeWidth = 3.dp,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -125,6 +130,7 @@ private fun LoadingContent() {
             
             Text(
                 text = loadingMessages[currentMessageIndex],
+                modifier = Modifier.testTag("loading_text_message"),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

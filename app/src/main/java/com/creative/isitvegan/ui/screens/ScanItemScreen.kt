@@ -36,6 +36,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -128,6 +129,7 @@ fun ScanItemScreen(
                 .padding(top = 48.dp, start = 16.dp)
                 .clip(CircleShape)
                 .background(Color.Black.copy(alpha = 0.3f))
+                .testTag("btn_scan_close")
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
@@ -140,7 +142,8 @@ fun ScanItemScreen(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 80.dp),
+                .padding(bottom = 80.dp)
+                .testTag("text_scan_instruction"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
