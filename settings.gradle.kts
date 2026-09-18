@@ -19,10 +19,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
 rootProject.name = "Is It Vegan"
 include(":app")
-include(":core-engine")
-include(":lint-rules")

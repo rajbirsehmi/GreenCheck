@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +48,7 @@ fun ProductScreen(
                 title = { 
                     Text(
                         "Product Details",
+                        modifier = Modifier.testTag("product_title"),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Black,
                             color = MaterialTheme.colorScheme.primary
@@ -54,7 +56,10 @@ fun ProductScreen(
                     ) 
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.testTag("product_btn_back")
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack, 
                             contentDescription = "Back",
@@ -135,7 +140,9 @@ fun ProductHeader(product: Product) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Card(
-            modifier = Modifier.size(120.dp),
+            modifier = Modifier
+                .size(120.dp)
+                .testTag("product_image"),
             shape = MaterialTheme.shapes.medium,
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
@@ -152,12 +159,14 @@ fun ProductHeader(product: Product) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = product.brands ?: "Unknown Brand",
+                modifier = Modifier.testTag("product_text_brand"),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = product.name ?: "Unknown Product",
+                modifier = Modifier.testTag("product_text_name"),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -191,6 +200,7 @@ fun VeganStatusBanner(product: Product) {
     }
 
     Surface(
+        modifier = Modifier.testTag("product_banner_status"),
         color = color.copy(alpha = 0.1f),
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(1.dp, color.copy(alpha = 0.2f))
@@ -211,6 +221,7 @@ fun VeganStatusBanner(product: Product) {
             Column {
                 Text(
                     text = statusText,
+                    modifier = Modifier.testTag("product_text_status"),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = color
@@ -227,7 +238,10 @@ fun VeganStatusBanner(product: Product) {
 
 @Composable
 fun ProductInformationSection(product: Product) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        modifier = Modifier.testTag("product_section_info"),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text(
             text = "Information",
             style = MaterialTheme.typography.titleLarge,
@@ -272,6 +286,7 @@ fun IngredientItem(ingredient: Ingredient) {
     }
 
     Surface(
+        modifier = Modifier.testTag("ingredient_item_${ingredient.text}"),
         color = MaterialTheme.colorScheme.surface,
         shape = MaterialTheme.shapes.medium,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
