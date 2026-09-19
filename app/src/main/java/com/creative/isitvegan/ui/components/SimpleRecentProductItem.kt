@@ -4,14 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.NoFood
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.creative.isitvegan.domain.model.Product
 
@@ -30,10 +30,10 @@ fun SimpleRecentProductItem(
     product: Product,
     onClick: () -> Unit
 ) {
-    val (statusIcon, statusColor) = when {
-        product.isVegan -> Icons.Default.Eco to MaterialTheme.colorScheme.primary
-        product.isNonVegan -> Icons.Default.NoFood to Color(0xFFF44336)
-        else -> Icons.Default.Info to Color(0xFFFF9800)
+    val (statusIcon, statusColor, statusLabel) = when {
+        product.isVegan -> Triple(Icons.Default.Eco, MaterialTheme.colorScheme.primary, "VEGAN")
+        product.isNonVegan -> Triple(Icons.Default.NoFood, Color(0xFFE53935), "NON-VEGAN")
+        else -> Triple(Icons.Default.Info, Color(0xFFFB8C00), "UNKNOWN")
     }
 
     Surface(
@@ -41,14 +41,14 @@ fun SimpleRecentProductItem(
             .fillMaxWidth()
             .testTag("recent_item_${product.barcode}")
             .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.medium,
+        shape = RoundedCornerShape(24.dp),
         color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp,
-        shadowElevation = 1.dp
+        tonalElevation = 2.dp,
+        shadowElevation = 2.dp
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(16.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -56,47 +56,64 @@ fun SimpleRecentProductItem(
                 model = product.thumbUrl ?: product.imageUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(MaterialTheme.shapes.small)
+                    .size(72.dp)
+                    .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(20.dp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = product.name ?: "Unknown Product",
-                    style = MaterialTheme.typography.bodyLarge,
+                    text = product.brands?.uppercase() ?: "UNKNOWN BRAND",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    letterSpacing = 1.sp
                 )
                 Text(
-                    text = product.brands ?: "Unknown Brand",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    text = product.name ?: "Unknown Product",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Black,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Surface(
+                    color = statusColor.copy(alpha = 0.1f),
+                    shape = CircleShape
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = statusIcon,
+                            contentDescription = null,
+                            tint = statusColor,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = statusLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = statusColor,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Simple Circle Indicator
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .background(statusColor.copy(alpha = 0.1f), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = statusIcon,
-                    contentDescription = null,
-                    tint = statusColor,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+            )
         }
     }
 }

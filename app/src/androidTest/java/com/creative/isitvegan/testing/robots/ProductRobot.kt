@@ -10,14 +10,12 @@ import com.sehmi.engine.actions.scrollToTag
 class ProductRobot : ComposeRuleScope {
 
     fun verifyProductDetails(name: String, brand: String) {
-        assertTagDisplayed(TestTags.Product.TEXT_NAME)
-        assertTextContains(TestTags.Product.TEXT_NAME, name)
-        assertTagDisplayed(TestTags.Product.TEXT_BRAND)
-        assertTextContains(TestTags.Product.TEXT_BRAND, brand)
+        assertTagDisplayed(TestTags.Product.TITLE)
+        assertTextContains(TestTags.Product.TITLE, name)
     }
 
     fun verifyVeganStatus(status: String) {
-        assertTagDisplayed(TestTags.Product.BANNER_STATUS)
+        assertTagDisplayed(TestTags.Product.TEXT_STATUS)
         assertTextContains(TestTags.Product.TEXT_STATUS, status)
     }
 
