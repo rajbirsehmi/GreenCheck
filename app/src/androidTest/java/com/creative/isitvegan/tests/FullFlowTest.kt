@@ -1,6 +1,7 @@
 package com.creative.isitvegan.tests
 
 import android.Manifest
+import androidx.test.filters.FlakyTest
 import androidx.test.rule.GrantPermissionRule
 import com.creative.isitvegan.MainActivity
 import com.creative.isitvegan.data.remote.OpenFoodFactsApi
@@ -52,11 +53,13 @@ class FullFlowTest {
     }
 
     @Test
+    @FlakyTest
     fun testFullAppFlow_HomeToProduct() {
         // Mock API response
         coEvery { api.getProduct(testBarcode, any()) } returns testResponse
 
         UiTestEngine.withRobot(HomeRobot()) {
+            verifyEmptyState()
             tapScanButton()
         }
 
