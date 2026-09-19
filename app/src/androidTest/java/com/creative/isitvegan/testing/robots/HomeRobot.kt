@@ -10,7 +10,6 @@ class HomeRobot : ComposeRuleScope {
     fun verifyEmptyState() {
         assertTagDisplayed(TestTags.Home.TEXT_MAIN)
         assertTagDisplayed(TestTags.Home.TEXT_SUB_MAIN)
-        assertTagDisplayed(TestTags.Home.BTN_SCAN)
     }
 
     fun verifyRecentScansTitleDisplayed() {

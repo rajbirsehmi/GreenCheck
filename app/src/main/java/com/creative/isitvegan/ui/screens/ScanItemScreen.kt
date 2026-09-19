@@ -1,6 +1,7 @@
 package com.creative.isitvegan.ui.screens
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -56,6 +57,9 @@ fun ScanItemScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val haptic = LocalHapticFeedback.current
+
+    BackHandler(onBack = onCloseClick)
+
     val scanner = remember { BarcodeScanning.getClient() }
     DisposableEffect(Unit) {
         onDispose {

@@ -8,6 +8,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,7 +78,11 @@ fun NavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.HOME
+        startDestination = Routes.HOME,
+        enterTransition = { fadeIn(animationSpec = tween(400)) },
+        exitTransition = { fadeOut(animationSpec = tween(400)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(400)) },
+        popExitTransition = { fadeOut(animationSpec = tween(400)) }
     ) {
         composable(Routes.HOME) {
             HomeScaffolding(

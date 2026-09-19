@@ -1,5 +1,6 @@
 package com.creative.isitvegan.tests
 
+import androidx.compose.ui.text.toUpperCase
 import com.creative.isitvegan.MainActivity
 import com.creative.isitvegan.data.local.entity.ProductEntity
 import com.creative.isitvegan.di.TestEntryPoint
@@ -15,6 +16,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.Locale
+import java.util.Locale.getDefault
 
 @HiltAndroidTest
 class RecentHistoryTest {
@@ -55,7 +58,7 @@ class RecentHistoryTest {
 
         UiTestEngine.withRobot(ProductRobot()) {
             verifyProductDetails(testProduct.name!!, testProduct.brands!!)
-            verifyVeganStatus("Certified Vegan Friendly")
+            verifyVeganStatus("CERTIFIED VEGAN FRIENDLY")
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.creative.isitvegan.ui.screens
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.QrCodeScanner
@@ -23,6 +24,7 @@ fun HomeScaffolding(
     viewModel: RecentSearchViewModel = hiltViewModel()
 ) {
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBarHome()
         },
