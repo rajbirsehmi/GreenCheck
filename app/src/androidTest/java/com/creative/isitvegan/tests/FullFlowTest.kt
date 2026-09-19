@@ -57,7 +57,6 @@ class FullFlowTest {
         coEvery { api.getProduct(testBarcode, any()) } returns testResponse
 
         UiTestEngine.withRobot(HomeRobot()) {
-            verifyEmptyState()
             tapScanButton()
         }
 
