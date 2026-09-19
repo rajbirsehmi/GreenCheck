@@ -116,7 +116,7 @@ fun EmptyScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(64.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
                         modifier = Modifier.testTag("text_main"),
@@ -128,7 +128,7 @@ fun EmptyScreen(
                         lineHeight = 48.sp
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
                         text = "Instant vegan analysis for every product in your pantry.",
@@ -140,7 +140,7 @@ fun EmptyScreen(
                             .testTag("text_sub_main")
                     )
 
-                    Spacer(modifier = Modifier.height(80.dp))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
                         onClick = onScanClick,
