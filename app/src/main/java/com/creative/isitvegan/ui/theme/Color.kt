@@ -2,54 +2,62 @@ package com.creative.isitvegan.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Modern Vegan Palette - Enhanced for "Sexy" UI
-val VeganGreen = Color(0xFF2E7D32) // Deeper, more premium green
-val VeganGreenLight = Color(0xFFC8E6C9)
-val EarthyBrown = Color(0xFF3E2723)
-val Cream = Color(0xFFFCFDF9) // Brighter, cleaner cream
+// Botanical Minimalist Palette
+val SageGreen = Color(0xFF88A090)
+val SageGreenLight = Color(0xFFD4DDD8)
+val LeafGreen = Color(0xFFB8C7BC)
+val StoneGrey = Color(0xFF4A4A4A)
+val SoftCream = Color(0xFFF9F8F6)
+val MutedRed = Color(0xFFD1A7A7)
+val MutedYellow = Color(0xFFE6D5B8)
 
-// Light Theme Colors - Vibrant & High Contrast
-val LightPrimary = Color(0xFF006D3A)
+// Semantic Colors
+val VeganStatusGreen = Color(0xFF7FB088)
+val NonVeganStatusRed = Color(0xFFD9A0A0)
+val UncertainStatusYellow = Color(0xFFE6C4A0)
+
+// Light Theme Colors
+val LightPrimary = SageGreen
 val LightOnPrimary = Color(0xFFFFFFFF)
-val LightPrimaryContainer = Color(0xFF9CF4B2)
-val LightOnPrimaryContainer = Color(0xFF00210C)
-val LightSecondary = Color(0xFF4F6354)
+val LightPrimaryContainer = SageGreenLight
+val LightOnPrimaryContainer = Color(0xFF1E2E25)
+val LightSecondary = StoneGrey
 val LightOnSecondary = Color(0xFFFFFFFF)
-val LightSecondaryContainer = Color(0xFFD2E8D5)
-val LightOnSecondaryContainer = Color(0xFF0C1F13)
-val LightTertiary = Color(0xFF3B6470)
-val LightOnTertiary = Color(0xFFFFFFFF)
-val LightTertiaryContainer = Color(0xFFBFEAF7)
-val LightOnTertiaryContainer = Color(0xFF001F28)
-val LightError = Color(0xFFBA1A1A)
+val LightSecondaryContainer = Color(0xFFE5E5E5)
+val LightOnSecondaryContainer = Color(0xFF1A1A1A)
+val LightTertiary = LeafGreen
+val LightOnTertiary = Color(0xFF1A1A1A)
+val LightTertiaryContainer = Color(0xFFE8EDE9)
+val LightOnTertiaryContainer = Color(0xFF1B221E)
+val LightError = MutedRed
 val LightOnError = Color(0xFFFFFFFF)
-val LightBackground = Color(0xFFFBFDF8)
-val LightOnBackground = Color(0xFF191C19)
-val LightSurface = Color(0xFFFBFDF8)
-val LightOnSurface = Color(0xFF191C19)
-val LightSurfaceVariant = Color(0xFFDCE5DB)
-val LightOnSurfaceVariant = Color(0xFF414942)
-val LightOutline = Color(0xFF717971)
+val LightBackground = SoftCream
+val LightOnBackground = Color(0xFF1A1C1A)
+val LightSurface = SoftCream
+val LightOnSurface = Color(0xFF1A1C1A)
+val LightSurfaceVariant = Color(0xFFEBEAE6)
+val LightOnSurfaceVariant = Color(0xFF4A4A4A)
+val LightOutline = Color(0xFFBCBCBC)
 
-// Dark Theme Colors - Deep & Sleek
-val DarkPrimary = Color(0xFF81D798)
-val DarkOnPrimary = Color(0xFF00391A)
-val DarkPrimaryContainer = Color(0xFF005228)
-val DarkOnPrimaryContainer = Color(0xFF9CF4B2)
-val DarkSecondary = Color(0xFFB6CCB9)
-val DarkOnSecondary = Color(0xFF243528)
-val DarkSecondaryContainer = Color(0xFF394B3D)
-val DarkOnSecondaryContainer = Color(0xFFD2E8D5)
-val DarkTertiary = Color(0xFFA3CDDB)
-val DarkOnTertiary = Color(0xFF033541)
-val DarkTertiaryContainer = Color(0xFF224C58)
-val DarkOnTertiaryContainer = Color(0xFFBFEAF7)
-val DarkError = Color(0xFFFFB4AB)
-val DarkOnError = Color(0xFF690005)
-val DarkBackground = Color(0xFF191C19)
-val DarkOnBackground = Color(0xFFE1E3DE)
-val DarkSurface = Color(0xFF191C19)
-val DarkOnSurface = Color(0xFFE1E3DE)
-val DarkSurfaceVariant = Color(0xFF414942)
-val DarkOnSurfaceVariant = Color(0xFFC0C9BF)
-val DarkOutline = Color(0xFF8B938A)
+// Dark Theme Colors
+val DarkPrimary = LeafGreen
+val DarkOnPrimary = Color(0xFF1E2E25)
+val DarkPrimaryContainer = Color(0xFF2E3F35)
+val DarkOnPrimaryContainer = LeafGreen
+val DarkSecondary = SageGreen
+val DarkOnSecondary = Color(0xFF1A1A1A)
+val DarkSecondaryContainer = Color(0xFF333333)
+val DarkOnSecondaryContainer = SageGreenLight
+val DarkTertiary = SageGreenLight
+val DarkOnTertiary = Color(0xFF1B221E)
+val DarkTertiaryContainer = Color(0xFF3E4F45)
+val DarkOnTertiaryContainer = SageGreenLight
+val DarkError = Color(0xFFE5BABA)
+val DarkOnError = Color(0xFF481717)
+val DarkBackground = Color(0xFF1A1C1B)
+val DarkOnBackground = Color(0xFFE2E2E2)
+val DarkSurface = Color(0xFF1A1C1B)
+val DarkOnSurface = Color(0xFFE2E2E2)
+val DarkSurfaceVariant = Color(0xFF3B3E3C)
+val DarkOnSurfaceVariant = Color(0xFFBCBCBC)
+val DarkOutline = Color(0xFF6B6E6C)

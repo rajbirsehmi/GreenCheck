@@ -15,7 +15,7 @@ fun TopAppBarHome() {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                "Is It Vegan?",
+                "GreenCheck",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Black,
                     color = MaterialTheme.colorScheme.onBackground,

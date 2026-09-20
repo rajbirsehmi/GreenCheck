@@ -34,6 +34,28 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun searchProducts(query: String): Result<List<Product>> {
+        return try {
+            val response = api.searchProducts(query)
+            val products = response.products?.map { it.toDomain() } ?: emptyList()
+            Result.success(products)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error searching products for $query: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun searchByIngredient(ingredient: String): Result<List<Product>> {
+        return try {
+            val response = api.searchByIngredient(ingredient)
+            val products = response.products?.map { it.toDomain() } ?: emptyList()
+            Result.success(products)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error searching by ingredient $ingredient: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
     override suspend fun saveProduct(product: Product) {
         database.productDao().insertProduct(product.toEntity())
     }
@@ -50,5 +72,9 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun deleteProduct(product: Product) {
         database.productDao().deleteProduct(product.toEntity())
+    }
+
+    override suspend fun clearHistory() {
+        database.productDao().deleteAllProducts()
     }
 }
