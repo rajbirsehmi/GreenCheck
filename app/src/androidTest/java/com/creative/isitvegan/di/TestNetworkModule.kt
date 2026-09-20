@@ -6,6 +6,8 @@ import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import io.mockk.mockk
+import kotlinx.serialization.json.Json
+import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
@@ -14,6 +16,22 @@ import javax.inject.Singleton
     replaces = [NetworkModule::class]
 )
 class TestNetworkModule {
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            isLenient = true
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().build()
+    }
 
     @Provides
     @Singleton
