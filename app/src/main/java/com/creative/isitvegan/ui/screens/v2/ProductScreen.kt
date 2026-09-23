@@ -180,7 +180,9 @@ fun ProductHeroSection(product: Product) {
                 imageVector = Icons.Default.Eco,
                 contentDescription = "Default Product Icon",
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                modifier = Modifier.size(72.dp)
+                modifier = Modifier
+                    .size(72.dp)
+                    .testTag(TestTags.V2.Product.IMAGE)
             )
 
             if (imageUrl != null) {

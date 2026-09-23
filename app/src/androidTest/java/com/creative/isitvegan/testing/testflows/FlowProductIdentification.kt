@@ -90,7 +90,6 @@ class FlowProductIdentification {
         UiTestEngine.withRobot(RobotSearchScreen()) {
             enterSearchQuery(query)
             clickSearch()
-            pressBack()
             clickProductItem(barcode)
         }
         UiTestEngine.withRobot(RobotProductScreen()) {
