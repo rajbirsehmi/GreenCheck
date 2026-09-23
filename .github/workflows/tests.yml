@@ -93,7 +93,7 @@ jobs:
           mkdir -p consolidated-reports
           modules=("app")
           echo "<!DOCTYPE html><html><head><title>Test Reports Landing Page</title><style>body{font-family:sans-serif;padding:40px;background-color:#f4f7f9;color:#333;}ul{line-height:2;list-style:none;padding:0;}li{background:white;margin-bottom:10px;padding:15px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);}a{color:#0366d6;text-decoration:none;font-weight:bold;}a:hover{text-decoration:underline;}h1{color:#1a202c;} .download-btn{display:inline-block;padding:10px 20px;background-color:#28a745;color:white !important;border-radius:5px;margin-bottom:20px;text-decoration:none;font-weight:bold;}</style></head><body>" > consolidated-reports/index.html
-          echo "<h1>Is It Vegan - UI Test Reports</h1>" >> consolidated-reports/index.html
+          echo "<h1>GreenCheck - UI Test Reports</h1>" >> consolidated-reports/index.html
           echo "<p>Execution Date: $(date)</p>" >> consolidated-reports/index.html
           echo "<p><em>Note: To view these reports locally, download and extract the ZIP, then open index.html.</em></p><ul>" >> consolidated-reports/index.html
           for module in "${modules[@]}"; do
@@ -109,6 +109,9 @@ jobs:
             fi
           done
           echo "</ul></body></html>" >> consolidated-reports/index.html
+
+          # Copy UIAutomationEngine HTML failure reports into consolidated-reports folder
+          cp -r app/build/outputs/connected_android_test_additional_output/. consolidated-reports/ 2>/dev/null || true
 
       - name: Upload Consolidated Reports
         if: always()
