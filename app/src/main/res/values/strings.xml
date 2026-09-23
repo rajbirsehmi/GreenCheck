@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">Is It Vegan</string>
+    <string name="app_name">GreenCheck</string>
+    <string name="how_it_works">This app instantly verifies whether food and beverage products meet vegan or vegetarian dietary requirements via a quick barcode scan. Products are easily identifiable through a color-coded indicator: a green dot for Vegan, an orange dot for Vegetarian, and a red dot for Not Vegetarian. Tapping a product card opens a detailed view, providing the original ingredient list alongside a specific breakdown of any non-vegan components.</string>
+    <string name="disclaimer">Please note that this app is designed strictly for educational and entertainment purposes and should not replace professional medical advice. It does not detect allergens or monitor specific health concerns. Users are strongly advised to consult a healthcare professional prior to making any dietary modifications. The developers disclaim all liability for any risks, damages, or losses arising from the use of this application. A portion of the app\'s data is credited to \"Open Food Facts contributors.\"</string>
+    <string name="google_client_id">YOUR_GOOGLE_CLIENT_ID_HERE</string>
 </resources>

@@ -23,5 +23,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Is It Vegan"
+rootProject.name = "GreenCheck"
 include(":app")

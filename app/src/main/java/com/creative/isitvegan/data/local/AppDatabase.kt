@@ -8,7 +8,7 @@ import com.creative.isitvegan.data.local.dao.ProductDao
 import com.creative.isitvegan.data.local.entity.IngredientEntity
 import com.creative.isitvegan.data.local.entity.ProductEntity
 
-@Database(entities = [ProductEntity::class, IngredientEntity::class], version = 2)
+@Database(entities = [ProductEntity::class, IngredientEntity::class], version = 4)
 @TypeConverters(RoomConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao

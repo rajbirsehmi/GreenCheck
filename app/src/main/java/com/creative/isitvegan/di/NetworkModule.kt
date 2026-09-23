@@ -1,6 +1,8 @@
 package com.creative.isitvegan.di
 
+import com.creative.isitvegan.data.remote.LocaleInterceptor
 import com.creative.isitvegan.data.remote.OpenFoodFactsApi
+import com.creative.isitvegan.data.remote.UserAgentInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,11 +31,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(
+        localeInterceptor: LocaleInterceptor,
+        userAgentInterceptor: UserAgentInterceptor
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
+            .addInterceptor(localeInterceptor)
+            .addInterceptor(userAgentInterceptor)
             .build()
     }
 

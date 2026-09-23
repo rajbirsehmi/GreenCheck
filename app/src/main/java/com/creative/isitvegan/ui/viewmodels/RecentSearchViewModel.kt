@@ -27,4 +27,10 @@ class RecentSearchViewModel @Inject constructor(
             repository.deleteProduct(product)
         }
     }
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            repository.clearHistory()
+        }
+    }
 }

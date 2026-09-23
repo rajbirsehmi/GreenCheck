@@ -26,6 +26,8 @@ import com.creative.isitvegan.ui.screens.HomeScaffolding
 import com.creative.isitvegan.ui.screens.LoadingScreen
 import com.creative.isitvegan.ui.screens.ProductScreen
 import com.creative.isitvegan.ui.screens.ScanItemScreen
+import com.creative.isitvegan.ui.screens.v2.MainScaffolding
+import com.creative.isitvegan.ui.screens.v2.ManualEntryScreen
 import com.creative.isitvegan.ui.viewmodels.RecentSearchViewModel
 import com.creative.isitvegan.ui.viewmodels.ScanItemViewModel
 
@@ -78,12 +80,15 @@ fun NavGraph() {
 
     NavHost(
         navController = navController,
-        startDestination = Routes.HOME,
+        startDestination = "v2_main",
         enterTransition = { fadeIn(animationSpec = tween(400)) },
         exitTransition = { fadeOut(animationSpec = tween(400)) },
         popEnterTransition = { fadeIn(animationSpec = tween(400)) },
         popExitTransition = { fadeOut(animationSpec = tween(400)) }
     ) {
+        composable("v2_main") {
+//            MainScaffolding(navController = navController)
+        }
         composable(Routes.HOME) {
             HomeScaffolding(
                 searches = searches,
@@ -102,6 +107,9 @@ fun NavGraph() {
                     navController.navigate(Routes.getProductRoute(barcode))
                 }
             )
+        }
+        composable(Routes.MANUAL) {
+            ManualEntryScreen()
         }
         composable(Routes.SCAN) {
             ScanItemScreen(
