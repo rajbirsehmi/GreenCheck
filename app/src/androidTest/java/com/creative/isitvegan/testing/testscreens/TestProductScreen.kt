@@ -2,6 +2,7 @@ package com.creative.isitvegan.testing.testscreens
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.creative.isitvegan.MainActivity
+import com.creative.isitvegan.data.local.UsageManager
 import com.creative.isitvegan.data.local.dao.ProductDao
 import com.creative.isitvegan.data.local.entity.ProductEntity
 import com.creative.isitvegan.data.remote.OpenFoodFactsApi
@@ -41,10 +42,14 @@ class TestProductScreen {
     @Inject
     lateinit var productDao: ProductDao
 
+    @Inject
+    lateinit var usageManager: UsageManager
+
     @Before
     fun inject() {
         hiltRule.inject()
         runBlocking {
+            usageManager.setHasSeenIntro(true)
             productDao.deleteAllProducts()
         }
     }
@@ -59,7 +64,7 @@ class TestProductScreen {
             ingredientsAnalysisTags = listOf("en:vegan")
         )
         
-        coEvery { api.getProduct(barcode, any()) } returns ProductResponse(
+        coEvery { api.getProduct(barcode, null) } returns ProductResponse(
             status = 1,
             product = mockProduct
         )

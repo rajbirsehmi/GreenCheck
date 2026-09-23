@@ -2,6 +2,7 @@ package com.creative.isitvegan.testing.testscreens
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.creative.isitvegan.MainActivity
+import com.creative.isitvegan.data.local.UsageManager
 import com.creative.isitvegan.data.local.dao.ProductDao
 import com.creative.isitvegan.data.local.entity.ProductEntity
 import com.creative.isitvegan.testing.robots.RobotEmptyHistoryScreen
@@ -32,10 +33,14 @@ class TestHistoryScreen {
     @Inject
     lateinit var productDao: ProductDao
 
+    @Inject
+    lateinit var usageManager: UsageManager
+
     @Before
     fun inject() {
         hiltRule.inject()
         runBlocking {
+            usageManager.setHasSeenIntro(true)
             productDao.deleteAllProducts()
         }
     }

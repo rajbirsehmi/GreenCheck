@@ -2,6 +2,7 @@ package com.creative.isitvegan.testing.testflows
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.creative.isitvegan.MainActivity
+import com.creative.isitvegan.data.local.UsageManager
 import com.creative.isitvegan.data.remote.OpenFoodFactsApi
 import com.creative.isitvegan.data.remote.dto.ProductDetails
 import com.creative.isitvegan.data.remote.dto.ProductResponse
@@ -17,6 +18,7 @@ import com.sehmi.engine.createHiltRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.coEvery
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,15 +38,21 @@ class FlowProductIdentification {
     @Inject
     lateinit var api: OpenFoodFactsApi
 
+    @Inject
+    lateinit var usageManager: UsageManager
+
     @Before
     fun inject() {
         hiltRule.inject()
+        runBlocking {
+            usageManager.setHasSeenIntro(true)
+        }
     }
 
     @Test
     fun testManualEntryToProductDetail() {
         val barcode = "87654321"
-        coEvery { api.getProduct(barcode, any()) } returns ProductResponse(
+        coEvery { api.getProduct(barcode, null) } returns ProductResponse(
             status = 1,
             product = ProductDetails(barcode = barcode, name = "Manual Product", brands = "Brand A")
         )
@@ -76,7 +84,7 @@ class FlowProductIdentification {
         coEvery { api.searchByIngredient(query, any()) } returns SearchResponse(
             products = listOf(mockProduct)
         )
-        coEvery { api.getProduct(barcode, any()) } returns ProductResponse(
+        coEvery { api.getProduct(barcode, null) } returns ProductResponse(
             status = 1,
             product = mockProduct
         )
