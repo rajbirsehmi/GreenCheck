@@ -4,6 +4,7 @@ import androidx.compose.ui.test.hasTestTag
 import com.creative.isitvegan.testing.TestTags
 import com.sehmi.engine.actions.clickOnTag
 import com.sehmi.engine.actions.enterText
+import com.sehmi.engine.actions.scrollToTag
 import com.sehmi.engine.assertions.assertTagDisplayed
 import com.sehmi.engine.core.ComposeRuleScope
 import com.sehmi.engine.utils.waitUntilExists
@@ -35,13 +36,23 @@ class RobotSearchScreen : ComposeRuleScope {
 
     fun verifyLoading() = assertTagDisplayed(TestTags.V2.Search.LOADING_INDICATOR)
     
-    fun verifyNoResults() = assertTagDisplayed(TestTags.V2.Search.NO_RESULTS_TEXT)
+    fun verifyNoResults() {
+        scrollToTag(TestTags.V2.Search.NO_RESULTS_TEXT)
+        assertTagDisplayed(TestTags.V2.Search.NO_RESULTS_TEXT)
+    }
     
-    fun verifyError() = assertTagDisplayed(TestTags.V2.Search.ERROR_TEXT)
+    fun verifyError() {
+        scrollToTag(TestTags.V2.Search.ERROR_TEXT)
+        assertTagDisplayed(TestTags.V2.Search.ERROR_TEXT)
+    }
     
-    fun verifyQuota() = assertTagDisplayed(TestTags.V2.Search.QUOTA_TEXT)
+    fun verifyQuota() {
+        scrollToTag(TestTags.V2.Search.QUOTA_TEXT)
+        assertTagDisplayed(TestTags.V2.Search.QUOTA_TEXT)
+    }
 
     fun clickProductItem(barcode: String) {
+        scrollToTag(TestTags.V2.Components.ProductItem.container(barcode))
         clickOnTag(TestTags.V2.Components.ProductItem.container(barcode))
     }
 }

@@ -26,26 +26,27 @@ class RobotProductScreen : ComposeRuleScope {
     }
 
     fun verifyStatusBanner() {
+        scrollToTag(TestTags.V2.Product.STATUS_BANNER)
         assertTagDisplayed(TestTags.V2.Product.STATUS_BANNER)
         assertTagDisplayed(TestTags.V2.Product.STATUS_TITLE)
     }
 
     fun verifyProductDetails() {
-        scrollToTag(TestTags.V2.Product.DETAILS_SECTION)
+        scrollToTag(TestTags.V2.Product.DETAILS_CARD)
         assertTagDisplayed(TestTags.V2.Product.DETAILS_CARD)
         assertTagDisplayed(TestTags.V2.Product.detailRow("Quantity"))
         assertTagDisplayed(TestTags.V2.Product.detailRow("Eco-Score"))
     }
 
     fun verifyIngredientsAnalysis() {
-        scrollToTag(TestTags.V2.Product.INGREDIENTS_ANALYSIS_SECTION)
+        scrollToTag(TestTags.V2.Product.analysisCard("vegan"))
         assertTagDisplayed(TestTags.V2.Product.analysisCard("vegan"))
         assertTagDisplayed(TestTags.V2.Product.analysisCard("uncertain"))
         assertTagDisplayed(TestTags.V2.Product.analysisCard("non_vegan"))
     }
 
     fun verifyAllIngredients() {
-        scrollToTag(TestTags.V2.Product.ALL_INGREDIENTS_SECTION)
+        scrollToTag(TestTags.V2.Product.ALL_INGREDIENTS_CARD)
         assertTagDisplayed(TestTags.V2.Product.ALL_INGREDIENTS_CARD)
     }
 
