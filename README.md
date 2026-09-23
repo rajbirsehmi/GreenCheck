@@ -6,6 +6,45 @@ Built with a "Botanical Minimalist" aesthetic, GreenCheck offers a sophisticated
 
 ---
 
+## 📱 App Screenshots
+
+### 🌙 Dark UI
+
+<p align="center">
+  <img src="images/Dark/GreenCheck - Welcome Screen.png" width="200" alt="Welcome Screen" />
+  <img src="images/Dark/GreenCheck - Home Screen.png" width="200" alt="Home Screen" />
+  <img src="images/Dark/GreenCheck - Manual Screen - 1.png" width="200" alt="Manual Entry Screen 1" />
+  <img src="images/Dark/GreenCheck - Manual Screen - 2.png" width="200" alt="Manual Entry Screen 2" />
+  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 1.png" width="200" alt="Ingredient Search Screen 1" />
+  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 2.png" width="200" alt="Ingredient Search Screen 2" />
+  <img src="images/Dark/GreenCheck - Product Screen - 1.png" width="200" alt="Product Screen 1" />
+  <img src="images/Dark/GreenCheck - Product Screen - 2.png" width="200" alt="Product Screen 2" />
+  <img src="images/Dark/GreenCheck - History Screen.png" width="200" alt="History Screen" />
+  <img src="images/Dark/GreenCheck - Empty History Screen.png" width="200" alt="Empty History Screen" />
+  <img src="images/Dark/GreenCheck - Privacy Screen.png" width="200" alt="Privacy Screen" />
+  <img src="images/Dark/GreenCheck - Quota Usage Screen.png" width="200" alt="Quota Usage Screen" />
+</p>
+
+### ☀️ Light UI
+
+<p align="center">
+  <img src="images/Light/GreenCheck - Welcoem Screen.png" width="200" alt="Welcome Screen" />
+  <img src="images/Light/GreenCheck - Home Screen.png" width="200" alt="Home Screen" />
+  <img src="images/Light/GreenCheck - Manual Screen - 1.png" width="200" alt="Manual Entry Screen 1" />
+  <img src="images/Light/GreenCheck - Manual Screen - 2.png" width="200" alt="Manual Entry Screen 2" />
+  <img src="images/Light/GreenCheck - Ingredient Search Screen - 1.png" width="200" alt="Ingredient Search Screen 1" />
+  <img src="images/Light/GreenCheck - Ingredient Search Screen - 2.png" width="200" alt="Ingredient Search Screen 2" />
+  <img src="images/Light/GreenCheck - Ingredient Search Screen - 3.png" width="200" alt="Ingredient Search Screen 3" />
+  <img src="images/Light/GreenCheck - Product Screen - 1.png" width="200" alt="Product Screen 1" />
+  <img src="images/Light/GreenCheck - Product Screen - 2.png" width="200" alt="Product Screen 2" />
+  <img src="images/Light/GreenCheck - History Screen.png" width="200" alt="History Screen" />
+  <img src="images/Light/GreenCheck - Empty History Screen.png" width="200" alt="Empty History Screen" />
+  <img src="images/Light/GreenCheck - Privacy Screen.png" width="200" alt="Privacy Screen" />
+  <img src="images/Light/GreenCheck - Quota Usage Screen.png" width="200" alt="Quota Usage Screen" />
+</p>
+
+---
+
 ## ✨ What's New in Version 2.0 (v2)
 
 GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overhaul, enhanced product and ingredient discovery, granular daily quota tracking, and comprehensive automated test tags:
