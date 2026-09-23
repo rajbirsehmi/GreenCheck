@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.viewmodels.AppInfoViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -52,14 +53,14 @@ fun TransparencyInfoSheet(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp, vertical = 16.dp)
-            .testTag("transparency_sheet_container")
+            .testTag(TestTags.V2.Components.Privacy.SHEET_CONTAINER)
     ) {
         Text(
             text = "Privacy & Transparency",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.testTag("transparency_title")
+            modifier = Modifier.testTag(TestTags.V2.Components.Privacy.TITLE)
         )
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -68,35 +69,35 @@ fun TransparencyInfoSheet(
             icon = Icons.Default.MoneyOff,
             title = "100% Free & Ad-Free",
             desc = "GreenCheck is a passion project. I don't charge money, show ads, or monetize your usage in any way.",
-            modifier = Modifier.testTag("transparency_item_free")
+            modifier = Modifier.testTag(TestTags.V2.Components.Privacy.ITEM_FREE)
         )
         
         TransparencyItem(
             icon = Icons.Default.Shield,
             title = "Strictly Local Experience",
             desc = "No accounts, no cloud sync, and no data collection. Your scan history and settings stay entirely on your device.",
-            modifier = Modifier.testTag("transparency_item_local")
+            modifier = Modifier.testTag(TestTags.V2.Components.Privacy.ITEM_LOCAL)
         )
         
         TransparencyItem(
             icon = Icons.Default.DeviceUnknown,
             title = "Per-Device Usage Limits",
             desc = "To ensure the Open Food Facts API remains available for everyone, we enforce a small daily lookup limit strictly on your device. Your next quota refresh is scheduled for ${formatResetTime(nextResetTime)}.",
-            modifier = Modifier.testTag("transparency_item_limits")
+            modifier = Modifier.testTag(TestTags.V2.Components.Privacy.ITEM_LIMITS)
         )
         
         TransparencyItem(
             icon = Icons.Default.Code,
             title = "Open Source Integrity",
             desc = "Transparency is core to our mission. You can audit our code on GitHub to verify how we handle (or rather, don't handle) your data.",
-            modifier = Modifier.testTag("transparency_item_open_source")
+            modifier = Modifier.testTag(TestTags.V2.Components.Privacy.ITEM_OPEN_SOURCE)
         )
         
         TransparencyItem(
             icon = Icons.Default.Shield,
             title = "Data & Licensing",
             desc = "All product data is retrieved from Open Food Facts and is governed by the Open Database License (ODbL). You can use and redistribute this data according to the license terms.",
-            modifier = Modifier.testTag("transparency_item_licensing")
+            modifier = Modifier.testTag(TestTags.V2.Components.Privacy.ITEM_LICENSING)
         )
         
         Spacer(modifier = Modifier.height(32.dp))
@@ -110,7 +111,7 @@ fun TransparencyInfoSheet(
                 modifier = Modifier
                     .weight(1f)
                     .height(56.dp)
-                    .testTag("button_audit_code"),
+                    .testTag(TestTags.V2.Components.Privacy.BTN_AUDIT_CODE),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -120,13 +121,13 @@ fun TransparencyInfoSheet(
                 Icon(
                     imageVector = Icons.Default.Code,
                     contentDescription = null,
-                    modifier = Modifier.testTag("button_audit_code_icon")
+                    modifier = Modifier.testTag(TestTags.V2.Components.Privacy.BTN_AUDIT_CODE_ICON)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Audit Code",
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag("button_audit_code_text")
+                    modifier = Modifier.testTag(TestTags.V2.Components.Privacy.BTN_AUDIT_CODE_TEXT)
                 )
             }
             
@@ -140,7 +141,7 @@ fun TransparencyInfoSheet(
                 modifier = Modifier
                     .weight(1f)
                     .height(56.dp)
-                    .testTag("button_odbl_license"),
+                    .testTag(TestTags.V2.Components.Privacy.BTN_ODBL_LICENSE),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -150,7 +151,7 @@ fun TransparencyInfoSheet(
                 Text(
                     text = "ODbL License",
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag("button_odbl_license_text")
+                    modifier = Modifier.testTag(TestTags.V2.Components.Privacy.BTN_ODBL_LICENSE_TEXT)
                 )
             }
         }
@@ -176,7 +177,7 @@ private fun TransparencyItem(
             modifier = Modifier
                 .size(40.dp)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
-                .testTag("transparency_item_icon_container_${title.lowercase().replace(" ", "_")}"),
+                .testTag(TestTags.V2.Components.Privacy.itemIconContainer(title)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -185,7 +186,7 @@ private fun TransparencyItem(
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(20.dp)
-                    .testTag("transparency_item_icon_${title.lowercase().replace(" ", "_")}")
+                    .testTag(TestTags.V2.Components.Privacy.itemIcon(title))
             )
         }
         
@@ -197,14 +198,14 @@ private fun TransparencyItem(
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.testTag("transparency_item_title_${title.lowercase().replace(" ", "_")}")
+                modifier = Modifier.testTag(TestTags.V2.Components.Privacy.itemTitle(title))
             )
             Text(
                 text = desc,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 18.sp,
-                modifier = Modifier.testTag("transparency_item_desc_${title.lowercase().replace(" ", "_")}")
+                modifier = Modifier.testTag(TestTags.V2.Components.Privacy.itemDesc(title))
             )
         }
     }

@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.LoadingUiState
 import com.creative.isitvegan.ui.viewmodels.LoadingViewModel
@@ -54,17 +55,17 @@ fun LoadingProductContent() {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .testTag("loading_product_screen"),
+            .testTag(TestTags.V2.LoadingProduct.SCREEN),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.testTag("loading_product_content")
+            modifier = Modifier.testTag(TestTags.V2.LoadingProduct.CONTENT)
         ) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .size(56.dp)
-                    .testTag("loading_product_indicator"),
+                    .testTag(TestTags.V2.LoadingProduct.INDICATOR),
                 strokeWidth = 4.dp,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -74,7 +75,7 @@ fun LoadingProductContent() {
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.testTag("loading_product_title")
+                modifier = Modifier.testTag(TestTags.V2.LoadingProduct.TITLE)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -82,7 +83,7 @@ fun LoadingProductContent() {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 0.5.sp,
-                modifier = Modifier.testTag("loading_product_subtitle")
+                modifier = Modifier.testTag(TestTags.V2.LoadingProduct.SUBTITLE)
             )
         }
     }

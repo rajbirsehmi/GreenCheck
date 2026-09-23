@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.AppInfoViewModel
 import java.text.SimpleDateFormat
@@ -48,13 +49,13 @@ fun QuotaExhaustedScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .testTag("quota_exhausted_screen"),
+            .testTag(TestTags.V2.QuotaExhausted.SCREEN),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .padding(40.dp)
-                .testTag("quota_exhausted_content"),
+                .testTag(TestTags.V2.QuotaExhausted.CONTENT),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -62,7 +63,7 @@ fun QuotaExhaustedScreen(
                 modifier = Modifier
                     .size(100.dp)
                     .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f), CircleShape)
-                    .testTag("quota_exhausted_icon_container"),
+                    .testTag(TestTags.V2.QuotaExhausted.ICON_CONTAINER),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -71,7 +72,7 @@ fun QuotaExhaustedScreen(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(48.dp)
-                        .testTag("quota_exhausted_icon")
+                        .testTag(TestTags.V2.QuotaExhausted.ICON)
                 )
             }
             
@@ -82,7 +83,7 @@ fun QuotaExhaustedScreen(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.testTag("quota_exhausted_title")
+                modifier = Modifier.testTag(TestTags.V2.QuotaExhausted.TITLE)
             )
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -93,7 +94,7 @@ fun QuotaExhaustedScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = 22.sp,
-                modifier = Modifier.testTag("quota_exhausted_description")
+                modifier = Modifier.testTag(TestTags.V2.QuotaExhausted.DESCRIPTION)
             )
             
             Spacer(modifier = Modifier.height(40.dp))
@@ -103,13 +104,13 @@ fun QuotaExhaustedScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .testTag("button_quota_understood"),
+                    .testTag(TestTags.V2.QuotaExhausted.BTN_UNDERSTOOD),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "Understood",
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag("button_quota_understood_text")
+                    modifier = Modifier.testTag(TestTags.V2.QuotaExhausted.BTN_UNDERSTOOD_TEXT)
                 )
             }
         }

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.creative.isitvegan.R
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.ScanItemViewModel
 
@@ -80,14 +81,14 @@ fun ManualEntryScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 32.dp)
-            .testTag("manual_entry_screen"),
+            .testTag(TestTags.V2.ManualEntry.SCREEN),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
             modifier = Modifier
                 .size(100.dp)
                 .padding(bottom = 16.dp)
-                .testTag("manual_entry_logo_container"),
+                .testTag(TestTags.V2.ManualEntry.LOGO_CONTAINER),
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
             shape = CircleShape
         ) {
@@ -98,7 +99,7 @@ fun ManualEntryScreen(
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .size(48.dp)
-                        .testTag("manual_entry_logo_icon")
+                        .testTag(TestTags.V2.ManualEntry.LOGO_ICON)
                 )
             }
         }
@@ -110,7 +111,7 @@ fun ManualEntryScreen(
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.testTag("manual_entry_title")
+            modifier = Modifier.testTag(TestTags.V2.ManualEntry.TITLE)
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -122,7 +123,7 @@ fun ManualEntryScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .testTag("manual_entry_subtitle"),
+                .testTag(TestTags.V2.ManualEntry.SUBTITLE),
             lineHeight = 20.sp
         )
 
@@ -131,7 +132,7 @@ fun ManualEntryScreen(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("manual_entry_input_card"),
+                .testTag(TestTags.V2.ManualEntry.INPUT_CARD),
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
         ) {
@@ -156,7 +157,7 @@ fun ManualEntryScreen(
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag("manual_entry_barcode_field"),
+                        .testTag(TestTags.V2.ManualEntry.BARCODE_FIELD),
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -167,7 +168,7 @@ fun ManualEntryScreen(
                             text = "${barcodeInput.length} of 14 digits",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .testTag("manual_entry_digit_count"),
+                                .testTag(TestTags.V2.ManualEntry.DIGIT_COUNT),
                             textAlign = TextAlign.End,
                             style = MaterialTheme.typography.labelSmall
                         )
@@ -184,7 +185,7 @@ fun ManualEntryScreen(
                             imageVector = Icons.Default.Dialpad,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.testTag("manual_entry_field_icon")
+                            modifier = Modifier.testTag(TestTags.V2.ManualEntry.FIELD_ICON)
                         )
                     }
                 )
@@ -196,13 +197,13 @@ fun ManualEntryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-                        .testTag("button_identify_product"),
+                        .testTag(TestTags.V2.ManualEntry.BTN_IDENTIFY),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
-                        modifier = Modifier.testTag("button_identify_product_icon")
+                        modifier = Modifier.testTag(TestTags.V2.ManualEntry.BTN_IDENTIFY_ICON)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
@@ -210,7 +211,7 @@ fun ManualEntryScreen(
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp,
-                        modifier = Modifier.testTag("button_identify_product_text")
+                        modifier = Modifier.testTag(TestTags.V2.ManualEntry.BTN_IDENTIFY_TEXT)
                     )
                 }
             }
@@ -222,7 +223,7 @@ fun ManualEntryScreen(
         Surface(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .testTag("manual_entry_quota_container"),
+                .testTag(TestTags.V2.ManualEntry.QUOTA_CONTAINER),
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -232,7 +233,7 @@ fun ManualEntryScreen(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 6.dp)
-                    .testTag("manual_entry_quota_text")
+                    .testTag(TestTags.V2.ManualEntry.QUOTA_TEXT)
             )
         }
     }

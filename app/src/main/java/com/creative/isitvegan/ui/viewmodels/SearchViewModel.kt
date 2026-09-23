@@ -53,7 +53,7 @@ class SearchViewModel @Inject constructor(
                         usageManager.incrementUsage(FeatureType.SEARCH_PRODUCT)
                     },
                     onFailure = { e ->
-                        _error.value = e.message ?: "Search failed"
+                        _error.value = e.message ?: "Searching too frequently. Please wait a moment and try again later."
                     }
                 )
                 _isLoading.value = false
@@ -77,7 +77,7 @@ class SearchViewModel @Inject constructor(
                         usageManager.incrementUsage(FeatureType.SEARCH_INGREDIENT)
                     },
                     onFailure = { e ->
-                        _error.value = e.message ?: "Search failed"
+                        _error.value = e.message ?: "Searching too frequently. Please wait a moment and try again later."
                     }
                 )
                 _isLoading.value = false

@@ -9,6 +9,7 @@ import com.creative.isitvegan.domain.model.Product
 import com.creative.isitvegan.domain.repo.Repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,12 +26,14 @@ class RepositoryImpl @Inject constructor(
             val response = api.getProduct(barcode)
             if (response.isFound && response.product != null) {
                 Result.success(response.product.toDomain())
+            } else if (response.status == 503 || response.statusVerbose?.contains("503") == true) {
+                Result.failure(Exception("Searching too frequently. Please wait a moment and try again later."))
             } else {
                 Result.failure(Exception(response.statusVerbose ?: "Product not found"))
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching product $barcode: ${e.message}")
-            Result.failure(e)
+            Result.failure(mapException(e))
         }
     }
 
@@ -41,7 +44,7 @@ class RepositoryImpl @Inject constructor(
             Result.success(products)
         } catch (e: Exception) {
             Log.e(TAG, "Error searching products for $query: ${e.message}")
-            Result.failure(e)
+            Result.failure(mapException(e))
         }
     }
 
@@ -52,8 +55,18 @@ class RepositoryImpl @Inject constructor(
             Result.success(products)
         } catch (e: Exception) {
             Log.e(TAG, "Error searching by ingredient $ingredient: ${e.message}")
-            Result.failure(e)
+            Result.failure(mapException(e))
         }
+    }
+
+    private fun mapException(e: Exception): Throwable {
+        if (e is HttpException && e.code() == 503) {
+            return Exception("Searching too frequently. Please wait a moment and try again later.")
+        }
+        if (e.message?.contains("503") == true) {
+            return Exception("Searching too frequently. Please wait a moment and try again later.")
+        }
+        return e
     }
 
     override suspend fun saveProduct(product: Product) {

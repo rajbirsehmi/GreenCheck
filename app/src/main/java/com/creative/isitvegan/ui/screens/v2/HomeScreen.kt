@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.creative.isitvegan.R
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 
 @Composable
@@ -55,7 +56,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("home_hero_section"),
+                .testTag(TestTags.V2.Home.HERO_SECTION),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -64,7 +65,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .size(100.dp)
                     .padding(bottom = 16.dp)
-                    .testTag("home_logo"),
+                    .testTag(TestTags.V2.Home.LOGO),
                 contentScale = ContentScale.Fit
             )
             Text(
@@ -73,7 +74,7 @@ fun HomeScreen(
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.testTag("home_title")
+                modifier = Modifier.testTag(TestTags.V2.Home.TITLE)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -83,7 +84,7 @@ fun HomeScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .testTag("home_subtitle")
+                    .testTag(TestTags.V2.Home.SUBTITLE)
             )
         }
 
@@ -96,7 +97,7 @@ fun HomeScreen(
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.testTag("home_quick_actions_title")
+            modifier = Modifier.testTag(TestTags.V2.Home.QUICK_ACTIONS_TITLE)
         )
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -104,13 +105,13 @@ fun HomeScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("home_actions_row_1"),
+                .testTag(TestTags.V2.Home.ACTIONS_ROW_1),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             HomeActionCard(
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("card_scanner"),
+                    .testTag(TestTags.V2.Home.CARD_SCANNER),
                 title = "Scanner",
                 subtitle = "Scan Barcode",
                 icon = ImageVector.vectorResource(R.drawable.barcode_scanner),
@@ -119,7 +120,7 @@ fun HomeScreen(
             HomeActionCard(
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("card_search"),
+                    .testTag(TestTags.V2.Home.CARD_SEARCH),
                 title = "Search",
                 subtitle = "Browse Database",
                 icon = Icons.Default.Search,
@@ -132,13 +133,13 @@ fun HomeScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("home_actions_row_2"),
+                .testTag(TestTags.V2.Home.ACTIONS_ROW_2),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             HomeActionCard(
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("card_manual"),
+                    .testTag(TestTags.V2.Home.CARD_MANUAL),
                 title = "Manual",
                 subtitle = "Type UPC Code",
                 icon = Icons.Default.Dialpad,
@@ -147,7 +148,7 @@ fun HomeScreen(
             HomeActionCard(
                 modifier = Modifier
                     .weight(1f)
-                    .testTag("card_history"),
+                    .testTag(TestTags.V2.Home.CARD_HISTORY),
                 title = "History",
                 subtitle = "Recent Finds",
                 icon = Icons.Default.History,
@@ -161,7 +162,7 @@ fun HomeScreen(
         InfoSection(
             title = "How it works",
             content = stringResource(R.string.how_it_works),
-            modifier = Modifier.testTag("section_how_it_works")
+            modifier = Modifier.testTag(TestTags.V2.Home.SECTION_HOW_IT_WORKS)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -169,7 +170,7 @@ fun HomeScreen(
         InfoSection(
             title = "Disclaimer",
             content = stringResource(R.string.disclaimer),
-            modifier = Modifier.testTag("section_disclaimer")
+            modifier = Modifier.testTag(TestTags.V2.Home.SECTION_DISCLAIMER)
         )
         
         Spacer(modifier = Modifier.height(24.dp))
@@ -228,7 +229,7 @@ fun InfoSection(title: String, content: String, modifier: Modifier = Modifier) {
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.5.sp,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.testTag("info_section_title_${title.lowercase().replace(" ", "_")}")
+            modifier = Modifier.testTag(TestTags.V2.Home.infoSectionTitle(title))
         )
         Spacer(modifier = Modifier.height(8.dp))
         Surface(
@@ -243,7 +244,7 @@ fun InfoSection(title: String, content: String, modifier: Modifier = Modifier) {
                 lineHeight = 18.sp,
                 modifier = Modifier
                     .padding(16.dp)
-                    .testTag("info_section_content_${title.lowercase().replace(" ", "_")}")
+                    .testTag(TestTags.V2.Home.infoSectionContent(title))
             )
         }
     }

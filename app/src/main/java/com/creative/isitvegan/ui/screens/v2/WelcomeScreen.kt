@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.creative.isitvegan.R
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.components.v2.TransparencyInfoSheet
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 
@@ -66,7 +67,7 @@ fun WelcomeScreen(
                 contentDescription = "Botanical Logo",
                 modifier = Modifier
                     .size(140.dp)
-                    .testTag("welcome_logo"),
+                    .testTag(TestTags.V2.Welcome.LOGO),
                 contentScale = ContentScale.Fit
             )
             
@@ -78,7 +79,7 @@ fun WelcomeScreen(
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 4.sp,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.testTag("welcome_title")
+                modifier = Modifier.testTag(TestTags.V2.Welcome.TITLE)
             )
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -88,7 +89,7 @@ fun WelcomeScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 1.sp,
-                modifier = Modifier.testTag("welcome_subtitle")
+                modifier = Modifier.testTag(TestTags.V2.Welcome.SUBTITLE)
             )
         }
 
@@ -97,7 +98,7 @@ fun WelcomeScreen(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 40.dp)
-                .testTag("welcome_bottom_section"),
+                .testTag(TestTags.V2.Welcome.BOTTOM_SECTION),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -107,7 +108,7 @@ fun WelcomeScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .testTag("welcome_description"),
+                    .testTag(TestTags.V2.Welcome.DESCRIPTION),
                 lineHeight = 22.sp
             )
             
@@ -118,14 +119,14 @@ fun WelcomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .testTag("button_get_started"),
+                    .testTag(TestTags.V2.Welcome.BTN_GET_STARTED),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "Get Started",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag("button_get_started_text")
+                    modifier = Modifier.testTag(TestTags.V2.Welcome.BTN_GET_STARTED_TEXT)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Icon(
@@ -133,7 +134,7 @@ fun WelcomeScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .size(20.dp)
-                        .testTag("button_get_started_icon")
+                        .testTag(TestTags.V2.Welcome.BTN_GET_STARTED_ICON)
                 )
             }
             
@@ -141,14 +142,14 @@ fun WelcomeScreen(
             
             TextButton(
                 onClick = { showTransparencySheet = true },
-                modifier = Modifier.testTag("button_how_we_handle_data")
+                modifier = Modifier.testTag(TestTags.V2.Welcome.BTN_HOW_WE_HANDLE_DATA)
             ) {
                 Text(
                     text = "How do we handle your data?",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.testTag("button_how_we_handle_data_text")
+                    modifier = Modifier.testTag(TestTags.V2.Welcome.BTN_HOW_WE_HANDLE_DATA_TEXT)
                 )
             }
         }
@@ -159,7 +160,7 @@ fun WelcomeScreen(
             onDismissRequest = { showTransparencySheet = false },
             sheetState = sheetState,
             containerColor = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.testTag("sheet_transparency")
+            modifier = Modifier.testTag(TestTags.V2.Welcome.SHEET_TRANSPARENCY)
         ) {
             TransparencyInfoSheet()
         }

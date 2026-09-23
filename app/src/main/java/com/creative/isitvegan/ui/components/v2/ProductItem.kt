@@ -6,12 +6,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,12 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.creative.isitvegan.R
 import com.creative.isitvegan.domain.model.Product
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.theme.NonVeganStatusRed
 import com.creative.isitvegan.ui.theme.UncertainStatusYellow
@@ -72,7 +74,7 @@ fun ProductItem(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onClick(product) }
-            .testTag("product_item_${product.barcode}"),
+            .testTag(TestTags.V2.Components.ProductItem.container(product.barcode)),
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
         tonalElevation = 0.dp
@@ -83,20 +85,36 @@ fun ProductItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(product.thumbUrl ?: product.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.image_not_available),
-                error = painterResource(id = R.drawable.image_not_available),
-                contentDescription = "Product Image",
+            val imageUrl = product.thumbUrl?.takeIf { it.isNotBlank() }
+                ?: product.imageUrl?.takeIf { it.isNotBlank() }
+
+            Box(
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .testTag("product_image"),
-                contentScale = ContentScale.Crop
-            )
+                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f))
+                    .testTag(TestTags.V2.Components.ProductItem.IMAGE),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Eco,
+                    contentDescription = "Default Product Icon",
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    modifier = Modifier.size(28.dp)
+                )
+
+                if (imageUrl != null) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Product Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.width(16.dp))
 
@@ -111,7 +129,7 @@ fun ProductItem(
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.testTag("product_name")
+                    modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.NAME)
                 )
                 Text(
                     text = (product.brands ?: "Unknown Brand").uppercase(),
@@ -120,7 +138,7 @@ fun ProductItem(
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.testTag("product_brand_name")
+                    modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.BRAND)
                 )
                 Spacer(modifier = Modifier.size(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -128,7 +146,7 @@ fun ProductItem(
                         modifier = Modifier
                             .size(6.dp)
                             .background(statusColor, CircleShape)
-                            .testTag("product_status_dot_${product.barcode}")
+                            .testTag(TestTags.V2.Components.ProductItem.statusDot(product.barcode))
                     )
                     Spacer(modifier = Modifier.width(6.6.dp))
                     Text(
@@ -136,14 +154,14 @@ fun ProductItem(
                         style = MaterialTheme.typography.bodySmall,
                         color = statusColor,
                         fontWeight = FontWeight.Medium,
-                        modifier = Modifier.testTag("product_status_text_${product.barcode}")
+                        modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.statusText(product.barcode))
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "• $formattedDate",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline,
-                        modifier = Modifier.testTag("product_timestamp_${product.barcode}")
+                        modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.timestamp(product.barcode))
                     )
                 }
             }

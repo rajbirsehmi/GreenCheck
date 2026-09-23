@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.creative.isitvegan.domain.model.Product
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.components.v2.ProductItem
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 
@@ -35,12 +36,12 @@ fun HistoryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("history_screen")
+            .testTag(TestTags.V2.History.SCREEN)
     ) {
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
-                .testTag("history_list"),
+                .testTag(TestTags.V2.History.LIST),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             items(products) { product ->
@@ -54,7 +55,7 @@ fun HistoryScreen(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("history_clear_container"),
+                .testTag(TestTags.V2.History.CLEAR_CONTAINER),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 0.dp
         ) {
@@ -64,7 +65,7 @@ fun HistoryScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 20.dp)
                     .height(50.dp)
-                    .testTag("button_clear_history"),
+                    .testTag(TestTags.V2.History.BTN_CLEAR),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error
@@ -74,7 +75,7 @@ fun HistoryScreen(
                 Text(
                     text = "Clear History",
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.testTag("button_clear_history_text")
+                    modifier = Modifier.testTag(TestTags.V2.History.BTN_CLEAR_TEXT)
                 )
             }
         }

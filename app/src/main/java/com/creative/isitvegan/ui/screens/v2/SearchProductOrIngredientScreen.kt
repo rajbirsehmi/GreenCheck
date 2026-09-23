@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +13,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -39,24 +41,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.creative.isitvegan.domain.model.Product
+import com.creative.isitvegan.testing.TestTags
+import com.creative.isitvegan.ui.components.v2.ProductItem
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.SearchViewModel
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CircularProgressIndicator
-import com.creative.isitvegan.domain.model.Product
-import com.creative.isitvegan.ui.components.v2.ProductItem
-
 enum class SearchMode {
-    PRODUCTS, INGREDIENTS
+    INGREDIENTS
 }
 
 @Composable
@@ -65,11 +62,7 @@ fun SearchProductOrIngredientScreen(
     onQuotaExhausted: (String) -> Unit = {},
     viewModel: SearchViewModel = hiltViewModel()
 ) {
-    var selectedMode by remember { mutableStateOf(SearchMode.PRODUCTS) }
-    var searchQuery by remember { mutableStateOf("") }
-
     val quotaExhausted by viewModel.quotaExhausted.collectAsStateWithLifecycle()
-    val remainingProduct by viewModel.remainingProductSearches.collectAsStateWithLifecycle()
     val remainingIngredient by viewModel.remainingIngredientSearches.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -82,10 +75,35 @@ fun SearchProductOrIngredientScreen(
         }
     }
 
+    SearchProductOrIngredientContent(
+        remainingIngredient = remainingIngredient,
+        searchResults = searchResults,
+        isLoading = isLoading,
+        error = error,
+        onSearch = viewModel::onSearchIngredient,
+        onProductClick = { product ->
+            viewModel.saveProduct(product)
+            onProductClick(product)
+        }
+    )
+}
+
+@Composable
+fun SearchProductOrIngredientContent(
+    remainingIngredient: Int,
+    searchResults: List<Product>,
+    isLoading: Boolean,
+    error: String?,
+    onSearch: (String) -> Unit,
+    onProductClick: (Product) -> Unit
+) {
+    var selectedMode by remember { mutableStateOf(SearchMode.INGREDIENTS) }
+    var searchQuery by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("search_screen_list"),
+            .testTag(TestTags.V2.Search.LIST),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item {
@@ -94,14 +112,14 @@ fun SearchProductOrIngredientScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 24.dp)
-                    .testTag("search_header_section"),
+                    .testTag(TestTags.V2.Search.HEADER_SECTION),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Surface(
                     modifier = Modifier
                         .size(100.dp)
                         .padding(bottom = 16.dp)
-                        .testTag("search_logo_container"),
+                        .testTag(TestTags.V2.Search.LOGO_CONTAINER),
                     color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(24.dp)
                 ) {
@@ -112,7 +130,7 @@ fun SearchProductOrIngredientScreen(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
                                 .size(48.dp)
-                                .testTag("search_logo_icon")
+                                .testTag(TestTags.V2.Search.LOGO_ICON)
                         )
                     }
                 }
@@ -121,17 +139,17 @@ fun SearchProductOrIngredientScreen(
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.testTag("search_title")
+                    modifier = Modifier.testTag(TestTags.V2.Search.TITLE)
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Explore our extensive library of products and individual ingredients.",
+                    text = "Explore our extensive library of individual ingredients.",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .testTag("search_subtitle")
+                        .testTag(TestTags.V2.Search.SUBTITLE)
                 )
             }
         }
@@ -142,24 +160,13 @@ fun SearchProductOrIngredientScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .testTag("search_mode_selection_row"),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .testTag(TestTags.V2.Search.MODE_SELECTION_ROW),
+                horizontalArrangement = Arrangement.Center
             ) {
                 SearchSelectionCard(
                     modifier = Modifier
-                        .weight(1f)
-                        .testTag("search_mode_products"),
-                    title = "Products",
-                    subtitle = "Browse Names",
-                    icon = Icons.Default.ShoppingCart,
-                    isSelected = selectedMode == SearchMode.PRODUCTS,
-                    onClick = { selectedMode = SearchMode.PRODUCTS }
-                )
-
-                SearchSelectionCard(
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag("search_mode_ingredients"),
+                        .fillMaxWidth()
+                        .testTag(TestTags.V2.Search.MODE_INGREDIENTS),
                     title = "Ingredients",
                     subtitle = "Analyze Items",
                     icon = Icons.Default.Eco,
@@ -176,7 +183,7 @@ fun SearchProductOrIngredientScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .testTag("search_input_card"),
+                    .testTag(TestTags.V2.Search.INPUT_CARD),
                 shape = RoundedCornerShape(24.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
             ) {
@@ -189,12 +196,12 @@ fun SearchProductOrIngredientScreen(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        label = { Text(if (selectedMode == SearchMode.PRODUCTS) "Search Products" else "Search Ingredients") },
+                        label = { Text("Search Ingredients") },
                         placeholder = { Text("e.g. Soy Milk") },
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .testTag("search_text_field"),
+                            .testTag(TestTags.V2.Search.TEXT_FIELD),
                         shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -206,7 +213,7 @@ fun SearchProductOrIngredientScreen(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.testTag("search_field_icon")
+                                modifier = Modifier.testTag(TestTags.V2.Search.FIELD_ICON)
                             )
                         }
                     )
@@ -215,16 +222,12 @@ fun SearchProductOrIngredientScreen(
 
                     Button(
                         onClick = {
-                            if (selectedMode == SearchMode.PRODUCTS) {
-                                viewModel.onSearchProduct(searchQuery)
-                            } else {
-                                viewModel.onSearchIngredient(searchQuery)
-                            }
+                            onSearch(searchQuery)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp)
-                            .testTag("button_initialize_search"),
+                            .testTag(TestTags.V2.Search.BTN_INITIALIZE),
                         shape = RoundedCornerShape(16.dp),
                         enabled = !isLoading
                     ) {
@@ -232,7 +235,7 @@ fun SearchProductOrIngredientScreen(
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .size(24.dp)
-                                    .testTag("search_loading_indicator"),
+                                    .testTag(TestTags.V2.Search.LOADING_INDICATOR),
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 strokeWidth = 2.dp
                             )
@@ -240,14 +243,14 @@ fun SearchProductOrIngredientScreen(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = null,
-                                modifier = Modifier.testTag("button_initialize_search_icon")
+                                modifier = Modifier.testTag(TestTags.V2.Search.BTN_INITIALIZE_ICON)
                             )
                             Spacer(Modifier.width(12.dp))
                             Text(
                                 text = "Initialize Search",
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 0.5.sp,
-                                modifier = Modifier.testTag("button_initialize_search_text")
+                                modifier = Modifier.testTag(TestTags.V2.Search.BTN_INITIALIZE_TEXT)
                             )
                         }
                     }
@@ -262,18 +265,18 @@ fun SearchProductOrIngredientScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .testTag("search_quota_container"),
+                    .testTag(TestTags.V2.Search.QUOTA_CONTAINER),
                 color = Color.Transparent
             ) {
-                val remaining = if (selectedMode == SearchMode.PRODUCTS) remainingProduct else remainingIngredient
-                val total = if (selectedMode == SearchMode.PRODUCTS) 10 else 15
+                val remaining = remainingIngredient
+                val total = 15
                 Text(
                     text = "Quota: $remaining of $total searches remaining",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .testTag("search_quota_text"),
+                        .testTag(TestTags.V2.Search.QUOTA_TEXT),
                     textAlign = TextAlign.Center
                 )
             }
@@ -282,28 +285,50 @@ fun SearchProductOrIngredientScreen(
 
         if (error != null) {
             item {
-                Text(
-                    text = error ?: "An error occurred",
-                    color = MaterialTheme.colorScheme.error,
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(24.dp)
-                        .testTag("search_error_text"),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
+                        .testTag(TestTags.V2.Search.ERROR_TEXT),
+                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.2f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ErrorOutline,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = error,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
             }
         }
 
         if (searchResults.isEmpty() && !isLoading && searchQuery.isNotBlank()) {
             item {
                 Text(
-                    text = "No products found for \"$searchQuery\"",
+                    text = "No ingredients found for \"$searchQuery\"",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(40.dp)
-                        .testTag("search_no_results_text"),
+                        .testTag(TestTags.V2.Search.NO_RESULTS_TEXT),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -314,7 +339,6 @@ fun SearchProductOrIngredientScreen(
             ProductItem(
                 product = product,
                 onClick = {
-                    viewModel.saveProduct(product)
                     onProductClick(product)
                 }
             )
@@ -335,7 +359,7 @@ fun SearchSelectionCard(
         onClick = onClick,
         modifier = modifier
             .height(130.dp)
-            .testTag("search_selection_card_${title.lowercase()}"),
+            .testTag(TestTags.V2.Search.selectionCard(title)),
         shape = RoundedCornerShape(20.dp),
         color = if (isSelected)
             MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
@@ -349,7 +373,7 @@ fun SearchSelectionCard(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(12.dp)
-                .testTag("search_selection_card_content_${title.lowercase()}"),
+                .testTag(TestTags.V2.Search.selectionCardContent(title)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -358,7 +382,7 @@ fun SearchSelectionCard(
                 contentDescription = title,
                 modifier = Modifier
                     .size(28.dp)
-                    .testTag("search_selection_card_icon_${title.lowercase()}"),
+                    .testTag(TestTags.V2.Search.selectionCardIcon(title)),
                 tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -367,13 +391,13 @@ fun SearchSelectionCard(
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.testTag("search_selection_card_title_${title.lowercase()}")
+                modifier = Modifier.testTag(TestTags.V2.Search.selectionCardTitle(title))
             )
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
-                modifier = Modifier.testTag("search_selection_card_subtitle_${title.lowercase()}")
+                modifier = Modifier.testTag(TestTags.V2.Search.selectionCardSubtitle(title))
             )
         }
     }
@@ -383,6 +407,13 @@ fun SearchSelectionCard(
 @Preview(showBackground = true, showSystemUi = true)
 fun SearchProductOrIngredientScreenPreview() {
     IsItVeganTheme {
-        SearchProductOrIngredientScreen()
+        SearchProductOrIngredientContent(
+            remainingIngredient = 12,
+            searchResults = emptyList(),
+            isLoading = false,
+            error = null,
+            onSearch = {},
+            onProductClick = {}
+        )
     }
 }

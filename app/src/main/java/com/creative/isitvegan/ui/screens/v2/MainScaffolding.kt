@@ -78,6 +78,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.creative.isitvegan.R
 import com.creative.isitvegan.data.local.FeatureType
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.components.v2.TransparencyInfoSheet
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.AppInfoViewModel
@@ -185,7 +186,7 @@ fun MainScaffolding() {
                 NavigationBar(
                     containerColor = MaterialTheme.colorScheme.surface,
                     tonalElevation = 0.dp,
-                    modifier = Modifier.testTag("bottom_navigation_bar")
+                    modifier = Modifier.testTag(TestTags.V2.Scaffolding.BOTTOM_NAV_BAR)
                 ) {
                     val navItems = listOf(
                         Triple(BottomTabs.HOME, Icons.Default.Home, "Home"),
@@ -198,7 +199,7 @@ fun MainScaffolding() {
                     navItems.forEach { (route, icon, label) ->
                         NavigationBarItem(
                             selected = currentDestination?.route == route,
-                            modifier = Modifier.testTag("nav_item_${route}"),
+                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.navItem(route)),
                             onClick = {
                                 if (route == BottomTabs.SCAN) {
                                     val hasPermission = ContextCompat.checkSelfPermission(
@@ -388,7 +389,7 @@ fun MainScaffolding() {
                 containerColor = MaterialTheme.colorScheme.surface,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .testTag("sheet_app_usage")
+                    .testTag(TestTags.V2.Scaffolding.SHEET_APP_USAGE)
             ) {
                 Column(
                     modifier = Modifier
@@ -401,12 +402,12 @@ fun MainScaffolding() {
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(bottom = 16.dp)
-                            .testTag("usage_sheet_title")
+                            .testTag(TestTags.V2.Scaffolding.USAGE_SHEET_TITLE)
                     )
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
                         shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier.testTag("usage_card")
+                        modifier = Modifier.testTag(TestTags.V2.Scaffolding.USAGE_CARD)
                     ) {
                         Column(
                             modifier = Modifier
@@ -429,7 +430,7 @@ fun MainScaffolding() {
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                     modifier = Modifier
                                         .align(Alignment.CenterHorizontally)
-                                        .testTag("usage_reset_time")
+                                        .testTag(TestTags.V2.Scaffolding.USAGE_RESET_TIME)
                                 )
                             }
                         }
@@ -440,7 +441,7 @@ fun MainScaffolding() {
                     Row(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .testTag("button_open_food_facts_link")
+                            .testTag(TestTags.V2.Scaffolding.BTN_OPEN_FOOD_FACTS)
                             .clickable {
                                 val intent = Intent(
                                     Intent.ACTION_VIEW,
@@ -455,14 +456,14 @@ fun MainScaffolding() {
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                             textDecoration = TextDecoration.Underline,
-                            modifier = Modifier.testTag("link_off_text")
+                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.LINK_OFF_TEXT)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "(ODbL)",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                            modifier = Modifier.testTag("link_odbl_text")
+                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.LINK_ODBL_TEXT)
                         )
                     }
 
@@ -472,7 +473,7 @@ fun MainScaffolding() {
                         onClick = { showTransparencyInAccount = true },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .testTag("button_data_transparency"),
+                            .testTag(TestTags.V2.Scaffolding.BTN_DATA_TRANSPARENCY),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
@@ -482,7 +483,7 @@ fun MainScaffolding() {
                         Icon(
                             imageVector = Icons.Default.Security,
                             contentDescription = null,
-                            modifier = Modifier.testTag("button_data_transparency_icon")
+                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_DATA_TRANSPARENCY_ICON)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text("Data Transparency")
@@ -494,7 +495,7 @@ fun MainScaffolding() {
                         onClick = { showBottomSheet = false },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .testTag("button_close_usage_sheet"),
+                            .testTag(TestTags.V2.Scaffolding.BTN_CLOSE_USAGE_SHEET),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text("Close")
@@ -507,7 +508,7 @@ fun MainScaffolding() {
             ModalBottomSheet(
                 onDismissRequest = { showTransparencyInAccount = false },
                 containerColor = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.testTag("sheet_transparency_in_account")
+                modifier = Modifier.testTag(TestTags.V2.Scaffolding.SHEET_TRANSPARENCY_IN_ACCOUNT)
             ) {
                 TransparencyInfoSheet()
             }
@@ -520,14 +521,14 @@ fun UsageRow(label: String, remaining: Int, limit: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("usage_row_${label.lowercase().replace(" ", "_")}"),
+            .testTag(TestTags.V2.Scaffolding.usageRow(label)),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.testTag("usage_label_${label.lowercase().replace(" ", "_")}")
+            modifier = Modifier.testTag(TestTags.V2.Scaffolding.usageLabel(label))
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
@@ -535,7 +536,7 @@ fun UsageRow(label: String, remaining: Int, limit: Int) {
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = if (remaining == 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-            modifier = Modifier.testTag("usage_value_${label.lowercase().replace(" ", "_")}")
+            modifier = Modifier.testTag(TestTags.V2.Scaffolding.usageValue(label))
         )
     }
 }
@@ -554,26 +555,26 @@ fun TopAppBarHome(onAccountClick: () -> Unit = {}) {
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 2.sp,
-                modifier = Modifier.testTag("top_bar_title")
+                modifier = Modifier.testTag(TestTags.V2.Scaffolding.TOP_BAR_TITLE)
             )
         },
         actions = {
             IconButton(
                 onClick = onAccountClick,
-                modifier = Modifier.testTag("button_open_info")
+                modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO)
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = "Information",
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.testTag("button_open_info_icon")
+                    modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO_ICON)
                 )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = Color.Transparent
         ),
-        modifier = Modifier.testTag("top_app_bar")
+        modifier = Modifier.testTag(TestTags.V2.Scaffolding.TOP_APP_BAR)
     )
 }
 

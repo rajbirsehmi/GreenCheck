@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 
 @Composable
@@ -37,13 +38,13 @@ fun ErrorScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .testTag("error_screen"),
+            .testTag(TestTags.V2.Error.SCREEN),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .padding(40.dp)
-                .testTag("error_content"),
+                .testTag(TestTags.V2.Error.CONTENT),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -51,7 +52,7 @@ fun ErrorScreen(
                 modifier = Modifier
                     .size(100.dp)
                     .background(MaterialTheme.colorScheme.error.copy(alpha = 0.05f), CircleShape)
-                    .testTag("error_icon_container"),
+                    .testTag(TestTags.V2.Error.ICON_CONTAINER),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -60,7 +61,7 @@ fun ErrorScreen(
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .size(48.dp)
-                        .testTag("error_icon")
+                        .testTag(TestTags.V2.Error.ICON)
                 )
             }
             
@@ -71,7 +72,7 @@ fun ErrorScreen(
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.testTag("error_title")
+                modifier = Modifier.testTag(TestTags.V2.Error.TITLE)
             )
             
             Spacer(modifier = Modifier.height(12.dp))
@@ -82,7 +83,7 @@ fun ErrorScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 lineHeight = 22.sp,
-                modifier = Modifier.testTag("error_description")
+                modifier = Modifier.testTag(TestTags.V2.Error.DESCRIPTION)
             )
             
             Spacer(modifier = Modifier.height(40.dp))
@@ -92,13 +93,13 @@ fun ErrorScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp)
-                    .testTag("button_error_return_home"),
+                    .testTag(TestTags.V2.Error.BTN_RETURN_HOME),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "Return to Safety",
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag("button_error_return_home_text")
+                    modifier = Modifier.testTag(TestTags.V2.Error.BTN_RETURN_HOME_TEXT)
                 )
             }
         }

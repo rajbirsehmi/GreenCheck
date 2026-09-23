@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 
 @Composable
@@ -32,7 +33,7 @@ fun EmptyHistoryScreen() {
         modifier = Modifier
             .fillMaxSize()
             .padding(40.dp)
-            .testTag("empty_history_screen"),
+            .testTag(TestTags.V2.EmptyHistory.SCREEN),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -40,7 +41,7 @@ fun EmptyHistoryScreen() {
             modifier = Modifier
                 .size(100.dp)
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f), CircleShape)
-                .testTag("empty_history_logo_container"),
+                .testTag(TestTags.V2.EmptyHistory.LOGO_CONTAINER),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -48,7 +49,7 @@ fun EmptyHistoryScreen() {
                 contentDescription = null,
                 modifier = Modifier
                     .size(48.dp)
-                    .testTag("empty_history_logo_icon"),
+                    .testTag(TestTags.V2.EmptyHistory.LOGO_ICON),
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
             )
         }
@@ -60,7 +61,7 @@ fun EmptyHistoryScreen() {
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.testTag("empty_history_title")
+            modifier = Modifier.testTag(TestTags.V2.EmptyHistory.TITLE)
         )
         
         Spacer(Modifier.height(12.dp))
@@ -71,7 +72,7 @@ fun EmptyHistoryScreen() {
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 22.sp,
-            modifier = Modifier.testTag("empty_history_subtitle")
+            modifier = Modifier.testTag(TestTags.V2.EmptyHistory.SUBTITLE)
         )
     }
 }

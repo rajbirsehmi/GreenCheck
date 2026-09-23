@@ -7,7 +7,6 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,11 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.NotificationsOff
+import androidx.compose.material.icons.filled.Vibration
+import androidx.compose.material.icons.outlined.Vibration
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +30,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,6 +50,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.isitvegan.R
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.viewmodels.ScanItemViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -65,7 +65,8 @@ fun ScannerScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val haptic = LocalHapticFeedback.current
 
-    var isSoundEnabled by remember { mutableStateOf(true) }
+    var isVibrationEnabled by remember { mutableStateOf(true) }
+    val currentIsVibrationEnabled by rememberUpdatedState(isVibrationEnabled)
     val isScanComplete by viewModel.isScanComplete.collectAsStateWithLifecycle()
     val remainingScans by viewModel.remainingScans.collectAsStateWithLifecycle()
 
@@ -95,7 +96,9 @@ fun ScannerScreen(
                             if (barcodes.isNotEmpty()) {
                                 val code = barcodes[0].rawValue ?: ""
                                 Log.d("ScannerScreen", "Barcode Read: $code")
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                if (currentIsVibrationEnabled) {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
                                 viewModel.onBarcodeDetected(code)
                             }
                         }
@@ -110,13 +113,13 @@ fun ScannerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("scanner_screen_container")
+            .testTag(TestTags.V2.Scanner.SCREEN_CONTAINER)
     ) {
         // Camera Preview Background
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag("camera_preview"),
+                .testTag(TestTags.V2.Scanner.CAMERA_PREVIEW),
             factory = { context ->
                 PreviewView(context).apply {
                     this.controller = cameraController
@@ -136,7 +139,7 @@ fun ScannerScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
-                    .testTag("scanner_instructions_overlay"),
+                    .testTag(TestTags.V2.Scanner.INSTRUCTIONS_OVERLAY),
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(20.dp),
                 tonalElevation = 0.dp
@@ -150,7 +153,7 @@ fun ScannerScreen(
                         contentDescription = null,
                         modifier = Modifier
                             .size(24.dp)
-                            .testTag("scanner_icon"),
+                            .testTag(TestTags.V2.Scanner.ICON),
                         tint = if (isScanComplete) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.width(16.dp))
@@ -162,20 +165,21 @@ fun ScannerScreen(
                         color = if (isScanComplete) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .weight(1f)
-                            .testTag("scanner_status_text")
+                            .testTag(TestTags.V2.Scanner.STATUS_TEXT)
                     )
                     IconButton(
-                        onClick = { isSoundEnabled = !isSoundEnabled },
+                        onClick = { isVibrationEnabled = !isVibrationEnabled },
                         modifier = Modifier
                             .size(32.dp)
-                            .testTag("button_toggle_sound")
+                            .testTag(TestTags.V2.Scanner.BTN_TOGGLE_VIBRATION)
                     ) {
                         Icon(
-                            imageVector = if (isSoundEnabled) Icons.Outlined.Notifications else Icons.Outlined.NotificationsOff,
-                            contentDescription = "Toggle Sound",
+                            imageVector = if (isVibrationEnabled) Icons.Filled.Vibration else Icons.Outlined.Vibration,
+                            contentDescription = "Toggle Vibration",
+                            tint = if (isVibrationEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
                             modifier = Modifier
                                 .size(20.dp)
-                                .testTag("button_toggle_sound_icon")
+                                .testTag(TestTags.V2.Scanner.BTN_TOGGLE_VIBRATION_ICON)
                         )
                     }
                 }
@@ -188,7 +192,7 @@ fun ScannerScreen(
                 modifier = Modifier
                     .padding(24.dp)
                     .align(Alignment.CenterHorizontally)
-                    .testTag("scanner_quota_overlay"),
+                    .testTag(TestTags.V2.Scanner.QUOTA_OVERLAY),
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
                 shape = RoundedCornerShape(12.dp)
             ) {
@@ -199,7 +203,7 @@ fun ScannerScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .testTag("scanner_quota_text")
+                        .testTag(TestTags.V2.Scanner.QUOTA_TEXT)
                 )
             }
         }
@@ -208,13 +212,13 @@ fun ScannerScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag("scanner_viewfinder_container"),
+                .testTag(TestTags.V2.Scanner.VIEWFINDER_CONTAINER),
             contentAlignment = Alignment.Center
         ) {
             Surface(
                 modifier = Modifier
                     .size(width = 260.dp, height = 180.dp)
-                    .testTag("scanner_viewfinder_window"),
+                    .testTag(TestTags.V2.Scanner.VIEWFINDER_WINDOW),
                 color = Color.Transparent,
                 border = BorderStroke(
                     width = 1.dp,

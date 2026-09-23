@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -35,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +47,7 @@ import coil.request.ImageRequest
 import com.creative.isitvegan.R
 import com.creative.isitvegan.domain.model.Ingredient
 import com.creative.isitvegan.domain.model.Product
+import com.creative.isitvegan.testing.TestTags
 import com.creative.isitvegan.ui.theme.IsItVeganTheme
 import com.creative.isitvegan.ui.theme.NonVeganStatusRed
 import com.creative.isitvegan.ui.theme.UncertainStatusYellow
@@ -72,7 +73,7 @@ fun ProductScreen(
                 CircularProgressIndicator(
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .testTag("product_loading"),
+                        .testTag(TestTags.V2.Product.LOADING),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -109,7 +110,7 @@ fun ProductContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("product_content_list"),
+            .testTag(TestTags.V2.Product.CONTENT_LIST),
         contentPadding = PaddingValues(bottom = 32.dp)
     ) {
         item {
@@ -144,13 +145,13 @@ fun ProductContent(
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .height(56.dp)
-                    .testTag("button_close_product_screen"),
+                    .testTag(TestTags.V2.Product.BTN_CLOSE),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Text(
                     text = "Back to Exploration",
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag("button_close_product_screen_text")
+                    modifier = Modifier.testTag(TestTags.V2.Product.BTN_CLOSE_TEXT)
                 )
             }
         }
@@ -159,38 +160,50 @@ fun ProductContent(
 
 @Composable
 fun ProductHeroSection(product: Product) {
+    val imageUrl = product.imageUrl?.takeIf { it.isNotBlank() }
+        ?: product.thumbUrl?.takeIf { it.isNotBlank() }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("product_hero_section")
+            .testTag(TestTags.V2.Product.HERO_SECTION)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(340.dp)
-                .testTag("product_image_container")
+                .height(300.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f))
+                .testTag(TestTags.V2.Product.IMAGE_CONTAINER),
+            contentAlignment = Alignment.Center
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(product.imageUrl ?: product.thumbUrl)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(id = R.drawable.leaves),
-                error = painterResource(id = R.drawable.leaves),
-                contentDescription = "Product Image",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("product_image"),
-                contentScale = ContentScale.Crop
+            Icon(
+                imageVector = Icons.Default.Eco,
+                contentDescription = "Default Product Icon",
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
+                modifier = Modifier.size(72.dp)
             )
+
+            if (imageUrl != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Product Image",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag(TestTags.V2.Product.IMAGE),
+                    contentScale = ContentScale.Crop
+                )
+            }
             
             // Branding Overlay
             Surface(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(20.dp)
-                    .testTag("product_brand_overlay"),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                    .testTag(TestTags.V2.Product.BRAND_OVERLAY),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
                 shape = RoundedCornerShape(12.dp),
                 tonalElevation = 0.dp
             ) {
@@ -198,7 +211,7 @@ fun ProductHeroSection(product: Product) {
                     text = (product.brands ?: "Unknown Brand").uppercase(),
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .testTag("product_brand_name"),
+                        .testTag(TestTags.V2.Product.BRAND_NAME),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.5.sp,
@@ -211,14 +224,14 @@ fun ProductHeroSection(product: Product) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 20.dp)
-                .testTag("product_title_section")
+                .testTag(TestTags.V2.Product.TITLE_SECTION)
         ) {
             Text(
                 text = product.name ?: "Unnamed Product",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.testTag("product_name")
+                modifier = Modifier.testTag(TestTags.V2.Product.NAME)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -226,7 +239,7 @@ fun ProductHeroSection(product: Product) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 letterSpacing = 0.5.sp,
-                modifier = Modifier.testTag("product_barcode")
+                modifier = Modifier.testTag(TestTags.V2.Product.BARCODE)
             )
         }
     }
@@ -244,7 +257,7 @@ fun ProductStatusBanner(product: Product) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp)
-            .testTag("product_status_banner"),
+            .testTag(TestTags.V2.Product.STATUS_BANNER),
         color = statusColor.copy(alpha = 0.1f),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -256,14 +269,14 @@ fun ProductStatusBanner(product: Product) {
                 modifier = Modifier
                     .size(48.dp)
                     .background(statusColor.copy(alpha = 0.2f), CircleShape)
-                    .testTag("product_status_icon_container"),
+                    .testTag(TestTags.V2.Product.STATUS_ICON_CONTAINER),
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
                         .size(12.dp)
                         .background(statusColor, CircleShape)
-                        .testTag("product_status_dot")
+                        .testTag(TestTags.V2.Product.STATUS_DOT)
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
@@ -274,7 +287,7 @@ fun ProductStatusBanner(product: Product) {
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.sp,
                     color = statusColor,
-                    modifier = Modifier.testTag("product_status_title")
+                    modifier = Modifier.testTag(TestTags.V2.Product.STATUS_TITLE)
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
@@ -282,7 +295,7 @@ fun ProductStatusBanner(product: Product) {
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 16.sp,
-                    modifier = Modifier.testTag("product_status_description")
+                    modifier = Modifier.testTag(TestTags.V2.Product.STATUS_DESCRIPTION)
                 )
             }
         }
@@ -294,7 +307,7 @@ fun ProductDetailsSection(product: Product) {
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
-            .testTag("product_details_section")
+            .testTag(TestTags.V2.Product.DETAILS_SECTION)
     ) {
         SectionTitle("Product Details")
         Spacer(modifier = Modifier.height(12.dp))
@@ -306,7 +319,7 @@ fun ProductDetailsSection(product: Product) {
             Column(
                 modifier = Modifier
                     .padding(20.dp)
-                    .testTag("product_details_card")
+                    .testTag(TestTags.V2.Product.DETAILS_CARD)
             ) {
                 DetailRow("Quantity", product.quantity ?: "N/A")
                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
@@ -323,20 +336,20 @@ fun DetailRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("detail_row_${label.lowercase()}"),
+            .testTag(TestTags.V2.Product.detailRow(label)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.testTag("detail_label_${label.lowercase()}")
+            modifier = Modifier.testTag(TestTags.V2.Product.detailLabel(label))
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.testTag("detail_value_${label.lowercase()}")
+            modifier = Modifier.testTag(TestTags.V2.Product.detailValue(label))
         )
     }
 }
@@ -351,7 +364,7 @@ fun IngredientsAnalysisSection(product: Product) {
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
-            .testTag("ingredients_analysis_section")
+            .testTag(TestTags.V2.Product.INGREDIENTS_ANALYSIS_SECTION)
     ) {
         SectionTitle("Ingredients Analysis")
         Spacer(modifier = Modifier.height(16.dp))
@@ -369,7 +382,7 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .testTag("analysis_card_$tagSuffix"),
+            .testTag(TestTags.V2.Product.analysisCard(tagSuffix)),
         color = color.copy(alpha = 0.05f),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, color.copy(alpha = 0.1f))
@@ -380,7 +393,7 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                     modifier = Modifier
                         .size(8.dp)
                         .background(color, CircleShape)
-                        .testTag("analysis_card_dot_$tagSuffix")
+                        .testTag(TestTags.V2.Product.analysisCardDot(tagSuffix))
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -388,18 +401,18 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     color = color,
-                    modifier = Modifier.testTag("analysis_card_title_$tagSuffix")
+                    modifier = Modifier.testTag(TestTags.V2.Product.analysisCardTitle(tagSuffix))
                 )
             }
             if (items.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Column(
-                    modifier = Modifier.testTag("analysis_card_items_$tagSuffix"),
+                    modifier = Modifier.testTag(TestTags.V2.Product.analysisCardItems(tagSuffix)),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items.forEachIndexed { index, item ->
                         Row(
-                            modifier = Modifier.testTag("analysis_card_item_${tagSuffix}_$index"),
+                            modifier = Modifier.testTag(TestTags.V2.Product.analysisCardItem(tagSuffix, index)),
                             verticalAlignment = Alignment.Top
                         ) {
                             Text(
@@ -413,7 +426,7 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 lineHeight = 18.sp,
-                                modifier = Modifier.testTag("analysis_card_item_text_${tagSuffix}_$index")
+                                modifier = Modifier.testTag(TestTags.V2.Product.analysisCardItemText(tagSuffix, index))
                             )
                         }
                     }
@@ -424,7 +437,7 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                     text = "None detected",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.testTag("analysis_card_empty_$tagSuffix")
+                    modifier = Modifier.testTag(TestTags.V2.Product.analysisCardEmpty(tagSuffix))
                 )
             }
         }
@@ -439,26 +452,26 @@ fun AllIngredientsSection(product: Product) {
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
-            .testTag("all_ingredients_section")
+            .testTag(TestTags.V2.Product.ALL_INGREDIENTS_SECTION)
     ) {
         SectionTitle("Full Ingredient List")
         Spacer(modifier = Modifier.height(12.dp))
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("all_ingredients_card"),
+                .testTag(TestTags.V2.Product.ALL_INGREDIENTS_CARD),
             color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
             shape = RoundedCornerShape(20.dp)
         ) {
             Column(
                 modifier = Modifier
                     .padding(20.dp)
-                    .testTag("all_ingredients_list"),
+                    .testTag(TestTags.V2.Product.ALL_INGREDIENTS_LIST),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ingredients.forEachIndexed { index, ingredient ->
                     Row(
-                        modifier = Modifier.testTag("all_ingredients_item_$index"),
+                        modifier = Modifier.testTag(TestTags.V2.Product.allIngredientsItem(index)),
                         verticalAlignment = Alignment.Top
                     ) {
                         Text(
@@ -472,7 +485,7 @@ fun AllIngredientsSection(product: Product) {
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp,
-                            modifier = Modifier.testTag("all_ingredients_item_text_$index")
+                            modifier = Modifier.testTag(TestTags.V2.Product.allIngredientsItemText(index))
                         )
                     }
                 }
@@ -489,7 +502,7 @@ fun SectionTitle(title: String) {
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.5.sp,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.testTag("section_title_${title.lowercase().replace(" ", "_")}")
+        modifier = Modifier.testTag(TestTags.V2.Product.sectionTitle(title))
     )
 }
 
@@ -499,7 +512,7 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(32.dp)
-            .testTag("error_state_container"),
+            .testTag(TestTags.V2.Product.ERROR_STATE_CONTAINER),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -509,14 +522,14 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
             tint = MaterialTheme.colorScheme.error,
             modifier = Modifier
                 .size(64.dp)
-                .testTag("error_state_icon")
+                .testTag(TestTags.V2.Product.ERROR_STATE_ICON)
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "An unexpected error occurred",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.testTag("error_state_title")
+            modifier = Modifier.testTag(TestTags.V2.Product.ERROR_STATE_TITLE)
         )
         Text(
             text = message,
@@ -524,23 +537,23 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(top = 8.dp)
-                .testTag("error_state_message")
+                .testTag(TestTags.V2.Product.ERROR_STATE_MESSAGE)
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = onRetry,
             shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.testTag("button_error_retry")
+            modifier = Modifier.testTag(TestTags.V2.Product.BTN_ERROR_RETRY)
         ) {
             Icon(
                 Icons.Default.Refresh,
                 contentDescription = null,
-                modifier = Modifier.testTag("button_error_retry_icon")
+                modifier = Modifier.testTag(TestTags.V2.Product.BTN_ERROR_RETRY_ICON)
             )
             Spacer(Modifier.width(8.dp))
             Text(
                 text = "Try Again",
-                modifier = Modifier.testTag("button_error_retry_text")
+                modifier = Modifier.testTag(TestTags.V2.Product.BTN_ERROR_RETRY_TEXT)
             )
         }
     }
