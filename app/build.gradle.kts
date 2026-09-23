@@ -7,17 +7,17 @@ plugins {
 }
 
 android {
-    namespace = "com.creative.isitvegan"
+    namespace = "com.creative.greencheck"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.creative.isitvegan"
+        applicationId = "com.creative.greencheck"
         minSdk = 30
         targetSdk = 35
         versionCode = 2
         versionName = "2.0"
 
-        testInstrumentationRunner = "com.creative.isitvegan.HiltTestRunner"
+        testInstrumentationRunner = "com.creative.greencheck.HiltTestRunner"
         missingDimensionStrategy("di", "hilt")
     }
 
