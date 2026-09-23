@@ -77,6 +77,7 @@ dependencies {
 
     // Hilt (Dependency Injection)
     implementation(libs.hilt.android)
+    androidTestImplementation(files("D:\\Android\\Projects\\UIAutomationEngine\\engine\\build\\outputs\\aar\\engine-hilt-release.aar"))
     ksp(libs.hilt.compiler)
 
     // Room (Database)
@@ -117,11 +118,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // UI Testing Egnine
-    androidTestImplementation(libs.uiengine) {
-        artifact {
-            type = "aar"
-            classifier = "hiltDebug"
-        }
-    }
+//    androidTestImplementation(libs.uiengine) {
+//        artifact {
+//            type = "aar"
+//            classifier = "hiltDebug"
+//        }
+//    }
     lintChecks(libs.engine.lint)
 }
