@@ -90,25 +90,43 @@ jobs:
       - name: Consolidate HTML Reports
         if: always()
         run: |
-          mkdir -p consolidated-reports
+          mkdir -p consolidated-reports/failures
           modules=("app")
-          echo "<!DOCTYPE html><html><head><title>Test Reports Landing Page</title><style>body{font-family:sans-serif;padding:40px;background-color:#f4f7f9;color:#333;}ul{line-height:2;list-style:none;padding:0;}li{background:white;margin-bottom:10px;padding:15px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);}a{color:#0366d6;text-decoration:none;font-weight:bold;}a:hover{text-decoration:underline;}h1{color:#1a202c;} .download-btn{display:inline-block;padding:10px 20px;background-color:#28a745;color:white !important;border-radius:5px;margin-bottom:20px;text-decoration:none;font-weight:bold;}</style></head><body>" > consolidated-reports/index.html
+          echo "<!DOCTYPE html><html><head><title>Test Reports Landing Page</title><style>body{font-family:sans-serif;padding:40px;background-color:#f4f7f9;color:#333;}ul{line-height:2;list-style:none;padding:0;}li{background:white;margin-bottom:10px;padding:15px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);}a{color:#0366d6;text-decoration:none;font-weight:bold;}a:hover{text-decoration:underline;}h1{color:#1a202c;}.badge-fail{background:#dc3545;color:white;padding:3px 8px;border-radius:12px;font-size:0.8em;margin-right:8px;}.download-btn{display:inline-block;padding:10px 20px;background-color:#28a745;color:white !important;border-radius:5px;margin-bottom:20px;text-decoration:none;font-weight:bold;}</style></head><body>" > consolidated-reports/index.html
           echo "<h1>GreenCheck - UI Test Reports</h1>" >> consolidated-reports/index.html
           echo "<p>Execution Date: $(date)</p>" >> consolidated-reports/index.html
           echo "<p><em>Note: To view these reports locally, download and extract the ZIP, then open index.html.</em></p><ul>" >> consolidated-reports/index.html
+          
           for module in "${modules[@]}"; do
             report_dir="$module/build/reports/androidTests/connected"
             if [ -d "$report_dir" ]; then
               echo "Copying reports for $module..."
               mkdir -p "consolidated-reports/$module"
               cp -r "$report_dir/." "consolidated-reports/$module/"
-              echo "<li><strong>$module:</strong> <a href='$module/index.html'>View Full Report</a></li>" >> consolidated-reports/index.html
+              echo "<li><strong>$module:</strong> <a href='$module/index.html'>View Full Test Report</a></li>" >> consolidated-reports/index.html
             else
               echo "No reports found for $module."
               echo "<li><strong>$module:</strong> <span style='color:#d73a49;'>No reports generated</span></li>" >> consolidated-reports/index.html
             fi
           done
-          echo "</ul></body></html>" >> consolidated-reports/index.html
+          echo "</ul>" >> consolidated-reports/index.html
+
+          # Locate and link UI Automation Engine HTML Failure Artifacts (with embedded screenshots)
+          failure_reports=$(find . -type f \( -name "FAILURE_*.html" -o -name "GLOBAL_FAILURE_*.html" -o -name "ADVANCED_ACTION_FAILURE_*.html" \))
+          if [ -n "$failure_reports" ]; then
+            echo "<h2>📸 Failure Diagnostic Artifacts (Interactive HTML + Embedded Screenshots)</h2><ul>" >> consolidated-reports/index.html
+            for f in $failure_reports; do
+              fname=$(basename "$f")
+              dir_name=$(dirname "$f")
+              cp "$f" "consolidated-reports/failures/"
+              cp "$dir_name"/*.png "consolidated-reports/failures/" 2>/dev/null || true
+              cp "$dir_name"/*.log "consolidated-reports/failures/" 2>/dev/null || true
+              echo "<li><span class='badge-fail'>FAILURE REPORT</span><a href='failures/$fname'>$fname (View Interactive Report & Screenshot)</a></li>" >> consolidated-reports/index.html
+            done
+            echo "</ul>" >> consolidated-reports/index.html
+          fi
+
+          echo "</body></html>" >> consolidated-reports/index.html
 
       - name: Upload Consolidated Reports
         if: always()
@@ -126,6 +144,9 @@ jobs:
           path: |
             **/build/outputs/androidTest-results/connected/**
             **/build/outputs/connected_android_test_additional_output/**
+            **/FAILURE_*
+            **/GLOBAL_FAILURE_*
+            **/ADVANCED_ACTION_FAILURE_*
           if-no-files-found: ignore
           retention-days: 7
 
