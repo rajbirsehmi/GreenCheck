@@ -87,113 +87,7 @@ jobs:
           ram-size: 4096M
           heap-size: 1024M
           disk-size: 8G
-          script: |
-            ./gradlew clean :app:connectedDebugAndroidTest --stacktrace --continue || TEST_FAILED=true
-            mkdir -p additional_test_output
-            adb pull /sdcard/Android/media/com.creative.isitvegan/additional_test_output/. additional_test_output/ || true
-            if [ "$TEST_FAILED" = "true" ]; then
-              echo "Tests failed, capturing logcat..."
-              timeout 60s adb logcat -d > logcat.txt
-              exit 1
-            fi
-
-      - name: Consolidate HTML Reports & Screenshots
-        if: always()
-        run: |
-          mkdir -p consolidated-reports/screenshots
-          
-          if [ -d "additional_test_output" ]; then
-            cp -r additional_test_output/. consolidated-reports/screenshots/ 2>/dev/null || true
-          fi
-          find app/build/outputs/ -type f \( -name "*.png" -o -name "*.jpg" \) -exec cp {} consolidated-reports/screenshots/ \; 2>/dev/null || true
-
-          modules=("app")
-          for module in "${modules[@]}"; do
-            report_dir="$module/build/reports/androidTests/connected"
-            if [ -d "$report_dir" ]; then
-              echo "Copying reports for $module..."
-              mkdir -p "consolidated-reports/$module"
-              cp -r "$report_dir/." "consolidated-reports/$module/"
-            fi
-          done
-
-          python3 -c "
-          import os, glob, time
-
-          os.makedirs('consolidated-reports/screenshots', exist_ok=True)
-          
-          report_items = ''
-          for module in ['app']:
-              report_path = f'consolidated-reports/{module}/index.html'
-              if os.path.exists(report_path):
-                  report_items += f'<li><strong>{module}:</strong> <a href=\"{module}/index.html\">View Full Report</a></li>\n'
-              else:
-                  report_items += f'<li><strong>{module}:</strong> <span style=\"color:#d73a49;\">No reports generated</span></li>\n'
-
-          screenshot_items = ''
-          images = glob.glob('consolidated-reports/screenshots/*.png') + glob.glob('consolidated-reports/screenshots/*.jpg')
-          if images:
-              for img in sorted(images):
-                  filename = os.path.basename(img)
-                  screenshot_items += f'<div class=\"screenshot-item\"><a href=\"screenshots/{filename}\" target=\"_blank\"><img src=\"screenshots/{filename}\" alt=\"{filename}\" /></a><div class=\"screenshot-title\">{filename}</div></div>\n'
-          else:
-              screenshot_items = '<p class=\"no-shots\">No diagnostic screenshots found.</p>'
-
-          html = f'''<!DOCTYPE html>
-          <html lang=\"en\">
-          <head>
-              <meta charset=\"UTF-8\">
-              <title>GreenCheck UI Test Reports</title>
-              <style>
-                  body {{ font-family: system-ui, -apple-system, sans-serif; padding: 30px; background-color: #f4f7f9; color: #333; }}
-                  .container {{ max-width: 1000px; margin: 0 auto; }}
-                  h1 {{ color: #1a202c; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }}
-                  h2 {{ color: #2b6cb0; margin-top: 30px; }}
-                  .card {{ background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }}
-                  ul {{ list-style: none; padding: 0; }}
-                  li {{ padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; margin-bottom: 8px; border-radius: 6px; }}
-                  a {{ color: #0366d6; text-decoration: none; font-weight: bold; }}
-                  a:hover {{ text-decoration: underline; }}
-                  .gallery {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 15px; }}
-                  .screenshot-item {{ background: white; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }}
-                  .screenshot-item img {{ width: 100%; height: auto; display: block; background: #000; }}
-                  .screenshot-title {{ padding: 8px 12px; font-size: 12px; word-break: break-all; color: #4a5568; }}
-                  .no-shots {{ color: #718096; font-style: italic; }}
-              </style>
-          </head>
-          <body>
-              <div class=\"container\">
-                  <h1>GreenCheck - UI Test Reports</h1>
-                  <p>Execution Date: {time.ctime()}</p>
-
-                  <div class=\"card\">
-                      <h2>Test Execution Reports</h2>
-                      <ul>
-          {report_items}
-                      </ul>
-                  </div>
-
-                  <div class=\"card\">
-                      <h2>Diagnostic Screenshots & Artifacts</h2>
-                      <div class=\"gallery\">
-          {screenshot_items}
-                      </div>
-                  </div>
-              </div>
-          </body>
-          </html>'''
-
-          with open('consolidated-reports/index.html', 'w') as f:
-              f.write(html)
-          "
-
-      - name: Upload Consolidated Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ui-test-html-reports
-          path: consolidated-reports/
-          retention-days: 7
+          script: ./gradlew clean :app:connectedDebugAndroidTest --stacktrace --continue || { echo "Tests failed, capturing logcat..."; timeout 60s adb logcat -d > logcat.txt; exit 1; }
 
       - name: Upload Raw Test Results
         if: always()
@@ -203,6 +97,7 @@ jobs:
           path: |
             **/build/outputs/androidTest-results/connected/**
             **/build/outputs/connected_android_test_additional_output/**
+            **/build/reports/androidTests/connected/**
           if-no-files-found: ignore
           retention-days: 7
 
