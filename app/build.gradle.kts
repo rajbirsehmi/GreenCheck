@@ -14,8 +14,8 @@ android {
         applicationId = "com.creative.isitvegan"
         minSdk = 30
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "com.creative.isitvegan.HiltTestRunner"
         missingDimensionStrategy("di", "hilt")
@@ -102,6 +102,8 @@ dependencies {
     androidTestImplementation(libs.hilt.testing)
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.espresso.core)
     kspAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
