@@ -8,6 +8,7 @@ import com.creative.greencheck.data.local.entity.ProductEntity
 import com.creative.greencheck.data.remote.OpenFoodFactsApi
 import com.creative.greencheck.data.remote.dto.ProductDetails
 import com.creative.greencheck.data.remote.dto.ProductResponse
+import com.creative.greencheck.data.remote.dto.SearchResponse
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.testing.robots.RobotHomeScreen
 import com.creative.greencheck.testing.robots.RobotManualEntryScreen
@@ -117,6 +118,53 @@ class TestProductScreen {
             verifyProductHero()
             assertTextContains(TestTags.V2.Product.NAME, "Seeded Tofu")
             assertTextContains(TestTags.V2.Product.BRAND_NAME, "ORGANIC FARM")
+        }
+    }
+
+    @Test
+    fun testProductScreen_DisplayNonVeganProduct_And_FetchVeganAlternatives() {
+        val barcode = "88888888"
+        val altBarcode = "77777777"
+        val nonVeganProduct = ProductEntity(
+            barcode = barcode,
+            name = "Milk Chocolate",
+            brands = "SweetCo",
+            categories = "Chocolates",
+            ingredientsAnalysisTags = listOf("en:non-vegan")
+        )
+
+        val veganAltProduct = ProductDetails(
+            barcode = altBarcode,
+            name = "Vegan Dark Chocolate",
+            brands = "EcoChoc",
+            ingredientsAnalysisTags = listOf("en:vegan")
+        )
+
+        runBlocking {
+            productDao.insertProduct(nonVeganProduct)
+        }
+
+        coEvery {
+            api.searchVeganAlternatives(any(), any(), any(), any())
+        } returns SearchResponse(
+            products = listOf(veganAltProduct)
+        )
+
+        UiTestEngine.withRobot(RobotWelcomeScreen()) {
+            clickGetStartedIfVisible()
+        }
+        UiTestEngine.withRobot(RobotHomeScreen()) {
+            clickManual()
+        }
+        UiTestEngine.withRobot(RobotManualEntryScreen()) {
+            enterBarcode(barcode)
+            clickIdentify()
+        }
+
+        UiTestEngine.withRobot(RobotProductScreen()) {
+            waitForProductLoaded()
+            verifyProductHero()
+            verifyVeganAlternativesSection()
         }
     }
 }

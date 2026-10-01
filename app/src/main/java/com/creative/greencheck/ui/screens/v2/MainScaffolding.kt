@@ -119,8 +119,8 @@ fun MainScaffolding() {
 
     val scannerUsage by infoViewModel.scannerUsage.collectAsStateWithLifecycle()
     val manualUsage by infoViewModel.manualUsage.collectAsStateWithLifecycle()
-    val productUsage by infoViewModel.productSearchUsage.collectAsStateWithLifecycle()
     val ingredientUsage by infoViewModel.ingredientSearchUsage.collectAsStateWithLifecycle()
+    val alternativeUsage by infoViewModel.alternativeSearchUsage.collectAsStateWithLifecycle()
     val nextResetTime by infoViewModel.nextResetTime.collectAsStateWithLifecycle()
 
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
@@ -341,6 +341,12 @@ fun MainScaffolding() {
                     barcode = barcode,
                     onCloseClick = {
                         bottomNavController.popBackStack(BottomTabs.HOME, false)
+                    },
+                    onProductClick = { product ->
+                        bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode))
+                    },
+                    onQuotaExhausted = { featureName ->
+                        bottomNavController.navigate(BottomTabs.getQuotaRoute(featureName))
                     }
                 )
             }
@@ -418,9 +424,9 @@ fun MainScaffolding() {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                             UsageRow("Manual Entries", manualUsage, FeatureType.MANUAL_ENTRY.limit)
                             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            UsageRow("Product Searches", productUsage, FeatureType.SEARCH_PRODUCT.limit)
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                             UsageRow("Ingredient Searches", ingredientUsage, FeatureType.SEARCH_INGREDIENT.limit)
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            UsageRow("Alternative Searches", alternativeUsage, FeatureType.ALTERNATIVE_SEARCH.limit)
 
                             if (nextResetTime > 0) {
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))

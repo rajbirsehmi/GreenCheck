@@ -2,6 +2,7 @@ package com.creative.greencheck.ui.screens.v2
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,15 +26,24 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -42,9 +54,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.creative.greencheck.R
 import com.creative.greencheck.domain.model.Ingredient
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.testing.TestTags
@@ -52,22 +64,38 @@ import com.creative.greencheck.ui.theme.IsItVeganTheme
 import com.creative.greencheck.ui.theme.NonVeganStatusRed
 import com.creative.greencheck.ui.theme.UncertainStatusYellow
 import com.creative.greencheck.ui.theme.VeganStatusGreen
+import com.creative.greencheck.ui.viewmodels.AlternativesUiState
 import com.creative.greencheck.ui.viewmodels.ProductUiState
 import com.creative.greencheck.ui.viewmodels.ProductViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen(
     barcode: String,
     onCloseClick: () -> Unit = {},
+    onProductClick: (Product) -> Unit = {},
+    onQuotaExhausted: (String) -> Unit = {},
     viewModel: ProductViewModel = hiltViewModel()
 ) {
+    val quotaExhausted by viewModel.quotaExhausted.collectAsStateWithLifecycle()
+
     LaunchedEffect(barcode) {
         viewModel.getProduct(barcode)
     }
 
-    val state = viewModel.uiState
+    LaunchedEffect(quotaExhausted) {
+        quotaExhausted?.let { feature ->
+            onQuotaExhausted(feature.name)
+            viewModel.resetQuotaState()
+        }
+    }
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    val state = viewModel.uiState
+    var selectedAlternative by remember { mutableStateOf<Product?>(null) }
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
         when (state) {
             is ProductUiState.Loading -> {
                 CircularProgressIndicator(
@@ -81,6 +109,12 @@ fun ProductScreen(
             is ProductUiState.Success -> {
                 ProductContent(
                     product = state.product,
+                    alternativesState = viewModel.alternativesState,
+                    onFetchAlternatives = { viewModel.fetchVeganAlternatives(state.product) },
+                    onProductClick = { altProduct ->
+                        viewModel.saveProduct(altProduct)
+                        selectedAlternative = altProduct
+                    },
                     onCloseClick = onCloseClick
                 )
             }
@@ -99,12 +133,34 @@ fun ProductScreen(
                 )
             }
         }
+
+        selectedAlternative?.let { altProduct ->
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ModalBottomSheet(
+                onDismissRequest = { selectedAlternative = null },
+                sheetState = sheetState,
+                containerColor = MaterialTheme.colorScheme.background,
+                modifier = Modifier.testTag("alternative_product_bottom_sheet")
+            ) {
+                AlternativeProductDetailSheet(
+                    product = altProduct,
+                    onClose = { selectedAlternative = null },
+                    onOpenFullScreen = { fullProduct ->
+                        selectedAlternative = null
+                        onProductClick(fullProduct)
+                    }
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun ProductContent(
     product: Product,
+    alternativesState: AlternativesUiState = AlternativesUiState.Idle,
+    onFetchAlternatives: () -> Unit = {},
+    onProductClick: (Product) -> Unit = {},
     onCloseClick: () -> Unit
 ) {
     LazyColumn(
@@ -120,6 +176,17 @@ fun ProductContent(
         item {
             Spacer(modifier = Modifier.height(24.dp))
             ProductStatusBanner(product)
+        }
+
+        if (product.isNonVegan) {
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+                VeganAlternativesSection(
+                    alternativesState = alternativesState,
+                    onFetchAlternatives = onFetchAlternatives,
+                    onProductClick = onProductClick
+                )
+            }
         }
 
         item {
@@ -198,7 +265,7 @@ fun ProductHeroSection(product: Product) {
                     contentScale = ContentScale.Crop
                 )
             }
-            
+
             // Branding Overlay
             Surface(
                 modifier = Modifier
@@ -250,9 +317,23 @@ fun ProductHeroSection(product: Product) {
 @Composable
 fun ProductStatusBanner(product: Product) {
     val (statusColor, statusTitle, statusDesc) = when {
-        product.isVegan -> Triple(VeganStatusGreen, "VEGAN CERTIFIED", "Plant-based goodness. No animal derivatives detected.")
-        product.isNonVegan -> Triple(NonVeganStatusRed, "NON-VEGAN", "Contains animal-derived ingredients.")
-        else -> Triple(UncertainStatusYellow, "UNCERTAIN STATUS", "Source of some ingredients could not be verified.")
+        product.isVegan -> Triple(
+            VeganStatusGreen,
+            "VEGAN CERTIFIED",
+            "Plant-based goodness. No animal derivatives detected."
+        )
+
+        product.isNonVegan -> Triple(
+            NonVeganStatusRed,
+            "NON-VEGAN",
+            "Contains animal-derived ingredients."
+        )
+
+        else -> Triple(
+            UncertainStatusYellow,
+            "UNCERTAIN STATUS",
+            "Source of some ingredients could not be verified."
+        )
     }
 
     Surface(
@@ -324,9 +405,15 @@ fun ProductDetailsSection(product: Product) {
                     .testTag(TestTags.V2.Product.DETAILS_CARD)
             ) {
                 DetailRow("Quantity", product.quantity ?: "N/A")
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
                 DetailRow("Eco-Score", product.ecoScoreGrade?.uppercase() ?: "Unknown")
-                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 12.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
                 DetailRow("Category", product.categories?.split(",")?.firstOrNull() ?: "General")
             }
         }
@@ -361,7 +448,8 @@ fun IngredientsAnalysisSection(product: Product) {
     val ingredients = product.ingredients ?: emptyList()
     val vegan = ingredients.filter { it.vegan == "yes" }.mapNotNull { it.text }
     val nonVegan = ingredients.filter { it.vegan == "no" }.mapNotNull { it.text }
-    val uncertain = ingredients.filter { it.vegan != "yes" && it.vegan != "no" }.mapNotNull { it.text }
+    val uncertain =
+        ingredients.filter { it.vegan != "yes" && it.vegan != "no" }.mapNotNull { it.text }
 
     Column(
         modifier = Modifier
@@ -370,7 +458,7 @@ fun IngredientsAnalysisSection(product: Product) {
     ) {
         SectionTitle("Ingredients Analysis")
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         AnalysisCard("Vegan Friendly", VeganStatusGreen, vegan, "vegan")
         Spacer(modifier = Modifier.height(12.dp))
         AnalysisCard("Uncertain Source", UncertainStatusYellow, uncertain, "uncertain")
@@ -414,7 +502,12 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                 ) {
                     items.forEachIndexed { index, item ->
                         Row(
-                            modifier = Modifier.testTag(TestTags.V2.Product.analysisCardItem(tagSuffix, index)),
+                            modifier = Modifier.testTag(
+                                TestTags.V2.Product.analysisCardItem(
+                                    tagSuffix,
+                                    index
+                                )
+                            ),
                             verticalAlignment = Alignment.Top
                         ) {
                             Text(
@@ -428,7 +521,12 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 lineHeight = 18.sp,
-                                modifier = Modifier.testTag(TestTags.V2.Product.analysisCardItemText(tagSuffix, index))
+                                modifier = Modifier.testTag(
+                                    TestTags.V2.Product.analysisCardItemText(
+                                        tagSuffix,
+                                        index
+                                    )
+                                )
                             )
                         }
                     }
@@ -487,7 +585,11 @@ fun AllIngredientsSection(product: Product) {
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             lineHeight = 20.sp,
-                            modifier = Modifier.testTag(TestTags.V2.Product.allIngredientsItemText(index))
+                            modifier = Modifier.testTag(
+                                TestTags.V2.Product.allIngredientsItemText(
+                                    index
+                                )
+                            )
                         )
                     }
                 }
@@ -570,9 +672,328 @@ fun ProductScreenPreview() {
                 barcode = "1234567890",
                 name = "Artisan Almond Cheese",
                 brands = "Green Life",
-                ingredients = listOf(Ingredient(text = "Almonds", vegan = "yes"), Ingredient(text = "Water", vegan = "yes"))
+                ingredients = listOf(
+                    Ingredient(text = "Almonds", vegan = "yes"),
+                    Ingredient(text = "Water", vegan = "yes")
+                )
             ),
             onCloseClick = {}
         )
+    }
+}
+
+@Composable
+fun VeganAlternativesSection(
+    alternativesState: AlternativesUiState,
+    onFetchAlternatives: () -> Unit,
+    onProductClick: (Product) -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .testTag("vegan_alternatives_section")
+    ) {
+        SectionTitle("Plant-Based Alternatives")
+        Spacer(modifier = Modifier.height(12.dp))
+
+        when (alternativesState) {
+            is AlternativesUiState.Idle -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+                    shape = RoundedCornerShape(16.dp),
+                    border = BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Looking for a vegan option?",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Discover certified vegan alternatives in this category.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Button(
+                            onClick = onFetchAlternatives,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Eco,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Find", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+
+            is AlternativesUiState.Loading -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 2.dp
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Finding vegan alternatives...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+
+            is AlternativesUiState.Success -> {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 4.dp)
+                ) {
+                    items(alternativesState.alternatives) { altProduct ->
+                        AlternativeProductItem(
+                            product = altProduct,
+                            onClick = { onProductClick(altProduct) }
+                        )
+                    }
+                }
+            }
+
+            is AlternativesUiState.Error -> {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = alternativesState.message,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(
+                            onClick = onFetchAlternatives,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text("Retry")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AlternativeProductItem(
+    product: Product,
+    onClick: () -> Unit = {}
+) {
+    val imageUrl = product.thumbUrl?.takeIf { it.isNotBlank() }
+        ?: product.imageUrl?.takeIf { it.isNotBlank() }
+
+    Surface(
+        modifier = Modifier
+            .width(160.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+            .testTag("alternative_product_item_${product.barcode}"),
+        color = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 2.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f),
+                        RoundedCornerShape(12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (imageUrl != null) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = product.name,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Eco,
+                        contentDescription = null,
+                        tint = VeganStatusGreen,
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Text(
+                text = product.name ?: "Vegan Product",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            if (!product.brands.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = product.brands,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Surface(
+                color = VeganStatusGreen.copy(alpha = 0.15f),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .background(VeganStatusGreen, CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "Vegan",
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = VeganStatusGreen
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AlternativeProductDetailSheet(
+    product: Product,
+    onClose: () -> Unit,
+    onOpenFullScreen: (Product) -> Unit = {}
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("alternative_detail_sheet_content"),
+        contentPadding = PaddingValues(bottom = 32.dp)
+    ) {
+        item {
+            ProductHeroSection(product)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            ProductStatusBanner(product)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            ProductDetailsSection(product)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            IngredientsAnalysisSection(product)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            AllIngredientsSection(product)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onClose,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp)
+                        .testTag("btn_close_alternative_sheet"),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = "Close Preview",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        onClose()
+                        onOpenFullScreen(product)
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(52.dp)
+                        .testTag("btn_open_full_screen_alternative"),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        text = "Full Page",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
     }
 }
