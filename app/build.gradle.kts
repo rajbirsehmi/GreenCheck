@@ -13,9 +13,9 @@ android {
     defaultConfig {
         applicationId = "com.creative.greencheck"
         minSdk = 30
-        targetSdk = 35
-        versionCode = 2
-        versionName = "2.0"
+        targetSdk = 36
+        versionCode = 3
+        versionName = "2.1"
 
         testInstrumentationRunner = "com.creative.greencheck.HiltTestRunner"
         missingDimensionStrategy("di", "hilt")
