@@ -38,6 +38,18 @@ interface OpenFoodFactsApi {
         @Query("page_size") pageSize: Int = 25
     ): SearchResponse
 
+    /**
+     * Search vegan alternative products by category or search terms.
+     * Endpoint: https://world.openfoodfacts.net/api/v2/search?categories_tags_en=<category>&ingredients_analysis_tags=en:vegan&page_size=15
+     */
+    @GET("api/v2/search")
+    suspend fun searchVeganAlternatives(
+        @Query("categories_tags_en") category: String? = null,
+        @Query("search_terms") searchTerms: String? = null,
+        @Query("ingredients_analysis_tags") veganTag: String = "en:vegan",
+        @Query("page_size") pageSize: Int = 15
+    ): SearchResponse
+
     companion object {
         const val BASE_URL = "https://world.openfoodfacts.org/"
     }

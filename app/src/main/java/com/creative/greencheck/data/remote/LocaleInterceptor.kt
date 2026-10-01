@@ -6,29 +6,20 @@ import java.util.Locale
 import javax.inject.Inject
 
 /**
- * An interceptor that dynamically updates the Open Food Facts API host based on the user's current locale.
- * For example, if the locale is set to France (FR), it changes the host from 'world' to 'fr'.
- * This leads to more relevant local results while maintaining 'world' as a fallback.
+ * An interceptor that adds standard Accept-Language headers for localized responses
+ * without mutating request query parameters or URL structure.
  */
 class LocaleInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val originalUrl = originalRequest.url
-        
-        // We only want to target our specific API domain
-        if (originalUrl.host == "world.openfoodfacts.org") {
-            val countryCode = Locale.getDefault().country.lowercase()
-            
-            if (countryCode.isNotEmpty()) {
-                val newHost = "$countryCode.openfoodfacts.org"
-                val newUrl = originalUrl.newBuilder()
-                    .host(newHost)
-                    .build()
-                
-                return chain.proceed(originalRequest.newBuilder().url(newUrl).build())
-            }
-        }
-        
-        return chain.proceed(originalRequest)
+        val locale = Locale.getDefault()
+        val languageTag = locale.toLanguageTag()
+        val languageCode = locale.language.lowercase()
+
+        val newRequest = originalRequest.newBuilder()
+            .header("Accept-Language", "$languageTag,$languageCode;q=0.9,en;q=0.8")
+            .build()
+
+        return chain.proceed(newRequest)
     }
 }

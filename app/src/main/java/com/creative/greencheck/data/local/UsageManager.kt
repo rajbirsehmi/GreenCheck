@@ -21,9 +21,9 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 
 enum class FeatureType(val limit: Int) {
     SCANNER(10),
-    MANUAL_ENTRY(5),
-    SEARCH_PRODUCT(10),
-    SEARCH_INGREDIENT(15)
+    MANUAL_ENTRY(10),
+    SEARCH_INGREDIENT(10),
+    ALTERNATIVE_SEARCH(10)
 }
 
 @Singleton

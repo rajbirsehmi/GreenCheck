@@ -269,7 +269,7 @@ fun SearchProductOrIngredientContent(
                 color = Color.Transparent
             ) {
                 val remaining = remainingIngredient
-                val total = 15
+                val total = 10
                 Text(
                     text = "Quota: $remaining of $total searches remaining",
                     style = MaterialTheme.typography.labelSmall,

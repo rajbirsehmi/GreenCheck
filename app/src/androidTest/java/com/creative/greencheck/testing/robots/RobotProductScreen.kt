@@ -50,6 +50,27 @@ class RobotProductScreen : ComposeRuleScope {
         assertTagDisplayed(TestTags.V2.Product.ALL_INGREDIENTS_CARD)
     }
 
+    fun verifyVeganAlternativesSection() {
+        scrollToTag("vegan_alternatives_section")
+        assertTagDisplayed("vegan_alternatives_section")
+    }
+
+    fun clickAlternativeItem(barcode: String) {
+        val tag = "alternative_product_item_$barcode"
+        scrollToTag(tag)
+        clickOnTag(tag)
+    }
+
+    fun verifyAlternativeBottomSheet() {
+        waitUntilExists(hasTestTag("alternative_product_bottom_sheet"))
+        assertTagDisplayed("alternative_product_bottom_sheet")
+    }
+
+    fun clickCloseAlternativeSheet() {
+        scrollToTag("btn_close_alternative_sheet")
+        clickOnTag("btn_close_alternative_sheet")
+    }
+
     fun clickClose() {
         scrollToTag(TestTags.V2.Product.BTN_CLOSE)
         clickOnTag(TestTags.V2.Product.BTN_CLOSE)

@@ -7,6 +7,7 @@ import com.creative.greencheck.data.local.UsageManager
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -33,51 +34,72 @@ class SearchViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error = _error.asStateFlow()
 
-    val remainingProductSearches: StateFlow<Int> = usageManager.getRemainingUsage(FeatureType.SEARCH_PRODUCT)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FeatureType.SEARCH_PRODUCT.limit)
-
     val remainingIngredientSearches: StateFlow<Int> = usageManager.getRemainingUsage(FeatureType.SEARCH_INGREDIENT)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FeatureType.SEARCH_INGREDIENT.limit)
 
-    fun onSearchProduct(query: String) {
-        if (query.isBlank()) return
-        viewModelScope.launch {
-            if (usageManager.canUseFeature(FeatureType.SEARCH_PRODUCT)) {
-                _isLoading.value = true
-                _error.value = null
-                _searchResults.value = emptyList() // Clear previous results
-                val result = repository.searchProducts(query)
-                result.fold(
-                    onSuccess = { products ->
-                        _searchResults.value = products
-                        usageManager.incrementUsage(FeatureType.SEARCH_PRODUCT)
-                    },
-                    onFailure = { e ->
-                        _error.value = e.message ?: "Searching too frequently. Please wait a moment and try again later."
-                    }
-                )
-                _isLoading.value = false
-            } else {
-                _quotaExhausted.value = FeatureType.SEARCH_PRODUCT
-            }
-        }
-    }
+    private var searchJob: Job? = null
+    private var lastQuery: String? = null
+    private var lastSearchTime = 0L
 
-    fun onSearchIngredient(query: String) {
-        if (query.isBlank()) return
-        viewModelScope.launch {
+    fun onSearchProduct(query: String) {
+        val trimmedQuery = query.trim()
+        if (trimmedQuery.isBlank()) return
+
+        val now = System.currentTimeMillis()
+        if (trimmedQuery == lastQuery && now - lastSearchTime < 500L && _isLoading.value) {
+            return
+        }
+        lastQuery = trimmedQuery
+        lastSearchTime = now
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             if (usageManager.canUseFeature(FeatureType.SEARCH_INGREDIENT)) {
                 _isLoading.value = true
                 _error.value = null
                 _searchResults.value = emptyList() // Clear previous results
-                val result = repository.searchByIngredient(query)
+                val result = repository.searchProducts(trimmedQuery)
                 result.fold(
                     onSuccess = { products ->
                         _searchResults.value = products
                         usageManager.incrementUsage(FeatureType.SEARCH_INGREDIENT)
                     },
                     onFailure = { e ->
-                        _error.value = e.message ?: "Searching too frequently. Please wait a moment and try again later."
+                        _error.value = e.message ?: "Unable to complete search. Please try again."
+                    }
+                )
+                _isLoading.value = false
+            } else {
+                _quotaExhausted.value = FeatureType.SEARCH_INGREDIENT
+            }
+        }
+    }
+
+    fun onSearchIngredient(query: String) {
+        val trimmedQuery = query.trim()
+        if (trimmedQuery.isBlank()) return
+
+        val now = System.currentTimeMillis()
+        if (trimmedQuery == lastQuery && now - lastSearchTime < 500L && _isLoading.value) {
+            return
+        }
+        lastQuery = trimmedQuery
+        lastSearchTime = now
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            if (usageManager.canUseFeature(FeatureType.SEARCH_INGREDIENT)) {
+                _isLoading.value = true
+                _error.value = null
+                _searchResults.value = emptyList() // Clear previous results
+                val result = repository.searchByIngredient(trimmedQuery)
+                result.fold(
+                    onSuccess = { products ->
+                        _searchResults.value = products
+                        usageManager.incrementUsage(FeatureType.SEARCH_INGREDIENT)
+                    },
+                    onFailure = { e ->
+                        _error.value = e.message ?: "Unable to complete search. Please try again."
                     }
                 )
                 _isLoading.value = false

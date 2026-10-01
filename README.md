@@ -8,46 +8,29 @@ Built with a "Botanical Minimalist" aesthetic, GreenCheck offers a sophisticated
 
 ## 📱 App Screenshots
 
-### 🌙 Dark UI
-
 <p align="center">
-  <img src="images/Dark/GreenCheck - Welcome Screen.png" width="200" alt="Welcome Screen" />
-  <img src="images/Dark/GreenCheck - Home Screen.png" width="200" alt="Home Screen" />
-  <img src="images/Dark/GreenCheck - Manual Screen - 1.png" width="200" alt="Manual Entry Screen 1" />
-  <img src="images/Dark/GreenCheck - Manual Screen - 2.png" width="200" alt="Manual Entry Screen 2" />
-  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 1.png" width="200" alt="Ingredient Search Screen 1" />
-  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 2.png" width="200" alt="Ingredient Search Screen 2" />
-  <img src="images/Dark/GreenCheck - Product Screen - 1.png" width="200" alt="Product Screen 1" />
-  <img src="images/Dark/GreenCheck - Product Screen - 2.png" width="200" alt="Product Screen 2" />
-  <img src="images/Dark/GreenCheck - History Screen.png" width="200" alt="History Screen" />
-  <img src="images/Dark/GreenCheck - Empty History Screen.png" width="200" alt="Empty History Screen" />
-  <img src="images/Dark/GreenCheck - Privacy Screen.png" width="200" alt="Privacy Screen" />
-  <img src="images/Dark/GreenCheck - Quota Usage Screen.png" width="200" alt="Quota Usage Screen" />
-</p>
-
-### ☀️ Light UI
-
-<p align="center">
-  <img src="images/Light/GreenCheck - Welcoem Screen.png" width="200" alt="Welcome Screen" />
-  <img src="images/Light/GreenCheck - Home Screen.png" width="200" alt="Home Screen" />
-  <img src="images/Light/GreenCheck - Manual Screen - 1.png" width="200" alt="Manual Entry Screen 1" />
-  <img src="images/Light/GreenCheck - Manual Screen - 2.png" width="200" alt="Manual Entry Screen 2" />
-  <img src="images/Light/GreenCheck - Ingredient Search Screen - 1.png" width="200" alt="Ingredient Search Screen 1" />
-  <img src="images/Light/GreenCheck - Ingredient Search Screen - 2.png" width="200" alt="Ingredient Search Screen 2" />
-  <img src="images/Light/GreenCheck - Ingredient Search Screen - 3.png" width="200" alt="Ingredient Search Screen 3" />
-  <img src="images/Light/GreenCheck - Product Screen - 1.png" width="200" alt="Product Screen 1" />
-  <img src="images/Light/GreenCheck - Product Screen - 2.png" width="200" alt="Product Screen 2" />
-  <img src="images/Light/GreenCheck - History Screen.png" width="200" alt="History Screen" />
-  <img src="images/Light/GreenCheck - Empty History Screen.png" width="200" alt="Empty History Screen" />
-  <img src="images/Light/GreenCheck - Privacy Screen.png" width="200" alt="Privacy Screen" />
-  <img src="images/Light/GreenCheck - Quota Usage Screen.png" width="200" alt="Quota Usage Screen" />
+  <img src="images/Dark/GreenCheck - Welcome Screen.png" width="130" alt="Welcome Screen" />
+  <img src="images/Dark/GreenCheck - Home Screen.png" width="130" alt="Home Screen" />
+  <img src="images/Dark/GreenCheck - Manual Screen - 1.png" width="130" alt="Manual Entry Screen 1" />
+  <img src="images/Dark/GreenCheck - Manual Screen - 2.png" width="130" alt="Manual Entry Screen 2" />
+  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 1.png" width="130" alt="Ingredient Search Screen 1" />
+  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 2.png" width="130" alt="Ingredient Search Screen 2" />
+  <img src="images/Dark/GreenCheck - Product Screen - 1.png" width="130" alt="Product Screen 1" />
+  <img src="images/Dark/GreenCheck - Product Screen - 2.png" width="130" alt="Product Screen 2" />
+  <img src="images/Dark/GreenCheck - Product Screen - Alternative - 1.png" width="130" alt="Plant-Based Alternatives Discovery 1" />
+  <img src="images/Dark/GreenCheck - Product Screen - Alternative - 2.png" width="130" alt="Plant-Based Alternatives Discovery 2" />
+  <img src="images/Dark/GreenCheck - Product Screen - Alternative - 3.png" width="130" alt="Alternative Product Detail Sheet" />
+  <img src="images/Dark/GreenCheck - History Screen.png" width="130" alt="History Screen" />
+  <img src="images/Dark/GreenCheck - Empty History Screen.png" width="130" alt="Empty History Screen" />
+  <img src="images/Dark/GreenCheck - Privacy Screen.png" width="130" alt="Privacy Transparency Screen" />
+  <img src="images/Dark/GreenCheck - Quota Usage Screen.png" width="130" alt="Daily Quota Usage Screen" />
 </p>
 
 ---
 
 ## ✨ What's New in Version 2.0 (v2)
 
-GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overhaul, enhanced product and ingredient discovery, granular daily quota tracking, and comprehensive automated test tags:
+GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overhaul, enhanced product and ingredient discovery, smart plant-based alternative recommendations, granular daily quota tracking, and comprehensive automated test tags:
 
 - **5-Tab Navigation Scaffolding (`MainScaffolding`)**: A seamless navigation hub featuring **Home**, **Manual Entry**, **Camera Scanner**, **Scan History**, and **Product/Ingredient Search**.
 - **Onboarding & Welcome Screen (`WelcomeScreen`)**: First-time user welcome flow highlighting privacy guarantees, zero tracking, and instant vegan scanning.
@@ -56,14 +39,15 @@ GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overh
 - **Manual Barcode Dialpad (`ManualEntryScreen`)**: Dedicated numeric dialpad with clear and backspace controls for easy barcode entry when camera scanning isn't practical.
 - **Dual-Mode Search (`SearchProductOrIngredientScreen`)**: Advanced search supporting both **Product Name Search** and **Ingredient Search** with tab switching, debounced queries, and detailed result cards.
 - **Comprehensive Product Analysis (`ProductScreen`)**: Rich product detail view featuring clear vegan status banners (Vegan, Non-Vegan, Maybe/Unknown), high-res product photos, itemized ingredient breakdowns with vegan status badges, nutritional level indicators, and Open Food Facts attribution.
+- **Plant-Based Alternatives Engine (`VeganAlternativesSection` & `AlternativeProductDetailSheet`)**: Instantly discover certified vegan alternatives in the same product category with one-tap fetching, scrollable alternative product recommendation cards, and a quick-preview modal bottom sheet to inspect ingredients and switch products.
 - **Local History & Wipe (`HistoryScreen` & `EmptyHistoryScreen`)**: Persistent scan history powered by Room database, complete with thumbnail cards, quick details view, and single-tap history wipe.
 - **Granular Fair-Use Daily Quotas (`QuotaExhaustedScreen`)**: Independent rolling 24-hour limit enforcement across 4 separate features:
-  - Barcode Scans
-  - Manual Barcode Entries
-  - Product Searches
-  - Ingredient Searches
-- **App Usage & Privacy Transparency Sheets (`TransparencyInfoSheet`)**: Quick-access top-bar info modal showing live daily quota usage, exact reset countdowns, ODbL dataset link, and transparent local privacy commitments.
-- **Full V2 Automated Test Coverage (`TestTags.V2`)**: Every v2 component and screen is tagged with standardized `TestTags` for robust automated UI and robot testing.
+  - Barcode Scans (10/day)
+  - Manual Barcode Entries (10/day)
+  - Product & Ingredient Searches (10/day)
+  - Alternative Searches (10/day)
+- **App Usage & Privacy Transparency Sheets (`TransparencyInfoSheet`)**: Quick-access top-bar info modal showing live daily quota usage across all features, exact reset countdowns, ODbL dataset link, and transparent local privacy commitments.
+- **Full V2 Automated Test Coverage (`TestTags.V2`)**: Every v2 component, screen, and alternative product action is tagged with standardized `TestTags` for robust automated UI and robot testing.
 
 ---
 
@@ -71,6 +55,7 @@ GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overh
 
 - **Advanced Barcode Scanning**: Rapid product identification using CameraX and Google ML Kit.
 - **Intelligent Ingredient Analysis**: Deep-dive analysis of ingredients to determine vegan suitability, presented in a clean, categorized list.
+- **Plant-Based Alternatives Engine**: Discover certified vegan alternatives in the same category with interactive quick-view modal sheets and direct product navigation.
 - **Dual Product & Ingredient Search**: Discover products by name or search for specific ingredients across millions of entries.
 - **Locale-Aware Intelligence**: Automatically routes API requests based on your device's locale (e.g., US, IN, FR) for maximum regional relevance.
 - **Fair-Use Usage Quotas**: Locally enforced, rolling 24-hour limits per feature to ensure fair API access and project stability.
