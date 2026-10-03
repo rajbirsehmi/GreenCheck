@@ -44,9 +44,17 @@ fun LoadingScreen(
                 navigated = true
                 onLoadingComplete()
             }
-            is com.creative.greencheck.ui.viewmodels.LoadingUiState.Error -> {
+            is com.creative.greencheck.ui.viewmodels.LoadingUiState.Error,
+            is com.creative.greencheck.ui.viewmodels.LoadingUiState.BarcodeError,
+            is com.creative.greencheck.ui.viewmodels.LoadingUiState.NetworkError -> {
                 navigated = true
-                if (uiState.message.contains("not found", ignoreCase = true)) {
+                val msg = when (uiState) {
+                    is com.creative.greencheck.ui.viewmodels.LoadingUiState.Error -> uiState.message
+                    is com.creative.greencheck.ui.viewmodels.LoadingUiState.BarcodeError -> uiState.message
+                    is com.creative.greencheck.ui.viewmodels.LoadingUiState.NetworkError -> uiState.message
+                    else -> ""
+                }
+                if (uiState is com.creative.greencheck.ui.viewmodels.LoadingUiState.BarcodeError || msg.contains("not found", ignoreCase = true)) {
                     onNotFound()
                 } else {
                     onError()

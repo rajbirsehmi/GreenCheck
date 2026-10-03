@@ -191,10 +191,12 @@ fun ProductHero(product: Product) {
             shadowElevation = 8.dp
         ) {
             AsyncImage(
-                model = product.imageUrl,
+                model = product.imageUrl ?: product.thumbUrl,
                 contentDescription = product.name,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                contentScale = ContentScale.Fit
             )
             
             // Subtle Gradient Overlay

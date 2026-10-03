@@ -16,18 +16,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,18 +50,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.ui.components.v2.ProductItem
 import com.creative.greencheck.ui.theme.IsItVeganTheme
+import com.creative.greencheck.ui.theme.NonVeganStatusRed
+import com.creative.greencheck.ui.theme.UncertainStatusYellow
+import com.creative.greencheck.ui.theme.VeganStatusGreen
 import com.creative.greencheck.ui.viewmodels.SearchViewModel
 
 enum class SearchMode {
@@ -65,6 +86,7 @@ fun SearchProductOrIngredientScreen(
     val quotaExhausted by viewModel.quotaExhausted.collectAsStateWithLifecycle()
     val remainingIngredient by viewModel.remainingIngredientSearches.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
+    val currentQuery by viewModel.currentQuery.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val error by viewModel.error.collectAsStateWithLifecycle()
 
@@ -78,6 +100,7 @@ fun SearchProductOrIngredientScreen(
     SearchProductOrIngredientContent(
         remainingIngredient = remainingIngredient,
         searchResults = searchResults,
+        currentQuery = currentQuery,
         isLoading = isLoading,
         error = error,
         onSearch = viewModel::onSearchIngredient,
@@ -88,17 +111,31 @@ fun SearchProductOrIngredientScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchProductOrIngredientContent(
     remainingIngredient: Int,
     searchResults: List<Product>,
+    currentQuery: String = "",
     isLoading: Boolean,
     error: String?,
     onSearch: (String) -> Unit,
     onProductClick: (Product) -> Unit
 ) {
     var selectedMode by remember { mutableStateOf(SearchMode.INGREDIENTS) }
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by remember(currentQuery) { mutableStateOf(currentQuery) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedProductDetails by remember { mutableStateOf<Product?>(null) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val handleSearch = {
+        if (searchQuery.isNotBlank()) {
+            keyboardController?.hide()
+            onSearch(searchQuery)
+            showBottomSheet = true
+            selectedProductDetails = null
+        }
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -199,6 +236,8 @@ fun SearchProductOrIngredientContent(
                         label = { Text("Search Ingredients") },
                         placeholder = { Text("e.g. Soy Milk") },
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { handleSearch() }),
                         modifier = Modifier
                             .fillMaxWidth()
                             .testTag(TestTags.V2.Search.TEXT_FIELD),
@@ -221,15 +260,13 @@ fun SearchProductOrIngredientContent(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = {
-                            onSearch(searchQuery)
-                        },
+                        onClick = handleSearch,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp)
                             .testTag(TestTags.V2.Search.BTN_INITIALIZE),
                         shape = RoundedCornerShape(16.dp),
-                        enabled = !isLoading
+                        enabled = !isLoading && searchQuery.isNotBlank()
                     ) {
                         if (isLoading) {
                             CircularProgressIndicator(
@@ -259,6 +296,63 @@ fun SearchProductOrIngredientContent(
             Spacer(modifier = Modifier.height(24.dp))
         }
 
+        if (searchResults.isNotEmpty()) {
+            item {
+                Surface(
+                    onClick = {
+                        showBottomSheet = true
+                        selectedProductDetails = null
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .testTag("BTN_VIEW_LAST_RESULTS"),
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.List,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "View Search Results",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                val queryDisplay = currentQuery.ifBlank { searchQuery }
+                                if (queryDisplay.isNotBlank()) {
+                                    Text(
+                                        text = "For \"$queryDisplay\" (${searchResults.size} found)",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                    )
+                                }
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+
         item {
             // Quota Label
             Surface(
@@ -282,69 +376,406 @@ fun SearchProductOrIngredientContent(
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
 
-        if (error != null) {
-            item {
-                Surface(
+    if (showBottomSheet) {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+        ModalBottomSheet(
+            onDismissRequest = {
+                showBottomSheet = false
+                selectedProductDetails = null
+            },
+            sheetState = sheetState,
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+        ) {
+            if (selectedProductDetails != null) {
+                ProductDetailBottomSheetContent(
+                    product = selectedProductDetails!!,
+                    onBackClick = { selectedProductDetails = null },
+                    onOpenFullScreen = { product ->
+                        onProductClick(product)
+                    }
+                )
+            } else if (isLoading) {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 8.dp)
-                        .testTag(TestTags.V2.Search.ERROR_TEXT),
-                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.2f))
+                        .padding(36.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .testTag(TestTags.V2.Search.LOADING_INDICATOR),
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 4.dp
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "Searching ingredients...",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.ErrorOutline,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        val displayQuery = currentQuery.ifBlank { searchQuery }
                         Text(
-                            text = error,
-                            color = MaterialTheme.colorScheme.onErrorContainer,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium
+                            text = if (displayQuery.isNotBlank()) "Results for \"$displayQuery\"" else "Search Results",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+                        Text(
+                            text = "${searchResults.size} found",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+
+                    if (error != null) {
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp)
+                                .testTag(TestTags.V2.Search.ERROR_TEXT),
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(16.dp),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.2f))
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.ErrorOutline,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = error,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    } else if (searchResults.isEmpty()) {
+                        val displayQuery = currentQuery.ifBlank { searchQuery }
+                        Text(
+                            text = "No ingredients found for \"$displayQuery\"",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(40.dp)
+                                .testTag(TestTags.V2.Search.NO_RESULTS_TEXT),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag(TestTags.V2.Search.LIST),
+                            contentPadding = PaddingValues(bottom = 24.dp)
+                        ) {
+                            items(searchResults) { product ->
+                                ProductItem(
+                                    product = product,
+                                    onClick = {
+                                        selectedProductDetails = product
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
 
-        if (searchResults.isEmpty() && !isLoading && searchQuery.isNotBlank()) {
-            item {
-                Text(
-                    text = "No ingredients found for \"$searchQuery\"",
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(40.dp)
-                        .testTag(TestTags.V2.Search.NO_RESULTS_TEXT),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium
+@Composable
+fun ProductDetailBottomSheetContent(
+    product: Product,
+    onBackClick: () -> Unit,
+    onOpenFullScreen: (Product) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 24.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back to results",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Product Details",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
 
-        items(searchResults) { product ->
-            ProductItem(
-                product = product,
-                onClick = {
-                    onProductClick(product)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val imageUrl = product.imageUrl?.takeIf { it.isNotBlank() }
+                            ?: product.thumbUrl?.takeIf { it.isNotBlank() }
+
+                        Surface(
+                            modifier = Modifier.size(72.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                        ) {
+                            if (imageUrl != null) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(imageUrl)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = product.name,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(4.dp),
+                                    contentScale = ContentScale.Fit
+                                )
+                            } else {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = Icons.Default.Eco,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(36.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = (product.brands ?: "Unknown Brand").uppercase(),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = product.name ?: "Unnamed Product",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            if (product.barcode.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "Barcode: ${product.barcode}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
                 }
-            )
+            }
+
+            item {
+                val (backgroundColor, textColor, icon, label) = when {
+                    product.isVegan -> StatusThemeInfo(
+                        VeganStatusGreen.copy(alpha = 0.15f),
+                        VeganStatusGreen,
+                        Icons.Default.Eco,
+                        product.statusText
+                    )
+                    product.isNonVegan -> StatusThemeInfo(
+                        NonVeganStatusRed.copy(alpha = 0.15f),
+                        NonVeganStatusRed,
+                        Icons.Default.Warning,
+                        product.statusText
+                    )
+                    else -> StatusThemeInfo(
+                        UncertainStatusYellow.copy(alpha = 0.15f),
+                        UncertainStatusYellow,
+                        Icons.Default.Warning,
+                        product.statusText
+                    )
+                }
+
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    color = backgroundColor
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = null,
+                            tint = textColor,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = textColor
+                        )
+                    }
+                }
+            }
+
+            if (!product.ingredients.isNullOrEmpty()) {
+                item {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Ingredients",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                val ingredientList = product.ingredients.mapNotNull { it.text }
+                                ingredientList.forEachIndexed { index, ingredient ->
+                                    Text(
+                                        text = "${index + 1}. $ingredient",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(vertical = 4.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (!product.ingredientsAnalysisTags.isNullOrEmpty()) {
+                item {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Ingredients Analysis",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                product.ingredientsAnalysisTags.forEach { tag ->
+                                    val cleanedTag = tag.removePrefix("en:").replace('-', ' ')
+                                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+                                    Text(
+                                        text = "• $cleanedTag",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(vertical = 4.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Button(
+                    onClick = {
+                        onOpenFullScreen(product)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "View Full Screen Page",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
         }
     }
 }
+
+private data class StatusThemeInfo(
+    val backgroundColor: Color,
+    val textColor: Color,
+    val icon: ImageVector,
+    val label: String
+)
 
 @Composable
 fun SearchSelectionCard(

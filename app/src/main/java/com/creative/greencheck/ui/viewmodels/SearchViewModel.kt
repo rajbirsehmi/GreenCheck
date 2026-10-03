@@ -28,6 +28,9 @@ class SearchViewModel @Inject constructor(
     private val _searchResults = MutableStateFlow<List<Product>>(emptyList())
     val searchResults = _searchResults.asStateFlow()
 
+    private val _currentQuery = MutableStateFlow("")
+    val currentQuery = _currentQuery.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
@@ -44,6 +47,8 @@ class SearchViewModel @Inject constructor(
     fun onSearchProduct(query: String) {
         val trimmedQuery = query.trim()
         if (trimmedQuery.isBlank()) return
+
+        _currentQuery.value = trimmedQuery
 
         val now = System.currentTimeMillis()
         if (trimmedQuery == lastQuery && now - lastSearchTime < 500L && _isLoading.value) {
@@ -78,6 +83,8 @@ class SearchViewModel @Inject constructor(
     fun onSearchIngredient(query: String) {
         val trimmedQuery = query.trim()
         if (trimmedQuery.isBlank()) return
+
+        _currentQuery.value = trimmedQuery
 
         val now = System.currentTimeMillis()
         if (trimmedQuery == lastQuery && now - lastSearchTime < 500L && _isLoading.value) {

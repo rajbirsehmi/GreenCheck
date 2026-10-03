@@ -16,6 +16,7 @@ data class ProductEntity(
     val productType: String? = null,
     val keywords: List<String>? = null,
     val categories: String? = null,
+    val categoriesTags: List<String>? = null,
     val dataSources: String? = null,
     val ingredientsAnalysisTags: List<String>? = null,
     val labelsTags: List<String>? = null,
@@ -34,5 +35,6 @@ data class ProductEntity(
     val thumbUrl: String? = null,
     val url: String? = null,
     val ingredients: List<Ingredients>? = null,
+    val ingredientsText: String? = null,
     val timestamp: Long = System.currentTimeMillis()
 )

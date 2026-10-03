@@ -85,8 +85,8 @@ fun ProductItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val imageUrl = product.thumbUrl?.takeIf { it.isNotBlank() }
-                ?: product.imageUrl?.takeIf { it.isNotBlank() }
+            val imageUrl = product.imageUrl?.takeIf { it.isNotBlank() }
+                ?: product.thumbUrl?.takeIf { it.isNotBlank() }
 
             Box(
                 modifier = Modifier

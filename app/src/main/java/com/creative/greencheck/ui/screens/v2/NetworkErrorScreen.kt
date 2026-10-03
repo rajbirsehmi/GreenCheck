@@ -31,7 +31,7 @@ import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 
 @Composable
-fun ErrorScreen(
+fun NetworkErrorScreen(
     onBackToHome: () -> Unit = {}
 ) {
     Box(
@@ -107,9 +107,16 @@ fun ErrorScreen(
 }
 
 @Composable
+fun ErrorScreen(
+    onBackToHome: () -> Unit = {}
+) {
+    NetworkErrorScreen(onBackToHome = onBackToHome)
+}
+
+@Composable
 @Preview(showBackground = true, showSystemUi = true)
-fun ErrorScreenPreview() {
+fun NetworkErrorScreenPreview() {
     IsItVeganTheme {
-        ErrorScreen()
+        NetworkErrorScreen()
     }
 }

@@ -93,9 +93,11 @@ fun ProductScreen(
     val state = viewModel.uiState
     var selectedAlternative by remember { mutableStateOf<Product?>(null) }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colorScheme.background)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         when (state) {
             is ProductUiState.Loading -> {
                 CircularProgressIndicator(
@@ -178,6 +180,11 @@ fun ProductContent(
             ProductStatusBanner(product)
         }
 
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            CategoriesAndLabelsSection(product)
+        }
+
         if (product.isNonVegan) {
             item {
                 Spacer(modifier = Modifier.height(32.dp))
@@ -189,10 +196,6 @@ fun ProductContent(
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-            ProductDetailsSection(product)
-        }
 
         item {
             Spacer(modifier = Modifier.height(32.dp))
@@ -201,26 +204,12 @@ fun ProductContent(
 
         item {
             Spacer(modifier = Modifier.height(32.dp))
-            AllIngredientsSection(product)
+            DetailedIngredientsSection(product)
         }
 
         item {
-            Spacer(modifier = Modifier.height(40.dp))
-            Button(
-                onClick = onCloseClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .height(56.dp)
-                    .testTag(TestTags.V2.Product.BTN_CLOSE),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Text(
-                    text = "Back to Exploration",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.testTag(TestTags.V2.Product.BTN_CLOSE_TEXT)
-                )
-            }
+            Spacer(modifier = Modifier.height(32.dp))
+            AllIngredientsSection(product)
         }
     }
 }
@@ -261,8 +250,9 @@ fun ProductHeroSection(product: Product) {
                     contentDescription = "Product Image",
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(8.dp)
                         .testTag(TestTags.V2.Product.IMAGE),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Fit
                 )
             }
 
@@ -386,62 +376,96 @@ fun ProductStatusBanner(product: Product) {
 }
 
 @Composable
-fun ProductDetailsSection(product: Product) {
+fun CategoriesAndLabelsSection(product: Product) {
+    val labels = product.formattedLabels
+    val categories = product.formattedCategories
+    val palmOilStatus = product.palmOilStatusText
+
+    if (labels.isEmpty() && categories.isEmpty() && palmOilStatus == null) return
+
     Column(
         modifier = Modifier
             .padding(horizontal = 24.dp)
-            .testTag(TestTags.V2.Product.DETAILS_SECTION)
+            .testTag("categories_and_labels_section")
     ) {
-        SectionTitle("Product Details")
+        SectionTitle("Categories & Labels")
         Spacer(modifier = Modifier.height(12.dp))
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-            shape = RoundedCornerShape(20.dp)
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(vertical = 4.dp),
+            modifier = Modifier.testTag("categories_and_labels_list")
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(20.dp)
-                    .testTag(TestTags.V2.Product.DETAILS_CARD)
-            ) {
-                DetailRow("Quantity", product.quantity ?: "N/A")
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
-                DetailRow("Eco-Score", product.ecoScoreGrade?.uppercase() ?: "Unknown")
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                )
-                DetailRow("Category", product.categories?.split(",")?.firstOrNull() ?: "General")
+            // Palm Oil Free / Palm Oil Chip
+            palmOilStatus?.let { status ->
+                item {
+                    val isFree = product.isPalmOilFree
+                    val chipColor = if (isFree) VeganStatusGreen else MaterialTheme.colorScheme.tertiary
+                    Surface(
+                        color = chipColor.copy(alpha = 0.12f),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, chipColor.copy(alpha = 0.3f)),
+                        modifier = Modifier.testTag("chip_palm_oil")
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(chipColor, CircleShape)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = status,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = chipColor
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Labels Chips (e.g. "No Added Sugar")
+            items(labels) { label ->
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
+                    modifier = Modifier.testTag("chip_label_$label")
+                ) {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                    )
+                }
+            }
+
+            // Categories Chips
+            items(categories) { category ->
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                    modifier = Modifier.testTag("chip_category_$category")
+                ) {
+                    Text(
+                        text = category,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                    )
+                }
             }
         }
     }
 }
 
-@Composable
-fun DetailRow(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(TestTags.V2.Product.detailRow(label)),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.testTag(TestTags.V2.Product.detailLabel(label))
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.testTag(TestTags.V2.Product.detailValue(label))
-        )
-    }
-}
 
 @Composable
 fun IngredientsAnalysisSection(product: Product) {
@@ -545,9 +569,135 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
 }
 
 @Composable
+fun DetailedIngredientsSection(product: Product) {
+    val ingredients = product.ingredients ?: return
+    if (ingredients.isEmpty()) return
+
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 24.dp)
+            .testTag("detailed_ingredients_section")
+    ) {
+        SectionTitle("Ingredients Breakdown")
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
+            shape = RoundedCornerShape(20.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                ingredients.forEachIndexed { index, ingredient ->
+                    IngredientDetailRow(ingredient = ingredient, index = index)
+                    if (index < ingredients.lastIndex) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun IngredientDetailRow(ingredient: Ingredient, index: Int) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("ingredient_detail_row_$index")
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                val statusColor = when {
+                    ingredient.isVegan -> VeganStatusGreen
+                    ingredient.isNonVegan -> NonVeganStatusRed
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(statusColor, CircleShape)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = (ingredient.text ?: "Unknown").replaceFirstChar { it.uppercase() },
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            ingredient.formattedPercentage?.let { pct ->
+                Spacer(modifier = Modifier.width(8.dp))
+                Surface(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text(
+                        text = pct,
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
+
+        // Sub-ingredients if present
+        ingredient.subIngredients?.takeIf { it.isNotEmpty() }?.let { subs ->
+            Spacer(modifier = Modifier.height(6.dp))
+            Column(
+                modifier = Modifier
+                    .padding(start = 18.dp)
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                subs.forEach { sub ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "└ ",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = (sub.text ?: "").replaceFirstChar { it.uppercase() },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        sub.formattedPercentage?.let { subPct ->
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "($subPct)",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun AllIngredientsSection(product: Product) {
     val ingredients = product.ingredients?.mapNotNull { it.text } ?: emptyList()
-    if (ingredients.isEmpty()) return
+    val rawIngredientsText = product.ingredientsText
+    if (ingredients.isEmpty() && rawIngredientsText.isNullOrBlank()) return
 
     Column(
         modifier = Modifier
@@ -569,29 +719,38 @@ fun AllIngredientsSection(product: Product) {
                     .testTag(TestTags.V2.Product.ALL_INGREDIENTS_LIST),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ingredients.forEachIndexed { index, ingredient ->
-                    Row(
-                        modifier = Modifier.testTag(TestTags.V2.Product.allIngredientsItem(index)),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        Text(
-                            text = "•",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text(
-                            text = ingredient.replaceFirstChar { c -> c.uppercase() },
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 20.sp,
-                            modifier = Modifier.testTag(
-                                TestTags.V2.Product.allIngredientsItemText(
-                                    index
+                if (ingredients.isNotEmpty()) {
+                    ingredients.forEachIndexed { index, ingredient ->
+                        Row(
+                            modifier = Modifier.testTag(TestTags.V2.Product.allIngredientsItem(index)),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text(
+                                text = "•",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            Text(
+                                text = ingredient.replaceFirstChar { c -> c.uppercase() },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                lineHeight = 20.sp,
+                                modifier = Modifier.testTag(
+                                    TestTags.V2.Product.allIngredientsItemText(
+                                        index
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
+                } else if (!rawIngredientsText.isNullOrBlank()) {
+                    Text(
+                        text = rawIngredientsText,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 20.sp
+                    )
                 }
             }
         }
@@ -669,13 +828,24 @@ fun ProductScreenPreview() {
     IsItVeganTheme {
         ProductContent(
             product = Product(
-                barcode = "1234567890",
-                name = "Artisan Almond Cheese",
-                brands = "Green Life",
+                barcode = "5711953184871",
+                name = "Protein Drink",
+                brands = "Starbucks",
+                categoriesTags = listOf("en:beverages", "en:dairies", "en:coffee-drinks", "en:protein-drink"),
+                labelsTags = listOf("en:no-added-sugar"),
+                ingredientsAnalysisTags = listOf("en:palm-oil-free", "en:non-vegan"),
+                imageUrl = "https://images.openfoodfacts.org/images/products/571/195/318/4871/front_en.12.400.jpg",
                 ingredients = listOf(
-                    Ingredient(text = "Almonds", vegan = "yes"),
-                    Ingredient(text = "Water", vegan = "yes")
-                )
+                    Ingredient(text = "fat milk", percent = 1.2, percentEstimate = 58.62),
+                    Ingredient(text = "Starbucks Arabica coffee coffee extract", percent = 20.9),
+                    Ingredient(text = "milk protein", percent = 3.8, vegan = "no", vegetarian = "yes"),
+                    Ingredient(
+                        text = "stabilisers",
+                        percentEstimate = 5.55,
+                        subIngredients = listOf(Ingredient(text = "gellan gum carrageenan", percentEstimate = 5.55))
+                    )
+                ),
+                ingredientsText = "1.2% fat milk (79%), Starbucks Arabica coffee coffee extract) (20.9%) milk protein powder (3.8%), stabilisers (gellan gum carrageenan)..."
             ),
             onCloseClick = {}
         )
@@ -826,8 +996,8 @@ fun AlternativeProductItem(
     product: Product,
     onClick: () -> Unit = {}
 ) {
-    val imageUrl = product.thumbUrl?.takeIf { it.isNotBlank() }
-        ?: product.imageUrl?.takeIf { it.isNotBlank() }
+    val imageUrl = product.imageUrl?.takeIf { it.isNotBlank() }
+        ?: product.thumbUrl?.takeIf { it.isNotBlank() }
 
     Surface(
         modifier = Modifier
@@ -942,12 +1112,18 @@ fun AlternativeProductDetailSheet(
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
-            ProductDetailsSection(product)
+            CategoriesAndLabelsSection(product)
         }
+
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
             IngredientsAnalysisSection(product)
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+            DetailedIngredientsSection(product)
         }
 
         item {

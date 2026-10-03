@@ -7,24 +7,35 @@ import com.creative.greencheck.domain.model.Ingredient
 import com.creative.greencheck.domain.model.Product
 
 fun ProductDetails.toDomain(): Product {
+    val mappedBarcode = code?.takeIf { it.isNotBlank() } ?: barcode ?: ""
+    val mappedCategories = categories?.takeIf { it.isNotBlank() }
+        ?: categoriesTags?.joinToString(", ") {
+            it.removePrefix("en:").replace("-", " ").replaceFirstChar { char -> char.uppercase() }
+        }
+
+    val primaryImageUrl = frontUrl?.takeIf { it.isNotBlank() } ?: url?.takeIf { it.isNotBlank() } ?: smallUrl?.takeIf { it.isNotBlank() }
+    val primaryThumbUrl = frontThumbUrl?.takeIf { it.isNotBlank() } ?: thumbUrl?.takeIf { it.isNotBlank() } ?: frontSmallUrl?.takeIf { it.isNotBlank() } ?: primaryImageUrl
+
     return Product(
-        barcode = barcode ?: "",
+        barcode = mappedBarcode,
         name = name,
         brands = brands,
         quantity = quantity,
         productType = productType,
         keywords = keywords,
-        categories = categories,
+        categories = mappedCategories,
+        categoriesTags = categoriesTags,
         dataSources = dataSources,
         ingredientsAnalysisTags = ingredientsAnalysisTags,
         labelsTags = labelsTags,
         ecoScoreGrade = ecoScoreGrade,
         ecoScore = ecoScore,
-        imageUrl = url,
-        thumbUrl = thumbUrl,
+        imageUrl = primaryImageUrl,
+        thumbUrl = primaryThumbUrl,
         ingredientsImageUrl = ingredientsUrl,
         nutritionImageUrl = nutritionUrl,
-        ingredients = ingredients?.map { it.toDomain() }
+        ingredients = ingredients?.map { it.toDomain() },
+        ingredientsText = ingredientsText
     )
 }
 
@@ -37,6 +48,7 @@ fun ProductEntity.toDomain(): Product {
         productType = productType,
         keywords = keywords,
         categories = categories,
+        categoriesTags = categoriesTags,
         dataSources = dataSources,
         ingredientsAnalysisTags = ingredientsAnalysisTags,
         labelsTags = labelsTags,
@@ -47,6 +59,7 @@ fun ProductEntity.toDomain(): Product {
         ingredientsImageUrl = ingredientsUrl,
         nutritionImageUrl = nutritionUrl,
         ingredients = ingredients?.map { it.toDomain() },
+        ingredientsText = ingredientsText,
         timestamp = timestamp
     )
 }
@@ -60,12 +73,13 @@ fun Product.toEntity(): ProductEntity {
         productType = productType,
         keywords = keywords,
         categories = categories,
+        categoriesTags = categoriesTags,
         dataSources = dataSources,
         ingredientsAnalysisTags = ingredientsAnalysisTags,
         labelsTags = labelsTags,
         ecoScoreGrade = ecoScoreGrade,
         ecoScore = ecoScore,
-        frontSmallUrl = null, // Simplified for entity if not needed, or map correctly
+        frontSmallUrl = null,
         frontThumbUrl = null,
         frontUrl = null,
         ingredientsSmallUrl = null,
@@ -78,6 +92,7 @@ fun Product.toEntity(): ProductEntity {
         thumbUrl = thumbUrl,
         url = imageUrl,
         ingredients = ingredients?.map { it.toDto() },
+        ingredientsText = ingredientsText,
         timestamp = timestamp
     )
 }
@@ -86,10 +101,14 @@ fun Ingredients.toDomain(): Ingredient {
     return Ingredient(
         id = id,
         text = text,
+        percent = percent,
         percentEstimate = percentEstimate,
+        quantityEstimate = quantityEstimate,
+        isInTaxonomy = isInTaxonomy,
         vegan = vegan,
         vegetarian = vegetarian,
         fromPalmOil = fromPalmOil,
+        processing = processing,
         subIngredients = ingredients?.map { it.toDomain() }
     )
 }
@@ -98,10 +117,15 @@ fun Ingredient.toDto(): Ingredients {
     return Ingredients(
         id = id,
         text = text,
+        percent = percent,
         percentEstimate = percentEstimate,
+        quantityEstimate = quantityEstimate,
+        isInTaxonomy = isInTaxonomy,
         vegan = vegan,
         vegetarian = vegetarian,
         fromPalmOil = fromPalmOil,
+        processing = processing,
         ingredients = subIngredients?.map { it.toDto() }
     )
 }
+

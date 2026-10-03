@@ -65,7 +65,7 @@ class TestProductScreen {
             ingredientsAnalysisTags = listOf("en:vegan")
         )
         
-        coEvery { api.getProduct(barcode, null) } returns ProductResponse(
+        coEvery { api.getProduct(barcode, any()) } returns ProductResponse(
             status = 1,
             product = mockProduct
         )
@@ -84,7 +84,6 @@ class TestProductScreen {
             waitForProductLoaded()
             verifyProductHero()
             verifyStatusBanner()
-            verifyProductDetails()
         }
     }
 
@@ -145,7 +144,7 @@ class TestProductScreen {
         }
 
         coEvery {
-            api.searchVeganAlternatives(any(), any(), any(), any())
+            api.searchVeganAlternatives(any(), any(), any(), any(), any())
         } returns SearchResponse(
             products = listOf(veganAltProduct)
         )

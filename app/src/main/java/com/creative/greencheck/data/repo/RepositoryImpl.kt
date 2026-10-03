@@ -13,6 +13,8 @@ import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
+class BarcodeNotFoundException(message: String) : Exception(message)
+
 @Singleton
 class RepositoryImpl @Inject constructor(
     private val api: OpenFoodFactsApi,
@@ -26,6 +28,8 @@ class RepositoryImpl @Inject constructor(
             val response = api.getProduct(barcode)
             if (response.isFound && response.product != null) {
                 Result.success(response.product.toDomain())
+            } else if (response.status == 0) {
+                Result.failure(BarcodeNotFoundException(response.statusVerbose ?: "Product not found"))
             } else if (response.status == 429 || response.statusVerbose?.contains("429") == true) {
                 Result.failure(Exception("Searching too frequently. Please wait a moment and try again later."))
             } else if (response.status == 503 || response.statusVerbose?.contains("503") == true) {
@@ -35,7 +39,10 @@ class RepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error fetching product $barcode: ${e.message}")
-            Result.failure(mapException(e))
+            if (e.message?.contains("404") == true)
+                   Result.failure(BarcodeNotFoundException("Product not found"))
+            else
+                Result.failure(mapException(e))
         }
     }
 

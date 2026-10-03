@@ -81,6 +81,17 @@ object TestTags {
             const val SUBTITLE = "empty_history_subtitle"
         }
 
+        object BarcodeError {
+            const val SCREEN = "barcode_error_screen"
+            const val CONTENT = "barcode_error_content"
+            const val ICON_CONTAINER = "barcode_error_icon_container"
+            const val ICON = "barcode_error_icon"
+            const val TITLE = "barcode_error_title"
+            const val DESCRIPTION = "barcode_error_description"
+            const val BTN_RETURN_HOME = "button_barcode_error_return_home"
+            const val BTN_RETURN_HOME_TEXT = "button_barcode_error_return_home_text"
+        }
+
         object Error {
             const val SCREEN = "error_screen"
             const val CONTENT = "error_content"

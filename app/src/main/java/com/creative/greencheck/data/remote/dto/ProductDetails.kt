@@ -8,6 +8,7 @@ data class ProductDetails(
     // Identification & General Info
     val id: Long? = null,
     @SerialName("_id") val barcode: String? = null,
+    @SerialName("code") val code: String? = null,
     @SerialName("product_name") val name: String? = null,
     @SerialName("brands") val brands: String? = null,
     @SerialName("quantity") val quantity: String? = null,
@@ -16,6 +17,7 @@ data class ProductDetails(
     // Classification & Metadata
     @SerialName("_keywords") val keywords: List<String>? = null,
     @SerialName("categories") val categories: String? = null,
+    @SerialName("categories_tags") val categoriesTags: List<String>? = null,
     @SerialName("data_sources") val dataSources: String? = null,
     @SerialName("ingredients_analysis_tags") val ingredientsAnalysisTags: List<String>? = null,
     @SerialName("labels_tags") val labelsTags: List<String>? = null,
@@ -39,5 +41,7 @@ data class ProductDetails(
     @SerialName("image_url") val url: String? = null,
 
     // Ingredients
-    @SerialName("ingredients") val ingredients: List<Ingredients>? = null
+    @SerialName("ingredients") val ingredients: List<Ingredients>? = null,
+    @SerialName("ingredients_text") val ingredientsText: String? = null
 )
+

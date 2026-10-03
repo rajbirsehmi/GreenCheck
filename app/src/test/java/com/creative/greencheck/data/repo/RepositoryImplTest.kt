@@ -42,7 +42,7 @@ class RepositoryImplTest {
     @Test
     fun `searchProducts 503 HTTP exception returns service unavailable error message`() = runBlocking {
         val httpException = HttpException(Response.error<Any>(503, "".toResponseBody(null)))
-        coEvery { api.searchProducts(any(), any()) } throws httpException
+        coEvery { api.searchProducts(any(), any(), any()) } throws httpException
 
         val result = repository.searchProducts("oat")
 
@@ -53,7 +53,7 @@ class RepositoryImplTest {
     @Test
     fun `searchByIngredient 503 HTTP exception returns service unavailable error message`() = runBlocking {
         val httpException = HttpException(Response.error<Any>(503, "".toResponseBody(null)))
-        coEvery { api.searchByIngredient(any(), any()) } throws httpException
+        coEvery { api.searchByIngredient(any(), any(), any(), any(), any(), any(), any()) } throws httpException
 
         val result = repository.searchByIngredient("milk")
 
@@ -62,9 +62,40 @@ class RepositoryImplTest {
     }
 
     @Test
+    fun `searchByIngredient success returns mapped domain products`() = runBlocking {
+        val mockProductDetails = com.creative.greencheck.data.remote.dto.ProductDetails(
+            code = "987654",
+            name = "Soy Milk",
+            brands = "Silk"
+        )
+        coEvery { api.searchByIngredient(any(), any(), any(), any(), any(), any(), any()) } returns com.creative.greencheck.data.remote.dto.SearchResponse(
+            products = listOf(mockProductDetails)
+        )
+
+        val result = repository.searchByIngredient("soy")
+
+        assertTrue(result.isSuccess)
+        val products = result.getOrNull()
+        assertEquals(1, products?.size)
+        assertEquals("Soy Milk", products?.first()?.name)
+        assertEquals("Silk", products?.first()?.brands)
+    }
+
+    @Test
+    fun `searchByIngredient 429 HTTP exception returns searching too frequently error message`() = runBlocking {
+        val httpException = HttpException(Response.error<Any>(429, "".toResponseBody(null)))
+        coEvery { api.searchByIngredient(any(), any(), any(), any(), any(), any(), any()) } throws httpException
+
+        val result = repository.searchByIngredient("soy")
+
+        assertTrue(result.isFailure)
+        assertEquals("Searching too frequently. Please wait a moment and try again later.", result.exceptionOrNull()?.message)
+    }
+
+    @Test
     fun `getVeganAlternatives 429 HTTP exception returns searching too frequently error message`() = runBlocking {
         val httpException = HttpException(Response.error<Any>(429, "".toResponseBody(null)))
-        coEvery { api.searchVeganAlternatives(any(), any(), any(), any()) } throws httpException
+        coEvery { api.searchVeganAlternatives(any(), any(), any(), any(), any()) } throws httpException
 
         val result = repository.getVeganAlternatives(category = "chocolates")
 

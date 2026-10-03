@@ -22,7 +22,10 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "is_it_vegan_db"
-        ).fallbackToDestructiveMigration().build()
+        )
+            .addMigrations(AppDatabase.MIGRATION_4_5)
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
@@ -30,3 +33,4 @@ object DatabaseModule {
         return database.productDao()
     }
 }
+

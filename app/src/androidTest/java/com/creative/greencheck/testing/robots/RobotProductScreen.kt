@@ -31,12 +31,7 @@ class RobotProductScreen : ComposeRuleScope {
         assertTagDisplayed(TestTags.V2.Product.STATUS_TITLE)
     }
 
-    fun verifyProductDetails() {
-        scrollToTag(TestTags.V2.Product.DETAILS_CARD)
-        assertTagDisplayed(TestTags.V2.Product.DETAILS_CARD)
-        assertTagDisplayed(TestTags.V2.Product.detailRow("Quantity"))
-        assertTagDisplayed(TestTags.V2.Product.detailRow("Eco-Score"))
-    }
+
 
     fun verifyIngredientsAnalysis() {
         scrollToTag(TestTags.V2.Product.analysisCard("vegan"))
