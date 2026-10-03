@@ -96,6 +96,8 @@ object BottomTabs {
     const val PRODUCT = "product/{barcode}"
     const val LOADING = "loading/{barcode}"
     const val ERROR = "error"
+    const val NETWORK_ERROR = "network_error"
+    const val BARCODE_ERROR = "barcode_error"
     const val QUOTA = "quota/{feature}"
 
     fun getProductRoute(barcode: String) = "product/$barcode"
@@ -359,15 +361,38 @@ fun MainScaffolding() {
                             popUpTo(BottomTabs.LOADING) { inclusive = true }
                         }
                     },
-                    onError = {
-                        bottomNavController.navigate(BottomTabs.ERROR) {
+                    onBarcodeError = {
+                        bottomNavController.navigate(BottomTabs.BARCODE_ERROR) {
+                            popUpTo(BottomTabs.LOADING) { inclusive = true }
+                        }
+                    },
+                    onNetworkError = {
+                        bottomNavController.navigate(BottomTabs.NETWORK_ERROR) {
                             popUpTo(BottomTabs.LOADING) { inclusive = true }
                         }
                     }
                 )
             }
+            composable(BottomTabs.BARCODE_ERROR) {
+                BarcodeErrorScreen(
+                    onBackToHome = {
+                        bottomNavController.navigate(BottomTabs.HOME) {
+                            popUpTo(BottomTabs.HOME) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(BottomTabs.NETWORK_ERROR) {
+                NetworkErrorScreen(
+                    onBackToHome = {
+                        bottomNavController.navigate(BottomTabs.HOME) {
+                            popUpTo(BottomTabs.HOME) { inclusive = true }
+                        }
+                    }
+                )
+            }
             composable(BottomTabs.ERROR) {
-                ErrorScreen(
+                NetworkErrorScreen(
                     onBackToHome = {
                         bottomNavController.navigate(BottomTabs.HOME) {
                             popUpTo(BottomTabs.HOME) { inclusive = true }

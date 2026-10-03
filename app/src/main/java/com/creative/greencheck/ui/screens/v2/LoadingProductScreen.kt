@@ -30,7 +30,8 @@ fun LoadingProductScreen(
     barcode: String,
     viewModel: LoadingViewModel = hiltViewModel(),
     onLoadingComplete: () -> Unit = {},
-    onError: () -> Unit = {}
+    onBarcodeError: () -> Unit = {},
+    onNetworkError: () -> Unit = {}
 ) {
     val uiState = viewModel.uiState
 
@@ -41,7 +42,8 @@ fun LoadingProductScreen(
     LaunchedEffect(uiState) {
         when (uiState) {
             is LoadingUiState.Success -> onLoadingComplete()
-            is LoadingUiState.Error -> onError()
+            is LoadingUiState.BarcodeError -> onBarcodeError()
+            is LoadingUiState.NetworkError -> onNetworkError()
             else -> {}
         }
     }

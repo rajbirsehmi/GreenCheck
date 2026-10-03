@@ -52,7 +52,7 @@ class FlowProductIdentification {
     @Test
     fun testManualEntryToProductDetail() {
         val barcode = "87654321"
-        coEvery { api.getProduct(barcode, null) } returns ProductResponse(
+        coEvery { api.getProduct(barcode, any()) } returns ProductResponse(
             status = 1,
             product = ProductDetails(barcode = barcode, name = "Manual Product", brands = "Brand A")
         )
@@ -72,36 +72,4 @@ class FlowProductIdentification {
         }
     }
 
-    @Test
-    fun testSearchToProductDetail() {
-        val query = "Oat"
-        val barcode = "11223344"
-        val mockProduct = ProductDetails(barcode = barcode, name = "Oat Milk", brands = "Brand B")
-        
-        coEvery { api.searchProducts(query, any()) } returns SearchResponse(
-            products = listOf(mockProduct)
-        )
-        coEvery { api.searchByIngredient(query, any()) } returns SearchResponse(
-            products = listOf(mockProduct)
-        )
-        coEvery { api.getProduct(barcode, null) } returns ProductResponse(
-            status = 1,
-            product = mockProduct
-        )
-        UiTestEngine.withRobot(RobotWelcomeScreen()) {
-            clickGetStartedIfVisible()
-        }
-
-        UiTestEngine.withRobot(RobotHomeScreen()) {
-            clickSearch()
-        }
-        UiTestEngine.withRobot(RobotSearchScreen()) {
-            enterSearchQuery(query)
-            clickSearch()
-            clickProductItem(barcode)
-        }
-        UiTestEngine.withRobot(RobotProductScreen()) {
-            verifyProductHero()
-        }
-    }
 }

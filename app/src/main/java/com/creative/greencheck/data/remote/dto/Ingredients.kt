@@ -8,7 +8,9 @@ data class Ingredients(
     // Basic Info
     @SerialName("id") val id: String? = null,
     @SerialName("text") val text: String? = null,
+    @SerialName("percent") val percent: Double? = null,
     @SerialName("percent_estimate") val percentEstimate: Double? = null,
+    @SerialName("quantity_estimate") val quantityEstimate: Double? = null,
     @SerialName("is_in_taxonomy") val isInTaxonomy: Int? = null,
 
     // Dietary Status
