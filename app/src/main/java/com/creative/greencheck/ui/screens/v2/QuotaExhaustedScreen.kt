@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassTop
 import androidx.compose.material3.Button
@@ -27,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.greencheck.testing.TestTags
@@ -54,58 +52,58 @@ fun QuotaExhaustedScreen(
     ) {
         Column(
             modifier = Modifier
-                .padding(40.dp)
+                .padding(32.dp)
                 .testTag(TestTags.V2.QuotaExhausted.CONTENT),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f), CircleShape)
+                    .size(90.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                     .testTag(TestTags.V2.QuotaExhausted.ICON_CONTAINER),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.HourglassTop,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(44.dp)
                         .testTag(TestTags.V2.QuotaExhausted.ICON)
                 )
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
             Text(
                 text = "Daily Limit Reached",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.testTag(TestTags.V2.QuotaExhausted.TITLE)
             )
             
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             Text(
                 text = "You've reached your daily quota for the $featureName feature. Your limit will reset on ${formatReset(nextResetTime)}. Join our community then for a fresh exploration.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                lineHeight = 22.sp,
                 modifier = Modifier.testTag(TestTags.V2.QuotaExhausted.DESCRIPTION)
             )
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(32.dp))
             
             Button(
                 onClick = onBackToHome,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
+                    .height(50.dp)
                     .testTag(TestTags.V2.QuotaExhausted.BTN_UNDERSTOOD),
-                shape = RoundedCornerShape(16.dp)
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = "Understood",

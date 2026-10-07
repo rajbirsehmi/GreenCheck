@@ -16,12 +16,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Vibration
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -132,17 +132,19 @@ fun ScannerScreen(
             }
         )
 
-        // Minimalist Overlays
+        // Material 3 Scanner Overlays
         Column(modifier = Modifier.fillMaxSize()) {
-            // Top Instructions
-            Surface(
+            // Top Instructions Card
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(20.dp)
                     .testTag(TestTags.V2.Scanner.INSTRUCTIONS_OVERLAY),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                shape = RoundedCornerShape(20.dp),
-                tonalElevation = 0.dp
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+                ),
+                shape = MaterialTheme.shapes.large,
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
@@ -159,24 +161,22 @@ fun ScannerScreen(
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
                         text = if (isScanComplete) "Detected" else "Align Barcode",
-                        style = MaterialTheme.typography.labelLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
                         color = if (isScanComplete) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .weight(1f)
                             .testTag(TestTags.V2.Scanner.STATUS_TEXT)
                     )
-                    IconButton(
+                    FilledTonalIconButton(
                         onClick = { isVibrationEnabled = !isVibrationEnabled },
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(36.dp)
                             .testTag(TestTags.V2.Scanner.BTN_TOGGLE_VIBRATION)
                     ) {
                         Icon(
                             imageVector = if (isVibrationEnabled) Icons.Filled.Vibration else Icons.Outlined.Vibration,
                             contentDescription = "Toggle Vibration",
-                            tint = if (isVibrationEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f),
                             modifier = Modifier
                                 .size(20.dp)
                                 .testTag(TestTags.V2.Scanner.BTN_TOGGLE_VIBRATION_ICON)
@@ -187,14 +187,16 @@ fun ScannerScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Bottom Quota Info
-            Surface(
+            // Bottom Quota Card
+            Card(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(20.dp)
                     .align(Alignment.CenterHorizontally)
                     .testTag(TestTags.V2.Scanner.QUOTA_OVERLAY),
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                shape = RoundedCornerShape(12.dp)
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+                ),
+                shape = MaterialTheme.shapes.small
             ) {
                 Text(
                     text = "Free Plan: $remainingScans of 10 Scans today",
@@ -208,7 +210,7 @@ fun ScannerScreen(
             }
         }
 
-        // Viewfinder (Transparent center)
+        // Viewfinder
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -221,13 +223,11 @@ fun ScannerScreen(
                     .testTag(TestTags.V2.Scanner.VIEWFINDER_WINDOW),
                 color = Color.Transparent,
                 border = BorderStroke(
-                    width = 1.dp,
-                    color = if (isScanComplete) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.5f)
+                    width = 2.dp,
+                    color = if (isScanComplete) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.7f)
                 ),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                // corner accents could be added here
-            }
+                shape = MaterialTheme.shapes.extraLarge
+            ) {}
         }
     }
 }

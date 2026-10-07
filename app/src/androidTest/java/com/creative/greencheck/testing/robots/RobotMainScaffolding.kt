@@ -17,7 +17,7 @@ class RobotMainScaffolding: ComposeRuleScope {
         assertTagDisplayed(TestTags.V2.Scaffolding.navItem("manual"))
         assertTagDisplayed(TestTags.V2.Scaffolding.navItem("scanner"))
         assertTagDisplayed(TestTags.V2.Scaffolding.navItem("history"))
-        assertTagDisplayed(TestTags.V2.Scaffolding.navItem("search"))
+//        assertTagDisplayed(TestTags.V2.Scaffolding.navItem("search"))
     }
 
     fun clickNavItem(route: String) = clickOnTag(TestTags.V2.Scaffolding.navItem(route))

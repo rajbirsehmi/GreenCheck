@@ -53,13 +53,12 @@ class FlowNavigation {
             clickNavItem("manual")
             UiTestEngine.withRobot(RobotManualEntryScreen()) { verifyManualEntryScreen() }
             
-            clickNavItem("search")
-            UiTestEngine.withRobot(RobotSearchScreen()) { verifySearchScreen() }
+//            clickNavItem("search")
+//            UiTestEngine.withRobot(RobotSearchScreen()) { verifySearchScreen() }
             
             clickNavItem("history")
             UiTestEngine.withRobot(RobotEmptyHistoryScreen()) { verifyEmptyHistoryScreen() }
-//            UiTestEngine.withRobot(RobotHistoryScreen()) { verifyHistoryScreen() }
-            
+
             clickNavItem("home")
             UiTestEngine.withRobot(RobotHomeScreen()) { verifyHeroSection() }
         }

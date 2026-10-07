@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.Button
@@ -26,7 +25,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 
@@ -43,58 +41,58 @@ fun NetworkErrorScreen(
     ) {
         Column(
             modifier = Modifier
-                .padding(40.dp)
+                .padding(32.dp)
                 .testTag(TestTags.V2.Error.CONTENT),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(100.dp)
-                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.05f), CircleShape)
+                    .size(90.dp)
+                    .background(MaterialTheme.colorScheme.errorContainer, CircleShape)
                     .testTag(TestTags.V2.Error.ICON_CONTAINER),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Outlined.ErrorOutline,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(44.dp)
                         .testTag(TestTags.V2.Error.ICON)
                 )
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
             Text(
                 text = "Connection Interrupted",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.testTag(TestTags.V2.Error.TITLE)
             )
             
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             
             Text(
                 text = "We couldn't reach the database. Please verify your internet connection or try a different barcode.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                lineHeight = 22.sp,
                 modifier = Modifier.testTag(TestTags.V2.Error.DESCRIPTION)
             )
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(32.dp))
             
             Button(
                 onClick = onBackToHome,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
+                    .height(50.dp)
                     .testTag(TestTags.V2.Error.BTN_RETURN_HOME),
-                shape = RoundedCornerShape(16.dp)
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = "Return to Safety",

@@ -60,6 +60,7 @@ object TestTags {
             const val LOGO = "home_logo"
             const val TITLE = "home_title"
             const val SUBTITLE = "home_subtitle"
+            const val FAB_SCAN_NOW = "home_fab_scan_now"
             const val QUICK_ACTIONS_TITLE = "home_quick_actions_title"
             const val ACTIONS_ROW_1 = "home_actions_row_1"
             const val CARD_SCANNER = "card_scanner"
@@ -141,6 +142,7 @@ object TestTags {
 
         object Product {
             const val LOADING = "product_loading"
+            const val ALTERNATIVE_SHEET = "alternative_product_bottom_sheet"
             const val CONTENT_LIST = "product_content_list"
             const val BTN_CLOSE = "button_close_product_screen"
             const val BTN_CLOSE_TEXT = "button_close_product_screen_text"
@@ -220,9 +222,11 @@ object TestTags {
             const val MODE_SELECTION_ROW = "search_mode_selection_row"
             const val MODE_PRODUCTS = "search_mode_products"
             const val MODE_INGREDIENTS = "search_mode_ingredients"
+            const val FILTER_CHIP_INGREDIENTS = "search_filter_chip_ingredients"
             const val INPUT_CARD = "search_input_card"
             const val TEXT_FIELD = "search_text_field"
             const val FIELD_ICON = "search_field_icon"
+            const val BTN_CLEAR_QUERY = "search_btn_clear_query"
             const val BTN_INITIALIZE = "button_initialize_search"
             const val LOADING_INDICATOR = "search_loading_indicator"
             const val BTN_INITIALIZE_ICON = "button_initialize_search_icon"

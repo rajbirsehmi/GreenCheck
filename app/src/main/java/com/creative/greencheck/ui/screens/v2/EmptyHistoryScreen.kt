@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 
@@ -32,15 +31,15 @@ fun EmptyHistoryScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(40.dp)
+            .padding(32.dp)
             .testTag(TestTags.V2.EmptyHistory.SCREEN),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
-                .size(100.dp)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f), CircleShape)
+                .size(90.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 .testTag(TestTags.V2.EmptyHistory.LOGO_CONTAINER),
             contentAlignment = Alignment.Center
         ) {
@@ -48,30 +47,29 @@ fun EmptyHistoryScreen() {
                 imageVector = Icons.Default.History,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(44.dp)
                     .testTag(TestTags.V2.EmptyHistory.LOGO_ICON),
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
-        
-        Spacer(modifier = Modifier.height(32.dp))
-        
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(
             text = "Your Journey Starts Here",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.testTag(TestTags.V2.EmptyHistory.TITLE)
         )
-        
-        Spacer(Modifier.height(12.dp))
-        
+
+        Spacer(Modifier.height(8.dp))
+
         Text(
             text = "As you scan products, they will appear here for quick reference. Start exploring your favorite foods!",
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            lineHeight = 22.sp,
             modifier = Modifier.testTag(TestTags.V2.EmptyHistory.SUBTITLE)
         )
     }

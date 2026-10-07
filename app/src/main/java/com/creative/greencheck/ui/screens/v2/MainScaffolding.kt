@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ExperimentalGetImage
@@ -25,18 +26,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.outlined.Dialpad
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.NavigationBar
@@ -44,7 +44,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,20 +53,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,11 +72,15 @@ import androidx.navigation.compose.rememberNavController
 import com.creative.greencheck.R
 import com.creative.greencheck.data.local.FeatureType
 import com.creative.greencheck.testing.TestTags
+import com.creative.greencheck.ui.components.TopAppBarHome
 import com.creative.greencheck.ui.components.v2.TransparencyInfoSheet
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 import com.creative.greencheck.ui.viewmodels.AppInfoViewModel
 import com.creative.greencheck.ui.viewmodels.RecentSearchViewModel
 import com.creative.greencheck.ui.viewmodels.ScanItemViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object BottomTabs {
     const val HOME = "home"
@@ -92,6 +89,7 @@ object BottomTabs {
     const val HISTORY = "history"
     const val SEARCH = "search"
     const val WELCOME = "welcome"
+
     // V2 Navigation routes
     const val PRODUCT = "product/{barcode}"
     const val LOADING = "loading/{barcode}"
@@ -141,8 +139,7 @@ fun MainScaffolding() {
                 launchSingleTop = true
                 restoreState = true
             }
-        }
-        else Toast.makeText(
+        } else Toast.makeText(
             context,
             "Permission is required to scan the product",
             Toast.LENGTH_SHORT
@@ -173,12 +170,37 @@ fun MainScaffolding() {
         }
     }
 
+    val currentRoute = currentDestination?.route
+    val isSubScreen = currentRoute in listOf(
+        BottomTabs.PRODUCT,
+        BottomTabs.LOADING,
+        BottomTabs.BARCODE_ERROR,
+        BottomTabs.NETWORK_ERROR,
+        BottomTabs.ERROR,
+        BottomTabs.QUOTA
+    ) || currentRoute?.startsWith("product/") == true || currentRoute?.startsWith("loading/") == true || currentRoute?.startsWith(
+        "quota/"
+    ) == true
+
+    val topBarTitle = when {
+        currentRoute?.startsWith("product/") == true -> "Product Details"
+        currentRoute?.startsWith("loading/") == true -> "Analyzing Product"
+        currentRoute == BottomTabs.MANUAL -> "Manual Entry"
+        currentRoute == BottomTabs.HISTORY -> "History"
+        currentRoute == BottomTabs.SEARCH -> "Search Database"
+        currentRoute == BottomTabs.SCAN -> "Barcode Scanner"
+        else -> "GreenCheck"
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             if (showBars) {
                 TopAppBarHome(
+                    title = topBarTitle,
+                    showBack = isSubScreen,
+                    onBackClick = { bottomNavController.popBackStack() },
                     onAccountClick = { showBottomSheet = true }
                 )
             }
@@ -186,54 +208,83 @@ fun MainScaffolding() {
         bottomBar = {
             if (showBars) {
                 NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 0.dp,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    tonalElevation = 3.dp,
                     modifier = Modifier.testTag(TestTags.V2.Scaffolding.BOTTOM_NAV_BAR)
                 ) {
                     val navItems = listOf(
-                        Triple(BottomTabs.HOME, Icons.Default.Home, "Home"),
-                        Triple(BottomTabs.MANUAL, Icons.Default.Dialpad, "Manual"),
-                        Triple(BottomTabs.SCAN, ImageVector.vectorResource(R.drawable.barcode_scanner), "Scan"),
-                        Triple(BottomTabs.HISTORY, Icons.Default.History, "History"),
-                        Triple(BottomTabs.SEARCH, Icons.Default.Search, "Search")
+                        Tuple4(BottomTabs.HOME, Icons.Filled.Home, Icons.Outlined.Home, "Home"),
+                        Tuple4(
+                            BottomTabs.MANUAL,
+                            Icons.Filled.Dialpad,
+                            Icons.Outlined.Dialpad,
+                            "Manual"
+                        ),
+                        Tuple4(
+                            BottomTabs.SCAN,
+                            ImageVector.vectorResource(R.drawable.barcode_scanner),
+                            ImageVector.vectorResource(R.drawable.barcode_scanner),
+                            "Scan"
+                        ),
+                        Tuple4(
+                            BottomTabs.HISTORY,
+                            Icons.Filled.History,
+                            Icons.Outlined.History,
+                            "History"
+                        ),
+//                        Tuple4(BottomTabs.SEARCH, Icons.Filled.Search, Icons.Outlined.Search, "Search")
                     )
 
-                    navItems.forEach { (route, icon, label) ->
-                        NavigationBarItem(
-                            selected = currentDestination?.route == route,
-                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.navItem(route)),
-                            onClick = {
-                                if (route == BottomTabs.SCAN) {
-                                    val hasPermission = ContextCompat.checkSelfPermission(
-                                        context,
-                                        Manifest.permission.CAMERA
-                                    ) == PackageManager.PERMISSION_GRANTED
-                                    
-                                    if (hasPermission) {
-                                        scanItemViewModel.resetScanner()
-                                        bottomNavController.navigate(route) {
-                                            popUpTo(bottomNavController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    } else {
-                                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    val navigateToTab: (String) -> Unit = { route ->
+                        if (route == BottomTabs.SCAN) {
+                            val hasPermission = ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.CAMERA
+                            ) == PackageManager.PERMISSION_GRANTED
+
+                            if (hasPermission) {
+                                scanItemViewModel.resetScanner()
+                                bottomNavController.navigate(route) {
+                                    popUpTo(bottomNavController.graph.findStartDestination().id) {
+                                        saveState = true
                                     }
-                                } else {
-                                    bottomNavController.navigate(route) {
-                                        popUpTo(bottomNavController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                            },
+                            } else {
+                                permissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        } else {
+                            bottomNavController.navigate(route) {
+                                popUpTo(bottomNavController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    }
+
+                    val isMainTab = currentDestination?.route in listOf(
+                        BottomTabs.HOME,
+                        BottomTabs.MANUAL,
+                        BottomTabs.SCAN,
+                        BottomTabs.HISTORY,
+                        BottomTabs.SEARCH
+                    )
+                    BackHandler(enabled = isMainTab) {
+                        (context as? android.app.Activity)?.finish()
+                    }
+
+                    navItems.forEach { (route, selectedIcon, unselectedIcon, label) ->
+                        val isSelected = currentDestination?.route == route
+                        NavigationBarItem(
+                            selected = isSelected,
+                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.navItem(route)),
+                            onClick = { navigateToTab(route) },
                             icon = {
                                 Icon(
-                                    imageVector = icon,
+                                    imageVector = if (isSelected) selectedIcon else unselectedIcon,
                                     contentDescription = label,
                                     modifier = Modifier.padding(bottom = 2.dp)
                                 )
@@ -242,15 +293,15 @@ fun MainScaffolding() {
                                 Text(
                                     text = label,
                                     style = MaterialTheme.typography.labelSmall,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                                 )
                             },
                             colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
                                 selectedTextColor = MaterialTheme.colorScheme.primary,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                                indicatorColor = Color.Transparent
+                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         )
                     }
@@ -274,29 +325,41 @@ fun MainScaffolding() {
                 )
             }
             composable(BottomTabs.HOME) {
-                HomeScreen(
-                    onNavigateToManual = {
-                        bottomNavController.navigate(BottomTabs.MANUAL)
-                    },
-                    onNavigateToScanner = { 
+                val navigateToTab: (String) -> Unit = { route ->
+                    if (route == BottomTabs.SCAN) {
                         val hasPermission = ContextCompat.checkSelfPermission(
                             context,
                             Manifest.permission.CAMERA
                         ) == PackageManager.PERMISSION_GRANTED
-                        
+
                         if (hasPermission) {
                             scanItemViewModel.resetScanner()
-                            bottomNavController.navigate(BottomTabs.SCAN)
+                            bottomNavController.navigate(route) {
+                                popUpTo(bottomNavController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         } else {
                             permissionLauncher.launch(Manifest.permission.CAMERA)
                         }
-                    },
-                    onNavigateToHistory = {
-                        bottomNavController.navigate(BottomTabs.HISTORY)
-                    },
-                    onNavigateToSearch = {
-                        bottomNavController.navigate(BottomTabs.SEARCH)
+                    } else {
+                        bottomNavController.navigate(route) {
+                            popUpTo(bottomNavController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
+                }
+
+                HomeScreen(
+                    onNavigateToManual = { navigateToTab(BottomTabs.MANUAL) },
+                    onNavigateToScanner = { navigateToTab(BottomTabs.SCAN) },
+                    onNavigateToHistory = { navigateToTab(BottomTabs.HISTORY) },
+                    onNavigateToSearch = { navigateToTab(BottomTabs.SEARCH) }
                 )
             }
             composable(BottomTabs.MANUAL) {
@@ -312,7 +375,7 @@ fun MainScaffolding() {
             composable(BottomTabs.HISTORY) {
                 val viewModel: RecentSearchViewModel = hiltViewModel()
                 val products by viewModel.products.collectAsStateWithLifecycle()
-                
+
                 if (products.isNotEmpty()) {
                     HistoryScreen(
                         products = products,
@@ -327,16 +390,16 @@ fun MainScaffolding() {
                     EmptyHistoryScreen()
                 }
             }
-            composable(BottomTabs.SEARCH) {
-                SearchProductOrIngredientScreen(
-                    onProductClick = { product ->
-                        bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode))
-                    },
-                    onQuotaExhausted = { featureName ->
-                        bottomNavController.navigate(BottomTabs.getQuotaRoute(featureName))
-                    }
-                )
-            }
+//            composable(BottomTabs.SEARCH) {
+//                SearchProductOrIngredientScreen(
+//                    onProductClick = { product ->
+//                        bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode))
+//                    },
+//                    onQuotaExhausted = { featureName ->
+//                        bottomNavController.navigate(BottomTabs.getQuotaRoute(featureName))
+//                    }
+//                )
+//            }
             composable(BottomTabs.PRODUCT) { backStackEntry ->
                 val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
                 ProductScreen(
@@ -436,7 +499,11 @@ fun MainScaffolding() {
                             .testTag(TestTags.V2.Scaffolding.USAGE_SHEET_TITLE)
                     )
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                                alpha = 0.3f
+                            )
+                        ),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier.testTag(TestTags.V2.Scaffolding.USAGE_CARD)
                     ) {
@@ -446,15 +513,35 @@ fun MainScaffolding() {
                                 .padding(16.dp)
                         ) {
                             UsageRow("Barcode Scans", scannerUsage, FeatureType.SCANNER.limit)
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 12.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
                             UsageRow("Manual Entries", manualUsage, FeatureType.MANUAL_ENTRY.limit)
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            UsageRow("Ingredient Searches", ingredientUsage, FeatureType.SEARCH_INGREDIENT.limit)
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
-                            UsageRow("Alternative Searches", alternativeUsage, FeatureType.ALTERNATIVE_SEARCH.limit)
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 12.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                            UsageRow(
+                                "Ingredient Searches",
+                                ingredientUsage,
+                                FeatureType.SEARCH_INGREDIENT.limit
+                            )
+                            HorizontalDivider(
+                                modifier = Modifier.padding(vertical = 12.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                            UsageRow(
+                                "Alternative Searches",
+                                alternativeUsage,
+                                FeatureType.ALTERNATIVE_SEARCH.limit
+                            )
 
                             if (nextResetTime > 0) {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 12.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                                )
                                 Text(
                                     text = "Resets on: ${formatTimestamp(nextResetTime)}",
                                     style = MaterialTheme.typography.labelSmall,
@@ -468,7 +555,7 @@ fun MainScaffolding() {
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     Row(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
@@ -577,37 +664,7 @@ fun formatTimestamp(timestamp: Long): String {
     return sdf.format(Date(timestamp))
 }
 
-@Composable
-fun TopAppBarHome(onAccountClick: () -> Unit = {}) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "GREENCHECK",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 2.sp,
-                modifier = Modifier.testTag(TestTags.V2.Scaffolding.TOP_BAR_TITLE)
-            )
-        },
-        actions = {
-            IconButton(
-                onClick = onAccountClick,
-                modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Information",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO_ICON)
-                )
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.Transparent
-        ),
-        modifier = Modifier.testTag(TestTags.V2.Scaffolding.TOP_APP_BAR)
-    )
-}
+private data class Tuple4<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 
 @Composable
 @Preview
