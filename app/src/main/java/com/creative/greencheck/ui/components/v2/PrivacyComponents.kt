@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.DeviceUnknown
@@ -33,7 +32,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.greencheck.testing.TestTags
@@ -100,7 +98,7 @@ fun TransparencyInfoSheet(
             modifier = Modifier.testTag(TestTags.V2.Components.Privacy.ITEM_LICENSING)
         )
         
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(28.dp))
         
         Row(modifier = Modifier.fillMaxWidth()) {
             Button(
@@ -110,9 +108,9 @@ fun TransparencyInfoSheet(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(56.dp)
+                    .height(50.dp)
                     .testTag(TestTags.V2.Components.Privacy.BTN_AUDIT_CODE),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -140,9 +138,9 @@ fun TransparencyInfoSheet(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .height(56.dp)
+                    .height(50.dp)
                     .testTag(TestTags.V2.Components.Privacy.BTN_ODBL_LICENSE),
-                shape = RoundedCornerShape(16.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -176,14 +174,14 @@ private fun TransparencyItem(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 .testTag(TestTags.V2.Components.Privacy.itemIconContainer(title)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
                     .size(20.dp)
                     .testTag(TestTags.V2.Components.Privacy.itemIcon(title))
@@ -195,16 +193,16 @@ private fun TransparencyItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.testTag(TestTags.V2.Components.Privacy.itemTitle(title))
             )
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = desc,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 18.sp,
                 modifier = Modifier.testTag(TestTags.V2.Components.Privacy.itemDesc(title))
             )
         }

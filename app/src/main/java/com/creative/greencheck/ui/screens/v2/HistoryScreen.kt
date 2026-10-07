@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -42,13 +40,15 @@ fun HistoryScreen(
             modifier = Modifier
                 .weight(1f)
                 .testTag(TestTags.V2.History.LIST),
-            contentPadding = PaddingValues(vertical = 12.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp)
         ) {
             items(products) { product ->
-                ProductItem(
-                    product = product,
-                    onClick = onProductClick
-                )
+                Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                    ProductItem(
+                        product = product,
+                        onClick = onProductClick
+                    )
+                }
             }
         }
 
@@ -56,25 +56,26 @@ fun HistoryScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.V2.History.CLEAR_CONTAINER),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 0.dp
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            tonalElevation = 1.dp
         ) {
             OutlinedButton(
                 onClick = onClearHistoryClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 20.dp)
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
                     .height(50.dp)
                     .testTag(TestTags.V2.History.BTN_CLEAR),
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error
+                    contentColor = MaterialTheme.colorScheme.error,
+                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)
                 ),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.2f))
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.4f))
             ) {
                 Text(
                     text = "Clear History",
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.testTag(TestTags.V2.History.BTN_CLEAR_TEXT)
                 )
             }

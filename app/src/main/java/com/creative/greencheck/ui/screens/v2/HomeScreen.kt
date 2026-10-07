@@ -10,20 +10,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -31,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,124 +53,186 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 24.dp)
+            .padding(horizontal = 20.dp, vertical = 20.dp)
     ) {
-        // Hero Section
-        Column(
+        // Material 3 Vibrant Botanical Hero Section
+        ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.V2.Home.HERO_SECTION),
-            horizontalAlignment = Alignment.CenterHorizontally
+            shape = MaterialTheme.shapes.extraLarge,
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.leaves),
-                contentDescription = "Botanical Logo",
+            Column(
                 modifier = Modifier
-                    .size(100.dp)
-                    .padding(bottom = 16.dp)
-                    .testTag(TestTags.V2.Home.LOGO),
-                contentScale = ContentScale.Fit
-            )
-            Text(
-                text = "Discover Conscious Eating",
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.testTag(TestTags.V2.Home.TITLE)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Simple tools to identify vegan products instantly.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .testTag(TestTags.V2.Home.SUBTITLE)
-            )
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.leaves),
+                        contentDescription = "Botanical Logo",
+                        modifier = Modifier
+                            .size(44.dp)
+                            .testTag(TestTags.V2.Home.LOGO),
+                        contentScale = ContentScale.Fit
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = "GreenCheck",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                        Text(
+                            text = "Conscious Scanner",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Discover Conscious Eating",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.testTag(TestTags.V2.Home.TITLE)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Simple, lightning-fast tools to verify vegan products instantly.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f),
+                    modifier = Modifier.testTag(TestTags.V2.Home.SUBTITLE)
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                ExtendedFloatingActionButton(
+                    onClick = onNavigateToScanner,
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.QrCodeScanner,
+                            contentDescription = null
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = "Scan Barcode Now",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(TestTags.V2.Home.FAB_SCAN_NOW)
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
-        // Quick Actions
+        // Quick Actions Header
         Text(
             text = "QUICK ACTIONS",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.5.sp,
+            letterSpacing = 1.2.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag(TestTags.V2.Home.QUICK_ACTIONS_TITLE)
         )
         
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
+        // Material 3 Tonal Action Grid
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.V2.Home.ACTIONS_ROW_1),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            HomeActionCard(
+            MinimalistActionCard(
                 modifier = Modifier
                     .weight(1f)
                     .testTag(TestTags.V2.Home.CARD_SCANNER),
                 title = "Scanner",
-                subtitle = "Scan Barcode",
+                subtitle = "Barcode",
                 icon = ImageVector.vectorResource(R.drawable.barcode_scanner),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 onClick = onNavigateToScanner
             )
-            HomeActionCard(
+            MinimalistActionCard(
                 modifier = Modifier
                     .weight(1f)
                     .testTag(TestTags.V2.Home.CARD_SEARCH),
                 title = "Search",
-                subtitle = "Browse Database",
+                subtitle = "Database",
                 icon = Icons.Default.Search,
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = onNavigateToSearch
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.V2.Home.ACTIONS_ROW_2),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            HomeActionCard(
+            MinimalistActionCard(
                 modifier = Modifier
                     .weight(1f)
                     .testTag(TestTags.V2.Home.CARD_MANUAL),
                 title = "Manual",
-                subtitle = "Type UPC Code",
+                subtitle = "UPC Code",
                 icon = Icons.Default.Dialpad,
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 onClick = onNavigateToManual
             )
-            HomeActionCard(
+            MinimalistActionCard(
                 modifier = Modifier
                     .weight(1f)
                     .testTag(TestTags.V2.Home.CARD_HISTORY),
                 title = "History",
                 subtitle = "Recent Finds",
                 icon = Icons.Default.History,
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                 onClick = onNavigateToHistory
             )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
-        // Info Sections
-        InfoSection(
+        // Material 3 Info Sections
+        MinimalistInfoSection(
             title = "How it works",
             content = stringResource(R.string.how_it_works),
             modifier = Modifier.testTag(TestTags.V2.Home.SECTION_HOW_IT_WORKS)
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        InfoSection(
+        MinimalistInfoSection(
             title = "Disclaimer",
             content = stringResource(R.string.disclaimer),
             modifier = Modifier.testTag(TestTags.V2.Home.SECTION_DISCLAIMER)
@@ -178,70 +243,80 @@ fun HomeScreen(
 }
 
 @Composable
-fun HomeActionCard(
+fun MinimalistActionCard(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
     icon: ImageVector,
+    containerColor: Color,
+    contentColor: Color,
     onClick: () -> Unit
 ) {
-    Surface(
+    ElevatedCard(
         onClick = onClick,
-        modifier = modifier.height(140.dp),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-        tonalElevation = 0.dp
+        modifier = modifier.height(92.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = contentColor
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = contentColor.copy(alpha = 0.8f)
+                )
+            }
             Icon(
                 imageVector = icon,
                 contentDescription = title,
-                modifier = Modifier.size(32.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.size(24.dp),
+                tint = contentColor
             )
         }
     }
 }
 
 @Composable
-fun InfoSection(title: String, content: String, modifier: Modifier = Modifier) {
+fun MinimalistInfoSection(title: String, content: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.5.sp,
+            letterSpacing = 1.2.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag(TestTags.V2.Home.infoSectionTitle(title))
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Surface(
+        ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+            shape = MaterialTheme.shapes.medium,
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Text(
                 text = content,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 18.sp,
                 modifier = Modifier
                     .padding(16.dp)
                     .testTag(TestTags.V2.Home.infoSectionContent(title))

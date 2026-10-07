@@ -14,7 +14,7 @@ android {
         applicationId = "com.creative.greencheck"
         minSdk = 30
         targetSdk = 36
-        versionCode = 6
+        versionCode = 7
         versionName = "3.0"
 
         testInstrumentationRunner = "com.creative.greencheck.HiltTestRunner"

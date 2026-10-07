@@ -1,6 +1,7 @@
 package com.creative.greencheck.ui.screens.v2
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -36,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -45,12 +46,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.creative.greencheck.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 import com.creative.greencheck.ui.viewmodels.ScanItemViewModel
-
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun ManualEntryScreen(
@@ -80,66 +79,66 @@ fun ManualEntryScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp, vertical = 32.dp)
+            .padding(horizontal = 24.dp, vertical = 28.dp)
             .testTag(TestTags.V2.ManualEntry.SCREEN),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Surface(
+        Box(
             modifier = Modifier
-                .size(100.dp)
-                .padding(bottom = 16.dp)
+                .size(72.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 .testTag(TestTags.V2.ManualEntry.LOGO_CONTAINER),
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-            shape = CircleShape
+            contentAlignment = Alignment.Center
         ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Default.Dialpad,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .testTag(TestTags.V2.ManualEntry.LOGO_ICON)
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Dialpad,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier
+                    .size(36.dp)
+                    .testTag(TestTags.V2.ManualEntry.LOGO_ICON)
+            )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = "Manual Identification",
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.testTag(TestTags.V2.ManualEntry.TITLE)
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Enter the numeric UPC or EAN code found on the product packaging to retrieve its ingredients.",
+            text = "Enter the numeric UPC or EAN code found on the product packaging.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .testTag(TestTags.V2.ManualEntry.SUBTITLE),
-            lineHeight = 20.sp
+                .testTag(TestTags.V2.ManualEntry.SUBTITLE)
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
-        Surface(
+        // Material 3 Card Input Container
+        ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.V2.ManualEntry.INPUT_CARD),
-            shape = RoundedCornerShape(24.dp),
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+            shape = MaterialTheme.shapes.large,
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedTextField(
@@ -158,10 +157,10 @@ fun ManualEntryScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .testTag(TestTags.V2.ManualEntry.BARCODE_FIELD),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = MaterialTheme.shapes.medium,
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
                     ),
                     supportingText = {
                         Text(
@@ -190,22 +189,22 @@ fun ManualEntryScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = { handleSearch() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
+                        .height(50.dp)
                         .testTag(TestTags.V2.ManualEntry.BTN_IDENTIFY),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = MaterialTheme.shapes.medium
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
                         modifier = Modifier.testTag(TestTags.V2.ManualEntry.BTN_IDENTIFY_ICON)
                     )
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Identify Product",
                         style = MaterialTheme.typography.titleSmall,
@@ -224,13 +223,13 @@ fun ManualEntryScreen(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .testTag(TestTags.V2.ManualEntry.QUOTA_CONTAINER),
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
-            shape = RoundedCornerShape(8.dp)
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = MaterialTheme.shapes.small
         ) {
             Text(
                 text = "Quota: $remainingManual of 5 entries remaining",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 6.dp)
                     .testTag(TestTags.V2.ManualEntry.QUOTA_TEXT)

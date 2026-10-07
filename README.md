@@ -1,53 +1,44 @@
 # GreenCheck 🌱
 
-**GreenCheck** is a minimalist, privacy-first Android application designed to help users instantly identify vegan products. By scanning barcodes or searching an extensive database, GreenCheck leverages the [Open Food Facts](https://world.openfoodfacts.org/) API to provide real-time ingredient analysis and ethical dietary guidance.
+**GreenCheck** is a native, privacy-first Android application designed to help users instantly identify vegan products. By scanning product barcodes or entering UPC codes, GreenCheck leverages the [Open Food Facts](https://world.openfoodfacts.org/) API to provide real-time ingredient analysis and ethical dietary guidance.
 
-Built with a "Botanical Minimalist" aesthetic, GreenCheck offers a sophisticated, ad-free experience that respects user privacy through a strictly local-only architecture.
+Built following pure **Android Material 3 (M3) UI Guidelines** and a vibrant "Botanical Minimalist" aesthetic, GreenCheck offers a sophisticated, ad-free experience that respects user privacy through a strictly local-only architecture.
 
 ---
 
 ## 📱 App Screenshots
 
 <p align="center">
-  <img src="images/Dark/GreenCheck - Welcome Screen.png" width="130" alt="Welcome Screen" />
-  <img src="images/Dark/GreenCheck - Home Screen.png" width="130" alt="Home Screen" />
-  <img src="images/Dark/GreenCheck - Manual Screen - 1.png" width="130" alt="Manual Entry Screen 1" />
-  <img src="images/Dark/GreenCheck - Manual Screen - 2.png" width="130" alt="Manual Entry Screen 2" />
-  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 1.png" width="130" alt="Ingredient Search Screen 1" />
-  <img src="images/Dark/GreenCheck - Ingredient Search Screen - 2.png" width="130" alt="Ingredient Search Screen 2" />
-  <img src="images/Dark/GreenCheck - Product Screen - 1.png" width="130" alt="Product Screen 1" />
-  <img src="images/Dark/GreenCheck - Product Screen - 2.png" width="130" alt="Product Screen 2" />
-  <img src="images/Dark/GreenCheck - Product Screen - Alternative - 1.png" width="130" alt="Plant-Based Alternatives Discovery 1" />
-  <img src="images/Dark/GreenCheck - Product Screen - Alternative - 2.png" width="130" alt="Plant-Based Alternatives Discovery 2" />
-  <img src="images/Dark/GreenCheck - Product Screen - Alternative - 3.png" width="130" alt="Alternative Product Detail Sheet" />
-  <img src="images/Dark/GreenCheck - History Screen.png" width="130" alt="History Screen" />
-  <img src="images/Dark/GreenCheck - Empty History Screen.png" width="130" alt="Empty History Screen" />
-  <img src="images/Dark/GreenCheck - Privacy Screen.png" width="130" alt="Privacy Transparency Screen" />
-  <img src="images/Dark/GreenCheck - Quota Usage Screen.png" width="130" alt="Daily Quota Usage Screen" />
+  <img src="images/1. Welcome Screen.png" width="140" alt="Welcome Screen" />
+  <img src="images/2. Privacy & Transparency.png" width="140" alt="Privacy & Transparency" />
+  <img src="images/3. Home Screen.png" width="140" alt="Home Screen" />
+  <img src="images/4. Manual Screen.png" width="140" alt="Manual Barcode Entry" />
+  <img src="images/10. camera Screen.png" width="140" alt="Camera Barcode Scanner" />
+  <img src="images/5. Product Screen - 1.png" width="140" alt="Product Screen - Status Banner" />
+  <img src="images/6. Product Screen -21.png" width="140" alt="Product Screen - Breakdown" />
+  <img src="images/7. Product Screen - 3.png" width="140" alt="Product Screen - Ingredients" />
+  <img src="images/8. History Screen.png" width="140" alt="Scan History" />
+  <img src="images/9. History Screen - Empty.png" width="140" alt="Empty History" />
 </p>
 
 ---
 
-## ✨ What's New in Version 2.0 (v2)
+## ✨ Pure Material 3 Native Design & Features
 
-GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overhaul, enhanced product and ingredient discovery, smart plant-based alternative recommendations, granular daily quota tracking, and comprehensive automated test tags:
+GreenCheck features a complete **Material 3 (M3) UI Layout & Color Restructuring**, delivering a fluid, native Android look and feel:
 
-- **5-Tab Navigation Scaffolding (`MainScaffolding`)**: A seamless navigation hub featuring **Home**, **Manual Entry**, **Camera Scanner**, **Scan History**, and **Product/Ingredient Search**.
-- **Onboarding & Welcome Screen (`WelcomeScreen`)**: First-time user welcome flow highlighting privacy guarantees, zero tracking, and instant vegan scanning.
-- **Botanical Home Dashboard (`HomeScreen`)**: Central hub offering quick action cards (Scan, Manual Entry, Search, History), scan statistics, and recent scan previews.
-- **Real-Time Barcode Scanner (`ScannerScreen`)**: Upgraded CameraX & Google ML Kit scanner with flash controls, status indicators, and instant local database caching to minimize network usage.
-- **Manual Barcode Dialpad (`ManualEntryScreen`)**: Dedicated numeric dialpad with clear and backspace controls for easy barcode entry when camera scanning isn't practical.
-- **Dual-Mode Search (`SearchProductOrIngredientScreen`)**: Advanced search supporting both **Product Name Search** and **Ingredient Search** with tab switching, debounced queries, and detailed result cards.
-- **Comprehensive Product Analysis (`ProductScreen`)**: Rich product detail view featuring clear vegan status banners (Vegan, Non-Vegan, Maybe/Unknown), high-res front product photos (loaded via Coil based on `image_front_url`/`image_url`), scrollable category & label chips (e.g. *"No Added Sugar"*, *"Palm Oil Free"*), detailed component ingredient breakdowns with percentage badges (`percent`/`percent_estimate`) and nested sub-ingredients (e.g. stabilisers $\rightarrow$ gellan gum carrageenan), categorized dietary analysis cards, full raw ingredient text statements, and Open Food Facts attribution.
-- **Plant-Based Alternatives Engine (`VeganAlternativesSection` & `AlternativeProductDetailSheet`)**: Instantly discover certified vegan alternatives in the same product category with one-tap fetching, scrollable alternative product recommendation cards, and a quick-preview modal bottom sheet to inspect ingredients and switch products.
-- **Local History & Wipe (`HistoryScreen` & `EmptyHistoryScreen`)**: Persistent scan history powered by Room database, complete with thumbnail cards, quick details view, and single-tap history wipe.
-- **Granular Fair-Use Daily Quotas (`QuotaExhaustedScreen`)**: Independent rolling 24-hour limit enforcement across 4 separate features:
-  - Barcode Scans (10/day)
-  - Manual Barcode Entries (10/day)
-  - Product & Ingredient Searches (10/day)
-  - Alternative Searches (10/day)
-- **App Usage & Privacy Transparency Sheets (`TransparencyInfoSheet`)**: Quick-access top-bar info modal showing live daily quota usage across all features, exact reset countdowns, ODbL dataset link, and transparent local privacy commitments.
-- **Full V2 Automated Test Coverage (`TestTags.V2`)**: Every v2 component, screen, and alternative product action is tagged with standardized `TestTags` for robust automated UI and robot testing.
+- **Material You & Dynamic Color Support**: Built on the official M3 color system with **Dynamic Color** (Android 12+) enabled by default, harmonized with a rich botanical tonal palette (`primaryContainer`, `secondaryContainer`, `tertiaryContainer`, `surfaceContainerHigh`).
+- **Standard M3 Typography & Shape Token Scale**: Implements standard Material 3 typography tokens (`Display`, `Headline`, `Title`, `Body`, `Label`) and shape scales (4.dp to 28.dp).
+- **4-Tab Navigation Scaffolding (`MainScaffolding`)**: Bottom `NavigationBar` with active M3 selection indicator pills and filled/outlined icon states for **Home**, **Manual Entry**, **Camera Scanner**, and **Scan History**.
+- **Per-Screen Top App Bars**: Dynamic top app bars with screen titles and native back navigation arrow buttons (`IconButton` with `Icons.AutoMirrored.Filled.ArrowBack`) on sub-screens and product details.
+- **Botanical Home Dashboard (`HomeScreen`)**: M3 hero card, prominent M3 `ExtendedFloatingActionButton` for scanning, and colorful quick action cards.
+- **Real-Time Barcode Scanner (`ScannerScreen`)**: CameraX & Google ML Kit scanner with M3 translucent overlay card, `FilledTonalIconButton` vibration toggle, and local database caching.
+- **Manual Barcode Dialpad (`ManualEntryScreen`)**: M3 `ElevatedCard` form container with digit counter supporting text and instant search.
+- **Comprehensive Product Analysis (`ProductScreen`)**: Rich detail view with semantic status banners (Vegan, Non-Vegan, Uncertain), M3 `AssistChip` category/label badges, M3 `ListItem` ingredient rows with status dots and percentage badges, and full ingredient lists.
+- **Plant-Based Alternatives Engine**: Discover certified vegan alternatives in the same product category with one-tap fetching, scrollable alternative product recommendation cards, and quick-preview modal sheets.
+- **Local History & Wipe (`HistoryScreen` & `EmptyHistoryScreen`)**: Persistent scan history powered by Room database with M3 product cards and single-tap history clear.
+- **Granular Daily Quotas & Privacy (`TransparencyInfoSheet` & `QuotaExhaustedScreen`)**: Independent rolling 24-hour limit enforcement across features (Barcode Scans, Manual Entries, Alternative Searches) with exact reset countdowns and zero tracking promises.
+- **Automated Test Coverage (`TestTags.V2`)**: Every M3 component, screen, and action is tagged with standardized `TestTags` for automated UI and robot testing.
 
 ---
 
@@ -56,26 +47,24 @@ GreenCheck v2 is a major redesign of the app, introducing a complete UI/UX overh
 - **Advanced Barcode Scanning**: Rapid product identification using CameraX and Google ML Kit.
 - **Intelligent Ingredient Analysis**: Deep-dive analysis of ingredients to determine vegan suitability, presented in a clean, categorized list.
 - **Plant-Based Alternatives Engine**: Discover certified vegan alternatives in the same category with interactive quick-view modal sheets and direct product navigation.
-- **Dual Product & Ingredient Search**: Discover products by name or search for specific ingredients across millions of entries.
 - **Locale-Aware Intelligence**: Automatically routes API requests based on your device's locale (e.g., US, IN, FR) for maximum regional relevance.
 - **Fair-Use Usage Quotas**: Locally enforced, rolling 24-hour limits per feature to ensure fair API access and project stability.
-- **Strictly Local History**: Persistent history of your scans and searches, stored safely on your physical device.
+- **Strictly Local History**: Persistent history of your scans, stored safely on your physical device.
 
 ## 🔒 Privacy & Transparency
 
-GreenCheck is a passion project built on the principle of absolute privacy:
+GreenCheck is built on the principle of absolute privacy:
 
 - **No Accounts Required**: No Google Sign-In, no emails, and no cloud accounts. You are completely anonymous.
 - **Zero Data Collection**: We do not track your behavior, sell your data, or upload your scan history to any servers.
 - **On-Device Sovereignty**: All your history, settings, and usage counters are stored strictly on your device using Jetpack DataStore and Room.
-- **Open Source Integrity**: Our code is fully open source. We encourage independent audits of our codebase to verify our privacy and security claims.
+- **Open Source Integrity**: Our code is fully open source. We encourage independent audits of our codebase.
 
-## 🎨 Design Philosophy: Botanical Minimalism
+## 🎨 Design Philosophy: Native Botanical Material 3
 
-GreenCheck features a custom-built UI that moves away from industrial Material defaults toward an organic, "Botanical" experience:
-- **Sage Palette**: A calming, premium green-based color scheme.
-- **Soft Geometry**: Generous whitespace and high-radius rounded corners for a smooth, modern feel.
-- **Typography-First**: Refined text hierarchies and letter-spacing for maximum readability.
+- **Dynamic Botanical Palette**: Vibrant, accessible M3 tonal container fills and semantic status colors.
+- **Soft Geometry**: Native M3 shape scale tokens (Extra Small to Extra Large) for organic surface depth.
+- **Typography-First**: Official M3 typography hierarchy for maximum legibility.
 
 ## 🛠 Tech Stack
 
@@ -83,29 +72,10 @@ GreenCheck features a custom-built UI that moves away from industrial Material d
 - **UI Framework**: [Jetpack Compose](https://developer.android.com/jetpack/compose) with Material 3 & Navigation Compose
 - **Dependency Injection**: [Hilt](https://developer.android.com/training/dependency-injection/hilt-android)
 - **Local Storage**: [Room Database](https://developer.android.com/training/data-storage/room) & [Jetpack DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
-- **Networking**: [Retrofit](https://square.github.io/retrofit/) with custom Interceptors for locale-awareness and mandatory User-Agent compliance.
+- **Networking**: [Retrofit](https://square.github.io/retrofit/) with custom Interceptors for locale-awareness and User-Agent compliance.
 - **Image Loading**: [Coil](https://coil-kt.github.io/coil/)
 - **Camera & Scanning**: [CameraX](https://developer.android.com/training/camerax) & [ML Kit](https://developers.google.com/ml-kit/vision/barcode-scanning)
-- **Testing**: [JUnit 4](https://junit.org/junit4/), [MockK](https://mockk.io/), and a custom Robot-based UI testing engine with `TestTags.V2`.
-
-## 🏗 Architecture
-
-GreenCheck follows **Clean Architecture** principles and the **MVVM (Model-View-ViewModel)** pattern:
-- **Data Layer**: Handles API communication, locale-based routing, Room database storage, and DataStore usage counters.
-- **Domain Layer**: Contains pure Kotlin business models and repository abstractions.
-- **UI Layer**: Declarative Compose v2 screens and components that react to `StateFlow` updates.
-
-## 🧪 Testing & Quality
-
-Run unit tests:
-```bash
-./gradlew :app:testDebugUnitTest
-```
-
-Run UI tests (requires a connected device/emulator):
-```bash
-./gradlew :app:connectedDebugAndroidTest
-```
+- **Testing**: [JUnit 4](https://junit.org/junit4/), [MockK](https://mockk.io/), and [UI Automation Engine](https://github.com/rajbirsehmi/UI-Automation-Engine) (custom Robot-based UI testing framework).
 
 ## 📦 Getting Started
 
@@ -117,7 +87,7 @@ Run UI tests (requires a connected device/emulator):
 
 - **Data Source**: This application uses data from [Open Food Facts](https://world.openfoodfacts.org/).
 - **License**: The data is governed by the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/1-0/).
-- **App Source**: GreenCheck is an open-source project. Check the [GitHub Repository](https://github.com/rajbirsehmi/GreenCheck) for more details.
+- **App Source**: GreenCheck is an open-source project on [GitHub](https://github.com/rajbirsehmi/GreenCheck).
 
 ---
 

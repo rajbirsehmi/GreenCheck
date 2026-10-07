@@ -12,9 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -57,27 +58,38 @@ fun ProductItem(
     }
     val formattedDate = dateFormat.format(Date(product.timestamp))
 
-    val statusColor = when {
-        product.isVegan -> VeganStatusGreen
-        product.isNonVegan -> NonVeganStatusRed
-        else -> UncertainStatusYellow
+    val (statusColor, badgeContainer, badgeOnContainer, statusText) = when {
+        product.isVegan -> Quadruple(
+            VeganStatusGreen,
+            MaterialTheme.colorScheme.primaryContainer,
+            MaterialTheme.colorScheme.onPrimaryContainer,
+            "Vegan"
+        )
+        product.isNonVegan -> Quadruple(
+            NonVeganStatusRed,
+            MaterialTheme.colorScheme.errorContainer,
+            MaterialTheme.colorScheme.onErrorContainer,
+            "Non-Vegan"
+        )
+        else -> Quadruple(
+            UncertainStatusYellow,
+            MaterialTheme.colorScheme.tertiaryContainer,
+            MaterialTheme.colorScheme.onTertiaryContainer,
+            "Uncertain"
+        )
     }
 
-    val statusText = when {
-        product.isVegan -> "Vegan"
-        product.isNonVegan -> "Non-Vegan"
-        else -> "Uncertain"
-    }
-
-    Surface(
+    ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onClick(product) }
             .testTag(TestTags.V2.Components.ProductItem.container(product.barcode)),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
-        tonalElevation = 0.dp
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
@@ -91,15 +103,15 @@ fun ProductItem(
             Box(
                 modifier = Modifier
                     .size(64.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.35f))
+                    .clip(MaterialTheme.shapes.small)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .testTag(TestTags.V2.Components.ProductItem.IMAGE),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Default.Eco,
                     contentDescription = "Default Product Icon",
-                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier.size(28.dp)
                 )
 
@@ -119,8 +131,7 @@ fun ProductItem(
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = product.name ?: "Unnamed Product",
@@ -134,33 +145,43 @@ fun ProductItem(
                 Text(
                     text = (product.brands ?: "Unknown Brand").uppercase(),
                     style = MaterialTheme.typography.labelSmall,
-                    letterSpacing = 1.sp,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                    letterSpacing = 0.8.sp,
+                    color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.BRAND)
                 )
-                Spacer(modifier = Modifier.size(4.dp))
+                Spacer(modifier = Modifier.size(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(6.dp)
-                            .background(statusColor, CircleShape)
-                            .testTag(TestTags.V2.Components.ProductItem.statusDot(product.barcode))
-                    )
-                    Spacer(modifier = Modifier.width(6.6.dp))
-                    Text(
-                        text = statusText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = statusColor,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.statusText(product.barcode))
-                    )
+                    Surface(
+                        color = badgeContainer,
+                        shape = MaterialTheme.shapes.extraSmall
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(6.dp)
+                                    .background(statusColor, CircleShape)
+                                    .testTag(TestTags.V2.Components.ProductItem.statusDot(product.barcode))
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = statusText,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = badgeOnContainer,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.statusText(product.barcode))
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "• $formattedDate",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.timestamp(product.barcode))
                     )
                 }
@@ -168,6 +189,8 @@ fun ProductItem(
         }
     }
 }
+
+private data class Quadruple<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)
 
 @Composable
 @Preview(showBackground = true)

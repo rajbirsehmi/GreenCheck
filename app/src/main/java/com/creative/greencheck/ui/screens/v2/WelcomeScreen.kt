@@ -3,7 +3,6 @@ package com.creative.greencheck.ui.screens.v2
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
@@ -54,41 +52,41 @@ fun WelcomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .padding(28.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
-            
+            Spacer(modifier = Modifier.height(48.dp))
+
             Image(
                 painter = painterResource(id = R.drawable.leaves),
                 contentDescription = "Botanical Logo",
                 modifier = Modifier
-                    .size(140.dp)
+                    .size(110.dp)
                     .testTag(TestTags.V2.Welcome.LOGO),
                 contentScale = ContentScale.Fit
             )
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
+
+            Spacer(modifier = Modifier.height(20.dp))
+
             Text(
                 text = "GreenCheck",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 4.sp,
+                letterSpacing = 2.sp,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.testTag(TestTags.V2.Welcome.TITLE)
             )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = "Ethical choices made simple.",
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                letterSpacing = 1.sp,
+                letterSpacing = 0.5.sp,
                 modifier = Modifier.testTag(TestTags.V2.Welcome.SUBTITLE)
             )
         }
@@ -97,7 +95,7 @@ fun WelcomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp)
+                .padding(bottom = 24.dp)
                 .testTag(TestTags.V2.Welcome.BOTTOM_SECTION),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -107,39 +105,38 @@ fun WelcomeScreen(
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .testTag(TestTags.V2.Welcome.DESCRIPTION),
-                lineHeight = 22.sp
+                    .padding(horizontal = 12.dp)
+                    .testTag(TestTags.V2.Welcome.DESCRIPTION)
             )
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Button(
                 onClick = onGetStartedClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp)
+                    .height(50.dp)
                     .testTag(TestTags.V2.Welcome.BTN_GET_STARTED),
-                shape = RoundedCornerShape(16.dp)
+                shape = MaterialTheme.shapes.medium
             ) {
                 Text(
                     text = "Get Started",
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.testTag(TestTags.V2.Welcome.BTN_GET_STARTED_TEXT)
                 )
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(20.dp)
+                        .size(18.dp)
                         .testTag(TestTags.V2.Welcome.BTN_GET_STARTED_ICON)
                 )
             }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             TextButton(
                 onClick = { showTransparencySheet = true },
                 modifier = Modifier.testTag(TestTags.V2.Welcome.BTN_HOW_WE_HANDLE_DATA)
@@ -159,7 +156,8 @@ fun WelcomeScreen(
         ModalBottomSheet(
             onDismissRequest = { showTransparencySheet = false },
             sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            shape = MaterialTheme.shapes.extraLarge,
             modifier = Modifier.testTag(TestTags.V2.Welcome.SHEET_TRANSPARENCY)
         ) {
             TransparencyInfoSheet()
