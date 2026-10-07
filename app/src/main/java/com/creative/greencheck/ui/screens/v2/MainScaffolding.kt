@@ -358,8 +358,7 @@ fun MainScaffolding() {
                 HomeScreen(
                     onNavigateToManual = { navigateToTab(BottomTabs.MANUAL) },
                     onNavigateToScanner = { navigateToTab(BottomTabs.SCAN) },
-                    onNavigateToHistory = { navigateToTab(BottomTabs.HISTORY) },
-                    onNavigateToSearch = { navigateToTab(BottomTabs.SEARCH) }
+                    onNavigateToHistory = { navigateToTab(BottomTabs.HISTORY) }
                 )
             }
             composable(BottomTabs.MANUAL) {

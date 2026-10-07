@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 import com.creative.greencheck.ui.viewmodels.LoadingUiState

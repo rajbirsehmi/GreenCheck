@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -46,8 +45,7 @@ import com.creative.greencheck.ui.theme.IsItVeganTheme
 fun HomeScreen(
     onNavigateToManual: () -> Unit = {},
     onNavigateToScanner: () -> Unit = {},
-    onNavigateToHistory: () -> Unit = {},
-    onNavigateToSearch: () -> Unit = {}
+    onNavigateToHistory: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -148,7 +146,7 @@ fun HomeScreen(
 
         // Quick Actions Header
         Text(
-            text = "QUICK ACTIONS",
+            text = "FEATURES",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.2.sp,
@@ -158,19 +156,19 @@ fun HomeScreen(
         
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Material 3 Tonal Action Grid
-        Row(
+        // Material 3 Feature List
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag(TestTags.V2.Home.ACTIONS_ROW_1),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .testTag(TestTags.V2.Home.ACTIONS_LIST),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             MinimalistActionCard(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .testTag(TestTags.V2.Home.CARD_SCANNER),
-                title = "Scanner",
-                subtitle = "Barcode",
+                title = "Barcode Scanner",
+                subtitle = "Scan product barcode instantly with camera",
                 icon = ImageVector.vectorResource(R.drawable.barcode_scanner),
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -178,31 +176,10 @@ fun HomeScreen(
             )
             MinimalistActionCard(
                 modifier = Modifier
-                    .weight(1f)
-                    .testTag(TestTags.V2.Home.CARD_SEARCH),
-                title = "Search",
-                subtitle = "Database",
-                icon = Icons.Default.Search,
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                onClick = onNavigateToSearch
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(TestTags.V2.Home.ACTIONS_ROW_2),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            MinimalistActionCard(
-                modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .testTag(TestTags.V2.Home.CARD_MANUAL),
-                title = "Manual",
-                subtitle = "UPC Code",
+                title = "Manual Entry",
+                subtitle = "Look up product by typing UPC digits",
                 icon = Icons.Default.Dialpad,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -210,10 +187,10 @@ fun HomeScreen(
             )
             MinimalistActionCard(
                 modifier = Modifier
-                    .weight(1f)
+                    .fillMaxWidth()
                     .testTag(TestTags.V2.Home.CARD_HISTORY),
-                title = "History",
-                subtitle = "Recent Finds",
+                title = "Scan History",
+                subtitle = "Review previously scanned products",
                 icon = Icons.Default.History,
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -254,7 +231,7 @@ fun MinimalistActionCard(
 ) {
     ElevatedCard(
         onClick = onClick,
-        modifier = modifier.height(92.dp),
+        modifier = modifier.height(84.dp),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.elevatedCardColors(
             containerColor = containerColor,
@@ -265,10 +242,16 @@ fun MinimalistActionCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                modifier = Modifier.size(28.dp),
+                tint = contentColor
+            )
+            Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
                     text = title,
@@ -279,16 +262,10 @@ fun MinimalistActionCard(
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = contentColor.copy(alpha = 0.8f)
                 )
             }
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                modifier = Modifier.size(24.dp),
-                tint = contentColor
-            )
         }
     }
 }
