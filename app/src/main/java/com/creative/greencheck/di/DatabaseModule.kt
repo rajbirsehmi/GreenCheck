@@ -24,7 +24,7 @@ object DatabaseModule {
             "is_it_vegan_db"
         )
             .addMigrations(AppDatabase.MIGRATION_4_5)
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
 

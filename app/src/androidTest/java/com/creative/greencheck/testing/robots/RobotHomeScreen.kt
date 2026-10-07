@@ -16,7 +16,6 @@ class RobotHomeScreen : ComposeRuleScope {
     fun verifyQuickActions() {
         assertTagDisplayed(TestTags.V2.Home.QUICK_ACTIONS_TITLE)
         assertTagDisplayed(TestTags.V2.Home.CARD_SCANNER)
-        assertTagDisplayed(TestTags.V2.Home.CARD_SEARCH)
         assertTagDisplayed(TestTags.V2.Home.CARD_MANUAL)
         assertTagDisplayed(TestTags.V2.Home.CARD_HISTORY)
     }
@@ -31,7 +30,6 @@ class RobotHomeScreen : ComposeRuleScope {
     }
 
     fun clickScanner() = clickOnTag(TestTags.V2.Home.CARD_SCANNER)
-    fun clickSearch() = clickOnTag(TestTags.V2.Home.CARD_SEARCH)
     fun clickManual() = clickOnTag(TestTags.V2.Home.CARD_MANUAL)
     fun clickHistory() = clickOnTag(TestTags.V2.Home.CARD_HISTORY)
 }

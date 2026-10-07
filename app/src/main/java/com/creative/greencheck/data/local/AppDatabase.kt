@@ -10,7 +10,7 @@ import com.creative.greencheck.data.local.dao.ProductDao
 import com.creative.greencheck.data.local.entity.IngredientEntity
 import com.creative.greencheck.data.local.entity.ProductEntity
 
-@Database(entities = [ProductEntity::class, IngredientEntity::class], version = 5)
+@Database(entities = [ProductEntity::class, IngredientEntity::class], version = 5, exportSchema = false)
 @TypeConverters(RoomConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
