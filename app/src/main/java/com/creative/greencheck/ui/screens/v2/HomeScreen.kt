@@ -122,7 +122,7 @@ fun HomeScreen(
                     onClick = onNavigateToScanner,
                     icon = {
                         Icon(
-                            imageVector = Icons.Default.QrCodeScanner,
+                            painter = painterResource(id = R.drawable.barcode_scanner),
                             contentDescription = null
                         )
                     },
