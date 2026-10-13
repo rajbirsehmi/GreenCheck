@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.creative.greencheck.data.local.FeatureType
-import com.creative.greencheck.data.local.UsageManager
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,8 +31,7 @@ sealed interface AlternativesUiState {
 
 @HiltViewModel
 class ProductViewModel @Inject constructor(
-    private val repository: Repository,
-    private val usageManager: UsageManager
+    private val repository: Repository
 ) : ViewModel() {
 
     var uiState by mutableStateOf<ProductUiState>(ProductUiState.Loading)
@@ -80,30 +78,25 @@ class ProductViewModel @Inject constructor(
 
         fetchAlternativesJob?.cancel()
         fetchAlternativesJob = viewModelScope.launch {
-            if (usageManager.canUseFeature(FeatureType.ALTERNATIVE_SEARCH)) {
-                alternativesState = AlternativesUiState.Loading
-                val primaryCategory = product.categories?.split(",")?.firstOrNull()?.trim()
-                    ?.takeIf { it.isNotBlank() }
-                val searchQuery = if (primaryCategory == null) {
-                    product.name?.split(" ")?.take(2)?.joinToString(" ")
-                } else null
+            alternativesState = AlternativesUiState.Loading
+            val primaryCategory = product.categories?.split(",")?.firstOrNull()?.trim()
+                ?.takeIf { it.isNotBlank() }
+            val searchQuery = if (primaryCategory == null) {
+                product.name?.split(" ")?.take(2)?.joinToString(" ")
+            } else null
 
-                repository.getVeganAlternatives(
-                    category = primaryCategory,
-                    searchQuery = searchQuery
-                ).onSuccess { alternatives ->
-                    usageManager.incrementUsage(FeatureType.ALTERNATIVE_SEARCH)
-                    val filtered = alternatives.filter { it.barcode != product.barcode }
-                    alternativesState = if (filtered.isEmpty()) {
-                        AlternativesUiState.Error("No vegan alternatives found.")
-                    } else {
-                        AlternativesUiState.Success(filtered)
-                    }
-                }.onFailure {
-                    alternativesState = AlternativesUiState.Error(it.message ?: "Failed to load alternatives.")
+            repository.getVeganAlternatives(
+                category = primaryCategory,
+                searchQuery = searchQuery
+            ).onSuccess { alternatives ->
+                val filtered = alternatives.filter { it.barcode != product.barcode }
+                alternativesState = if (filtered.isEmpty()) {
+                    AlternativesUiState.Error("No vegan alternatives found.")
+                } else {
+                    AlternativesUiState.Success(filtered)
                 }
-            } else {
-                _quotaExhausted.value = FeatureType.ALTERNATIVE_SEARCH
+            }.onFailure {
+                alternativesState = AlternativesUiState.Error(it.message ?: "Failed to load alternatives.")
             }
         }
     }

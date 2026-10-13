@@ -28,7 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +56,6 @@ fun SearchProductOrIngredientScreen(
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val quotaExhausted by viewModel.quotaExhausted.collectAsStateWithLifecycle()
-    val remainingIngredient by viewModel.remainingIngredientSearches.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
     val currentQuery by viewModel.currentQuery.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
@@ -70,7 +68,6 @@ fun SearchProductOrIngredientScreen(
     }
 
     SearchProductOrIngredientContent(
-        remainingIngredient = remainingIngredient,
         searchResults = searchResults,
         currentQuery = currentQuery,
         isLoading = isLoading,
@@ -85,7 +82,6 @@ fun SearchProductOrIngredientScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchProductOrIngredientContent(
-    remainingIngredient: Int,
     searchResults: List<Product>,
     currentQuery: String = "",
     isLoading: Boolean,
@@ -184,22 +180,6 @@ fun SearchProductOrIngredientContent(
                 ),
                 modifier = Modifier.testTag(TestTags.V2.Search.FILTER_CHIP_INGREDIENTS)
             )
-
-            Surface(
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier.testTag(TestTags.V2.Search.QUOTA_CONTAINER)
-            ) {
-                Text(
-                    text = "Quota: $remainingIngredient / 10 left",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .testTag(TestTags.V2.Search.QUOTA_TEXT)
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

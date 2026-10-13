@@ -21,5 +21,13 @@ class RobotMainScaffolding: ComposeRuleScope {
     }
 
     fun clickNavItem(route: String) = clickOnTag(TestTags.V2.Scaffolding.navItem(route))
-    fun clickInfo() = clickOnTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO)
+    fun clickUsage() = clickOnTag(TestTags.V2.Scaffolding.BTN_OPEN_USAGE)
+    fun clickInfo() = clickUsage()
+    fun clickPrivacy() = clickOnTag(TestTags.V2.Scaffolding.BTN_OPEN_PRIVACY)
+    fun clickDataTransparencyInUsageSheet() = clickOnTag(TestTags.V2.Scaffolding.BTN_DATA_TRANSPARENCY)
+    fun verifyPrivacyButton() = assertTagDisplayed(TestTags.V2.Scaffolding.BTN_OPEN_PRIVACY)
+    fun verifyUsageButton() = assertTagDisplayed(TestTags.V2.Scaffolding.BTN_OPEN_USAGE)
+    fun verifyInfoButton() = verifyUsageButton()
+    fun verifyAppUsageSheet() = assertTagDisplayed(TestTags.V2.Scaffolding.SHEET_APP_USAGE)
+    fun verifyPrivacySheet() = assertTagDisplayed(TestTags.V2.Components.Privacy.SHEET_CONTAINER)
 }
