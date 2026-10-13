@@ -45,6 +45,30 @@ class TestMainScaffoldingScreen {
         UiTestEngine.withRobot(RobotMainScaffolding()) {
             verifyThatTopAppBarShowsTheAppName()
             verifyBottomNav()
+            verifyPrivacyButton()
+            verifyUsageButton()
+        }
+    }
+
+    @Test
+    fun testScaffolding_OpenPrivacySheetFromTopAppBar() {
+        UiTestEngine.withRobot(RobotWelcomeScreen()) {
+            clickGetStartedIfVisible()
+        }
+        UiTestEngine.withRobot(RobotMainScaffolding()) {
+            clickPrivacy()
+            verifyPrivacySheet()
+        }
+    }
+
+    @Test
+    fun testScaffolding_OpenUsageSheet() {
+        UiTestEngine.withRobot(RobotWelcomeScreen()) {
+            clickGetStartedIfVisible()
+        }
+        UiTestEngine.withRobot(RobotMainScaffolding()) {
+            clickUsage()
+            verifyAppUsageSheet()
         }
     }
 }

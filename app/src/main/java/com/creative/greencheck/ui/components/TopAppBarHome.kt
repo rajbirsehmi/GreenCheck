@@ -4,7 +4,8 @@ package com.creative.greencheck.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.DataUsage
+import androidx.compose.material.icons.outlined.Shield
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,7 +27,8 @@ fun TopAppBarHome(
     title: String = "GreenCheck",
     showBack: Boolean = false,
     onBackClick: () -> Unit = {},
-    onAccountClick: () -> Unit = {}
+    onUsageClick: () -> Unit = {},
+    onPrivacyClick: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -54,14 +56,25 @@ fun TopAppBarHome(
         },
         actions = {
             IconButton(
-                onClick = onAccountClick,
-                modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO)
+                onClick = onPrivacyClick,
+                modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_PRIVACY)
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = "Information",
+                    imageVector = Icons.Outlined.Shield,
+                    contentDescription = "Privacy & Transparency",
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_INFO_ICON)
+                    modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_PRIVACY_ICON)
+                )
+            }
+            IconButton(
+                onClick = onUsageClick,
+                modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_USAGE)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.DataUsage,
+                    contentDescription = "App Usage",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_OPEN_USAGE_ICON)
                 )
             }
         },

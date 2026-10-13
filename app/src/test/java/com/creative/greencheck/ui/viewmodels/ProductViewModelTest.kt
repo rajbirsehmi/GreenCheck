@@ -1,7 +1,5 @@
 package com.creative.greencheck.ui.viewmodels
 
-import com.creative.greencheck.data.local.FeatureType
-import com.creative.greencheck.data.local.UsageManager
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
 import io.mockk.coEvery
@@ -25,14 +23,12 @@ class ProductViewModelTest {
 
     private lateinit var viewModel: ProductViewModel
     private val repository: Repository = mockk()
-    private val usageManager: UsageManager = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        coEvery { usageManager.canUseFeature(FeatureType.ALTERNATIVE_SEARCH) } returns true
-        viewModel = ProductViewModel(repository, usageManager)
+        viewModel = ProductViewModel(repository)
     }
 
     @After
