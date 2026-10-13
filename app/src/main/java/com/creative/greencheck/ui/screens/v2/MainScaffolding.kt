@@ -26,12 +26,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.outlined.Dialpad
 import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -107,7 +104,7 @@ object BottomTabs {
 @Composable
 fun MainScaffolding() {
     val bottomNavController = rememberNavController()
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showUsageSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val context = LocalContext.current
 
@@ -115,12 +112,10 @@ fun MainScaffolding() {
     val infoViewModel = hiltViewModel<AppInfoViewModel>()
 
     val hasSeenIntro by infoViewModel.hasSeenIntro.collectAsStateWithLifecycle()
-    var showTransparencyInAccount by remember { mutableStateOf(false) }
+    var showTransparencySheet by remember { mutableStateOf(false) }
 
     val scannerUsage by infoViewModel.scannerUsage.collectAsStateWithLifecycle()
     val manualUsage by infoViewModel.manualUsage.collectAsStateWithLifecycle()
-    val ingredientUsage by infoViewModel.ingredientSearchUsage.collectAsStateWithLifecycle()
-    val alternativeUsage by infoViewModel.alternativeSearchUsage.collectAsStateWithLifecycle()
     val nextResetTime by infoViewModel.nextResetTime.collectAsStateWithLifecycle()
 
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
@@ -201,7 +196,8 @@ fun MainScaffolding() {
                     title = topBarTitle,
                     showBack = isSubScreen,
                     onBackClick = { bottomNavController.popBackStack() },
-                    onAccountClick = { showBottomSheet = true }
+                    onUsageClick = { showUsageSheet = true },
+                    onPrivacyClick = { showTransparencySheet = true }
                 )
             }
         },
@@ -475,9 +471,9 @@ fun MainScaffolding() {
             }
         }
 
-        if (showBottomSheet) {
+        if (showUsageSheet) {
             ModalBottomSheet(
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = { showUsageSheet = false },
                 sheetState = sheetState,
                 containerColor = MaterialTheme.colorScheme.surface,
                 modifier = Modifier
@@ -490,7 +486,7 @@ fun MainScaffolding() {
                         .padding(24.dp),
                 ) {
                     Text(
-                        text = "App Usage",
+                        text = "Daily Usage Limits",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -517,24 +513,6 @@ fun MainScaffolding() {
                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                             )
                             UsageRow("Manual Entries", manualUsage, FeatureType.MANUAL_ENTRY.limit)
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 12.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                            )
-                            UsageRow(
-                                "Ingredient Searches",
-                                ingredientUsage,
-                                FeatureType.SEARCH_INGREDIENT.limit
-                            )
-                            HorizontalDivider(
-                                modifier = Modifier.padding(vertical = 12.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                            )
-                            UsageRow(
-                                "Alternative Searches",
-                                alternativeUsage,
-                                FeatureType.ALTERNATIVE_SEARCH.limit
-                            )
 
                             if (nextResetTime > 0) {
                                 HorizontalDivider(
@@ -583,47 +561,13 @@ fun MainScaffolding() {
                             modifier = Modifier.testTag(TestTags.V2.Scaffolding.LINK_ODBL_TEXT)
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = { showTransparencyInAccount = true },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag(TestTags.V2.Scaffolding.BTN_DATA_TRANSPARENCY),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Security,
-                            contentDescription = null,
-                            modifier = Modifier.testTag(TestTags.V2.Scaffolding.BTN_DATA_TRANSPARENCY_ICON)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text("Data Transparency")
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    Button(
-                        onClick = { showBottomSheet = false },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag(TestTags.V2.Scaffolding.BTN_CLOSE_USAGE_SHEET),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("Close")
-                    }
                 }
             }
         }
 
-        if (showTransparencyInAccount) {
+        if (showTransparencySheet) {
             ModalBottomSheet(
-                onDismissRequest = { showTransparencyInAccount = false },
+                onDismissRequest = { showTransparencySheet = false },
                 containerColor = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.testTag(TestTags.V2.Scaffolding.SHEET_TRANSPARENCY_IN_ACCOUNT)
             ) {

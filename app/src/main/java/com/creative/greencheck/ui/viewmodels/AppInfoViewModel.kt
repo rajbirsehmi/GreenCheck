@@ -22,12 +22,6 @@ class AppInfoViewModel @Inject constructor(
     val manualUsage: StateFlow<Int> = usageManager.getRemainingUsage(FeatureType.MANUAL_ENTRY)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FeatureType.MANUAL_ENTRY.limit)
 
-    val ingredientSearchUsage: StateFlow<Int> = usageManager.getRemainingUsage(FeatureType.SEARCH_INGREDIENT)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FeatureType.SEARCH_INGREDIENT.limit)
-
-    val alternativeSearchUsage: StateFlow<Int> = usageManager.getRemainingUsage(FeatureType.ALTERNATIVE_SEARCH)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), FeatureType.ALTERNATIVE_SEARCH.limit)
-
     val nextResetTime: StateFlow<Long> = usageManager.getNextResetTimestamp()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
 

@@ -50,8 +50,13 @@ object TestTags {
             fun usageLabel(label: String) = "usage_label_${label.lowercase().replace(" ", "_")}"
             fun usageValue(label: String) = "usage_value_${label.lowercase().replace(" ", "_")}"
             const val TOP_BAR_TITLE = "top_bar_title"
-            const val BTN_OPEN_INFO = "button_open_info"
-            const val BTN_OPEN_INFO_ICON = "button_open_info_icon"
+            const val BTN_OPEN_USAGE = "button_open_usage"
+            const val BTN_OPEN_USAGE_ICON = "button_open_usage_icon"
+            const val BTN_OPEN_INFO = BTN_OPEN_USAGE
+            const val BTN_OPEN_INFO_ICON = BTN_OPEN_USAGE_ICON
+            const val BTN_OPEN_PRIVACY = "button_open_privacy"
+            const val BTN_OPEN_PRIVACY_ICON = "button_open_privacy_icon"
+            const val SHEET_TRANSPARENCY = "sheet_transparency"
             const val TOP_APP_BAR = "top_app_bar"
         }
 
