@@ -192,6 +192,7 @@ fun ProductContent(
             CategoriesAndLabelsSection(product)
         }
 
+        /*
         if (product.isNonVegan) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -202,6 +203,7 @@ fun ProductContent(
                 )
             }
         }
+        */
 
         item {
             Spacer(modifier = Modifier.height(24.dp))

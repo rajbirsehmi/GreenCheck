@@ -14,6 +14,7 @@ import com.creative.greencheck.testing.robots.RobotHomeScreen
 import com.creative.greencheck.testing.robots.RobotManualEntryScreen
 import com.creative.greencheck.testing.robots.RobotProductScreen
 import com.creative.greencheck.testing.robots.RobotWelcomeScreen
+import com.creative.greencheck.util.normalizeBarcode
 import com.sehmi.engine.UiTestEngine
 import com.sehmi.engine.assertions.assertTextContains
 import com.sehmi.engine.createHiltRule
@@ -22,6 +23,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.coEvery
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,7 +59,8 @@ class TestProductScreen {
 
     @Test
     fun testProductScreen_DisplayVeganProduct() {
-        val barcode = "12345678"
+        val rawBarcode = "12345678"
+        val barcode = rawBarcode.normalizeBarcode()
         val mockProduct = ProductDetails(
             barcode = barcode,
             name = "Vegan Milk",
@@ -77,7 +80,7 @@ class TestProductScreen {
             clickManual()
         }
         UiTestEngine.withRobot(RobotManualEntryScreen()) {
-            enterBarcode(barcode)
+            enterBarcode(rawBarcode)
             clickIdentify()
         }
         UiTestEngine.withRobot(RobotProductScreen()) {
@@ -89,7 +92,8 @@ class TestProductScreen {
 
     @Test
     fun testProductScreen_DisplaySeededProduct() {
-        val barcode = "99999999"
+        val rawBarcode = "99999999"
+        val barcode = rawBarcode.normalizeBarcode()
         val seededProduct = ProductEntity(
             barcode = barcode,
             name = "Seeded Tofu",
@@ -108,7 +112,7 @@ class TestProductScreen {
             clickManual()
         }
         UiTestEngine.withRobot(RobotManualEntryScreen()) {
-            enterBarcode(barcode)
+            enterBarcode(rawBarcode)
             clickIdentify()
         }
         
@@ -121,9 +125,11 @@ class TestProductScreen {
     }
 
     @Test
+    @Ignore("Alternative search feature disabled")
     fun testProductScreen_DisplayNonVeganProduct_And_FetchVeganAlternatives() {
-        val barcode = "88888888"
-        val altBarcode = "77777777"
+        val rawBarcode = "88888888"
+        val barcode = rawBarcode.normalizeBarcode()
+        val altBarcode = "77777777".normalizeBarcode()
         val nonVeganProduct = ProductEntity(
             barcode = barcode,
             name = "Milk Chocolate",
@@ -156,7 +162,7 @@ class TestProductScreen {
             clickManual()
         }
         UiTestEngine.withRobot(RobotManualEntryScreen()) {
-            enterBarcode(barcode)
+            enterBarcode(rawBarcode)
             clickIdentify()
         }
 

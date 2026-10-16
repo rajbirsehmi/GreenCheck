@@ -8,6 +8,7 @@ import com.creative.greencheck.data.remote.LocaleDetector
 import com.creative.greencheck.data.remote.OpenFoodFactsApi
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
+import com.creative.greencheck.util.normalizeBarcode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
@@ -25,10 +26,15 @@ class RepositoryImpl @Inject constructor(
     private val TAG = "RepositoryImpl"
 
     override suspend fun getProduct(barcode: String): Result<Product> {
+        val normalized = barcode.normalizeBarcode()
         return try {
-            val response = api.getProduct(barcode)
+            val response = api.getProduct(normalized)
             if (response.isFound && response.product != null) {
-                Result.success(response.product.toDomain())
+                val domainProduct: Product = response.product.toDomain()
+                val finalProduct = if (domainProduct.barcode.isBlank()) {
+                    domainProduct.copy(barcode = normalized)
+                } else domainProduct
+                Result.success(finalProduct)
             } else if (response.status == 0) {
                 Result.failure(BarcodeNotFoundException(response.statusVerbose ?: "Product not found"))
             } else if (response.status == 429 || response.statusVerbose?.contains("429") == true) {
@@ -39,7 +45,7 @@ class RepositoryImpl @Inject constructor(
                 Result.failure(Exception(response.statusVerbose ?: "Product not found"))
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error fetching product $barcode: ${e.message}")
+            Log.e(TAG, "Error fetching product $normalized: ${e.message}")
             if (e.message?.contains("404") == true)
                    Result.failure(BarcodeNotFoundException("Product not found"))
             else
@@ -130,11 +136,24 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveProduct(product: Product) {
-        database.productDao().insertProduct(product.toEntity())
+        val normalizedProduct = product.copy(barcode = product.barcode.normalizeBarcode())
+        database.productDao().insertProduct(normalizedProduct.toEntity())
     }
 
     override suspend fun getProductFromDb(barcode: String): Product? {
-        return database.productDao().getProductByBarcode(barcode)?.toDomain()
+        val normalized = barcode.normalizeBarcode()
+        var entity = database.productDao().getProductByBarcode(normalized)
+        if (entity == null && barcode.isNotBlank() && barcode != normalized) {
+            // Migration check: If stored under legacy un-padded barcode, migrate it to normalized 14-digit format
+            entity = database.productDao().getProductByBarcode(barcode)
+            if (entity != null) {
+                database.productDao().deleteProduct(entity)
+                val updatedEntity = entity.copy(barcode = normalized)
+                database.productDao().insertProduct(updatedEntity)
+                entity = updatedEntity
+            }
+        }
+        return entity?.toDomain()
     }
 
     override fun getAllProducts(): Flow<List<Product>> {
@@ -144,7 +163,8 @@ class RepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteProduct(product: Product) {
-        database.productDao().deleteProduct(product.toEntity())
+        val normalizedProduct = product.copy(barcode = product.barcode.normalizeBarcode())
+        database.productDao().deleteProduct(normalizedProduct.toEntity())
     }
 
     override suspend fun clearHistory() {

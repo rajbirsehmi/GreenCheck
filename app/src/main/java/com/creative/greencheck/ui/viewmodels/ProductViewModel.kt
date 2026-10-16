@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.creative.greencheck.data.local.FeatureType
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
+import com.creative.greencheck.util.normalizeBarcode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,14 +50,15 @@ class ProductViewModel @Inject constructor(
 
     fun getProduct(barcode: String) {
         getProductJob?.cancel()
+        val normalizedBarcode = barcode.normalizeBarcode()
         getProductJob = viewModelScope.launch {
             uiState = ProductUiState.Loading
             alternativesState = AlternativesUiState.Idle
-            val localProduct = repository.getProductFromDb(barcode)
+            val localProduct = repository.getProductFromDb(normalizedBarcode)
             if (localProduct != null) {
                 uiState = ProductUiState.Success(localProduct)
             } else {
-                repository.getProduct(barcode)
+                repository.getProduct(normalizedBarcode)
                     .onSuccess { product ->
                         uiState = ProductUiState.Success(product)
                         // Auto-save to database for recents
@@ -89,7 +91,8 @@ class ProductViewModel @Inject constructor(
                 category = primaryCategory,
                 searchQuery = searchQuery
             ).onSuccess { alternatives ->
-                val filtered = alternatives.filter { it.barcode != product.barcode }
+                val productBarcode = product.barcode.normalizeBarcode()
+                val filtered = alternatives.filter { it.barcode.normalizeBarcode() != productBarcode }
                 alternativesState = if (filtered.isEmpty()) {
                     AlternativesUiState.Error("No vegan alternatives found.")
                 } else {

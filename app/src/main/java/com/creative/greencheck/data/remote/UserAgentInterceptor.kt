@@ -10,7 +10,7 @@ import javax.inject.Inject
 class UserAgentInterceptor @Inject constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val userAgent = "GreenCheck/2.0 (Android; Mobile)"
+        val userAgent = "GreenCheck - Android - Version 3.0 - https://github.com/rajbirsehmi/GreenCheck"
 
         val newRequest = originalRequest.newBuilder()
             .header("User-Agent", userAgent)

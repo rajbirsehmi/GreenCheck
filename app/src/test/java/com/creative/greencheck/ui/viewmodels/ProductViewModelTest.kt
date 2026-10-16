@@ -2,6 +2,7 @@ package com.creative.greencheck.ui.viewmodels
 
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
+import com.creative.greencheck.util.normalizeBarcode
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -64,8 +65,9 @@ class ProductViewModelTest {
 
     @Test
     fun `getProduct success from db updates uiState to Success`() = runTest {
-        val product = Product(barcode = "12345", name = "Local Tofu")
-        coEvery { repository.getProductFromDb("12345") } returns product
+        val normalizedBarcode = "12345".normalizeBarcode()
+        val product = Product(barcode = normalizedBarcode, name = "Local Tofu")
+        coEvery { repository.getProductFromDb(normalizedBarcode) } returns product
 
         viewModel.getProduct("12345")
         advanceUntilIdle()
@@ -77,9 +79,10 @@ class ProductViewModelTest {
 
     @Test
     fun `getProduct success from api updates uiState to Success and saves to db`() = runTest {
-        val product = Product(barcode = "67890", name = "Remote Soy Milk")
-        coEvery { repository.getProductFromDb("67890") } returns null
-        coEvery { repository.getProduct("67890") } returns Result.success(product)
+        val normalizedBarcode = "67890".normalizeBarcode()
+        val product = Product(barcode = normalizedBarcode, name = "Remote Soy Milk")
+        coEvery { repository.getProductFromDb(normalizedBarcode) } returns null
+        coEvery { repository.getProduct(normalizedBarcode) } returns Result.success(product)
         coEvery { repository.saveProduct(product) } returns Unit
 
         viewModel.getProduct("67890")
