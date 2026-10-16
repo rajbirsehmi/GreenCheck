@@ -4,6 +4,7 @@ import android.util.Log
 import com.creative.greencheck.data.local.AppDatabase
 import com.creative.greencheck.data.mapper.toDomain
 import com.creative.greencheck.data.mapper.toEntity
+import com.creative.greencheck.data.remote.LocaleDetector
 import com.creative.greencheck.data.remote.OpenFoodFactsApi
 import com.creative.greencheck.domain.model.Product
 import com.creative.greencheck.domain.repo.Repository
@@ -70,7 +71,8 @@ class RepositoryImpl @Inject constructor(
 
     override suspend fun getVeganAlternatives(
         category: String?,
-        searchQuery: String?
+        searchQuery: String?,
+        countryTag: String?
     ): Result<List<Product>> {
         return try {
             val formattedCategory = category?.lowercase()?.trim()
@@ -79,9 +81,12 @@ class RepositoryImpl @Inject constructor(
                 ?.removeSurrounding("-")
                 ?.let { if (it.startsWith("en:")) it else "en:$it" }
 
+            val effectiveCountryTag = countryTag ?: LocaleDetector.currentDeviceCountryTag
+
             val response = api.searchVeganAlternatives(
                 category = formattedCategory,
-                searchTerms = searchQuery
+                searchTerms = searchQuery,
+                countryTag = effectiveCountryTag
             )
             var products = response.products
                 ?.map { it.toDomain() }
@@ -92,7 +97,8 @@ class RepositoryImpl @Inject constructor(
             if (products.isEmpty() && searchQuery == null && !category.isNullOrBlank()) {
                 val fallbackResponse = api.searchVeganAlternatives(
                     category = null,
-                    searchTerms = category
+                    searchTerms = category,
+                    countryTag = effectiveCountryTag
                 )
                 products = fallbackResponse.products
                     ?.map { it.toDomain() }

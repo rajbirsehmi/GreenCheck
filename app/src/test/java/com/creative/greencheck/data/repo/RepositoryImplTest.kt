@@ -95,7 +95,7 @@ class RepositoryImplTest {
     @Test
     fun `getVeganAlternatives 429 HTTP exception returns searching too frequently error message`() = runBlocking {
         val httpException = HttpException(Response.error<Any>(429, "".toResponseBody(null)))
-        coEvery { api.searchVeganAlternatives(any(), any(), any(), any(), any()) } throws httpException
+        coEvery { api.searchVeganAlternatives(any(), any(), any(), any(), any(), any()) } throws httpException
 
         val result = repository.getVeganAlternatives(category = "chocolates")
 

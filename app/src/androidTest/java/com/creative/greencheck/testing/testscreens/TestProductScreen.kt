@@ -144,7 +144,7 @@ class TestProductScreen {
         }
 
         coEvery {
-            api.searchVeganAlternatives(any(), any(), any(), any(), any())
+            api.searchVeganAlternatives(any(), any(), any(), any(), any(), any())
         } returns SearchResponse(
             products = listOf(veganAltProduct)
         )

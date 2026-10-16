@@ -14,7 +14,7 @@ android {
         applicationId = "com.creative.greencheck"
         minSdk = 30
         targetSdk = 36
-        versionCode = 7
+        versionCode = 8
         versionName = "3.0"
 
         testInstrumentationRunner = "com.creative.greencheck.HiltTestRunner"
@@ -23,10 +23,11 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
