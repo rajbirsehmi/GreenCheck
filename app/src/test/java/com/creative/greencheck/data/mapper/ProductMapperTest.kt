@@ -137,7 +137,7 @@ class ProductMapperTest {
 
         val product = productDetails!!.toDomain()
 
-        assertEquals("5711953184871", product.barcode)
+        assertEquals("05711953184871", product.barcode)
         assertEquals("Protein Drink", product.name)
         assertEquals("Starbucks", product.brands)
         assertEquals("https://images.openfoodfacts.org/images/products/571/195/318/4871/front_en.12.400.jpg", product.imageUrl)

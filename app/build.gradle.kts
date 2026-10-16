@@ -14,8 +14,8 @@ android {
         applicationId = "com.creative.greencheck"
         minSdk = 30
         targetSdk = 36
-        versionCode = 8
-        versionName = "3.0"
+        versionCode = 9
+        versionName = "3.1"
 
         testInstrumentationRunner = "com.creative.greencheck.HiltTestRunner"
         missingDimensionStrategy("di", "hilt")
@@ -40,10 +40,7 @@ android {
     }
     splits {
         abi {
-            isEnable = true
-            reset()
-            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            isUniversalApk = false
+            isEnable = false
         }
     }
     packaging {

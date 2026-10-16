@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Singleton
 class RateLimitInterceptor @Inject constructor() : Interceptor {
     private val lastRequestTime = AtomicLong(0L)
-    private val minIntervalMs = 300L
+    private val minIntervalMs = 800L
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val now = System.currentTimeMillis()

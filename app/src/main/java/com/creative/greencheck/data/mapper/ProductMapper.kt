@@ -5,9 +5,10 @@ import com.creative.greencheck.data.remote.dto.Ingredients
 import com.creative.greencheck.data.remote.dto.ProductDetails
 import com.creative.greencheck.domain.model.Ingredient
 import com.creative.greencheck.domain.model.Product
+import com.creative.greencheck.util.normalizeBarcode
 
 fun ProductDetails.toDomain(): Product {
-    val mappedBarcode = code?.takeIf { it.isNotBlank() } ?: barcode ?: ""
+    val mappedBarcode = (code?.takeIf { it.isNotBlank() } ?: barcode ?: "").normalizeBarcode()
     val mappedCategories = categories?.takeIf { it.isNotBlank() }
         ?: categoriesTags?.joinToString(", ") {
             it.removePrefix("en:").replace("-", " ").replaceFirstChar { char -> char.uppercase() }
@@ -41,7 +42,7 @@ fun ProductDetails.toDomain(): Product {
 
 fun ProductEntity.toDomain(): Product {
     return Product(
-        barcode = barcode,
+        barcode = barcode.normalizeBarcode(),
         name = name,
         brands = brands,
         quantity = quantity,
@@ -66,7 +67,7 @@ fun ProductEntity.toDomain(): Product {
 
 fun Product.toEntity(): ProductEntity {
     return ProductEntity(
-        barcode = barcode,
+        barcode = barcode.normalizeBarcode(),
         name = name,
         brands = brands,
         quantity = quantity,

@@ -73,6 +73,7 @@ import com.creative.greencheck.ui.components.TopAppBarHome
 import com.creative.greencheck.ui.components.v2.TransparencyInfoSheet
 import com.creative.greencheck.ui.theme.IsItVeganTheme
 import com.creative.greencheck.ui.viewmodels.AppInfoViewModel
+import com.creative.greencheck.util.normalizeBarcode
 import com.creative.greencheck.ui.viewmodels.RecentSearchViewModel
 import com.creative.greencheck.ui.viewmodels.ScanItemViewModel
 import java.text.SimpleDateFormat
@@ -359,9 +360,8 @@ fun MainScaffolding() {
             }
             composable(BottomTabs.MANUAL) {
                 ManualEntryScreen(
-                    onSearchClick = { barcode ->
-                        bottomNavController.navigate(BottomTabs.getLoadingRoute(barcode))
-                    }
+                    viewModel = scanItemViewModel,
+                    onSearchClick = { /* Handled reactively by scanItemViewModel in MainScaffolding */ }
                 )
             }
             composable(BottomTabs.SCAN) {
@@ -375,7 +375,7 @@ fun MainScaffolding() {
                     HistoryScreen(
                         products = products,
                         onProductClick = { product ->
-                            bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode))
+                            bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode.normalizeBarcode()))
                         },
                         onClearHistoryClick = {
                             viewModel.clearHistory()
@@ -396,14 +396,14 @@ fun MainScaffolding() {
 //                )
 //            }
             composable(BottomTabs.PRODUCT) { backStackEntry ->
-                val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
+                val barcode = (backStackEntry.arguments?.getString("barcode") ?: "").normalizeBarcode()
                 ProductScreen(
                     barcode = barcode,
                     onCloseClick = {
                         bottomNavController.popBackStack(BottomTabs.HOME, false)
                     },
                     onProductClick = { product ->
-                        bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode))
+                        bottomNavController.navigate(BottomTabs.getProductRoute(product.barcode.normalizeBarcode()))
                     },
                     onQuotaExhausted = { featureName ->
                         bottomNavController.navigate(BottomTabs.getQuotaRoute(featureName))
@@ -411,7 +411,7 @@ fun MainScaffolding() {
                 )
             }
             composable(BottomTabs.LOADING) { backStackEntry ->
-                val barcode = backStackEntry.arguments?.getString("barcode") ?: ""
+                val barcode = (backStackEntry.arguments?.getString("barcode") ?: "").normalizeBarcode()
                 LoadingProductScreen(
                     barcode = barcode,
                     onLoadingComplete = {

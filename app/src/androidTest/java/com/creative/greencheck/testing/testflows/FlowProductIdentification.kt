@@ -6,12 +6,12 @@ import com.creative.greencheck.data.local.UsageManager
 import com.creative.greencheck.data.remote.OpenFoodFactsApi
 import com.creative.greencheck.data.remote.dto.ProductDetails
 import com.creative.greencheck.data.remote.dto.ProductResponse
-import com.creative.greencheck.data.remote.dto.SearchResponse
 import com.creative.greencheck.testing.robots.RobotHomeScreen
 import com.creative.greencheck.testing.robots.RobotManualEntryScreen
 import com.creative.greencheck.testing.robots.RobotProductScreen
 import com.creative.greencheck.testing.robots.RobotSearchScreen
 import com.creative.greencheck.testing.robots.RobotWelcomeScreen
+import com.creative.greencheck.util.normalizeBarcode
 import com.sehmi.engine.UiTestEngine
 import com.sehmi.engine.actions.pressBack
 import com.sehmi.engine.createHiltRule
@@ -51,7 +51,8 @@ class FlowProductIdentification {
 
     @Test
     fun testManualEntryToProductDetail() {
-        val barcode = "87654321"
+        val rawBarcode = "87654321"
+        val barcode = rawBarcode.normalizeBarcode()
         coEvery { api.getProduct(barcode, any()) } returns ProductResponse(
             status = 1,
             product = ProductDetails(barcode = barcode, name = "Manual Product", brands = "Brand A")
@@ -64,7 +65,7 @@ class FlowProductIdentification {
             clickManual()
         }
         UiTestEngine.withRobot(RobotManualEntryScreen()) {
-            enterBarcode(barcode)
+            enterBarcode(rawBarcode)
             clickIdentify()
         }
         UiTestEngine.withRobot(RobotProductScreen()) {

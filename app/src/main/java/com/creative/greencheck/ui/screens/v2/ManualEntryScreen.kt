@@ -71,8 +71,8 @@ fun ManualEntryScreen(
             Toast.makeText(context, "Barcode should contain digits only", Toast.LENGTH_SHORT).show()
         } else {
             keyboardController?.hide()
+            viewModel.onManualSearchTriggered(trimmed)
             onSearchClick(trimmed)
-            viewModel.onManualSearchTriggered(barcodeInput)
         }
     }
 
@@ -229,7 +229,7 @@ fun ManualEntryScreen(
             shape = MaterialTheme.shapes.small
         ) {
             Text(
-                text = "Quota: $remainingManual of 5 entries remaining",
+                text = "Quota: $remainingManual of 10 entries remaining",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier

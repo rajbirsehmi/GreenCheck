@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.creative.greencheck.data.local.FeatureType
 import com.creative.greencheck.data.local.UsageManager
 import com.creative.greencheck.domain.repo.Repository
+import com.creative.greencheck.util.normalizeBarcode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,14 +42,21 @@ class ScanItemViewModel @Inject constructor(
     fun onBarcodeDetected(code: String) {
         if (!_isScanComplete.value) {
             viewModelScope.launch {
-                if (usageManager.canUseFeature(FeatureType.SCANNER)) {
+                val normalizedCode = code.normalizeBarcode()
+                val product = repository.getProductFromDb(normalizedCode)
+                if (product != null) {
                     _isScanComplete.value = true
-                    val product = repository.getProductFromDb(code)
-                    _existsInDb.value = product != null
-                    _barcodeResult.value = code
-                    usageManager.incrementUsage(FeatureType.SCANNER)
+                    _existsInDb.value = true
+                    _barcodeResult.value = normalizedCode
                 } else {
-                    _quotaExhausted.value = FeatureType.SCANNER
+                    if (usageManager.canUseFeature(FeatureType.SCANNER)) {
+                        _isScanComplete.value = true
+                        _existsInDb.value = false
+                        _barcodeResult.value = normalizedCode
+                        usageManager.incrementUsage(FeatureType.SCANNER)
+                    } else {
+                        _quotaExhausted.value = FeatureType.SCANNER
+                    }
                 }
             }
         }
@@ -56,14 +64,21 @@ class ScanItemViewModel @Inject constructor(
 
     fun onManualSearchTriggered(code: String) {
         viewModelScope.launch {
-            if (usageManager.canUseFeature(FeatureType.MANUAL_ENTRY)) {
+            val normalizedCode = code.normalizeBarcode()
+            val product = repository.getProductFromDb(normalizedCode)
+            if (product != null) {
                 _isScanComplete.value = true
-                val product = repository.getProductFromDb(code)
-                _existsInDb.value = product != null
-                _barcodeResult.value = code
-                usageManager.incrementUsage(FeatureType.MANUAL_ENTRY)
+                _existsInDb.value = true
+                _barcodeResult.value = normalizedCode
             } else {
-                _quotaExhausted.value = FeatureType.MANUAL_ENTRY
+                if (usageManager.canUseFeature(FeatureType.MANUAL_ENTRY)) {
+                    _isScanComplete.value = true
+                    _existsInDb.value = false
+                    _barcodeResult.value = normalizedCode
+                    usageManager.incrementUsage(FeatureType.MANUAL_ENTRY)
+                } else {
+                    _quotaExhausted.value = FeatureType.MANUAL_ENTRY
+                }
             }
         }
     }
