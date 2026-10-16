@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Eco
@@ -147,6 +148,7 @@ fun SearchProductOrIngredientContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag(TestTags.V2.Search.TEXT_FIELD),
+            shape = MaterialTheme.shapes.large,
             colors = SearchBarDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
             )
@@ -165,7 +167,7 @@ fun SearchProductOrIngredientContent(
         ) {
             AssistChip(
                 onClick = {},
-                label = { Text("Ingredients") },
+                label = { Text("Ingredients", fontWeight = FontWeight.Bold) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Eco,
@@ -174,10 +176,11 @@ fun SearchProductOrIngredientContent(
                     )
                 },
                 colors = AssistChipDefaults.assistChipColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    leadingIconContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    labelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    leadingIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
+                shape = RoundedCornerShape(50),
                 modifier = Modifier.testTag(TestTags.V2.Search.FILTER_CHIP_INGREDIENTS)
             )
         }
@@ -193,7 +196,8 @@ fun SearchProductOrIngredientContent(
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.testTag(TestTags.V2.Search.LOADING_INDICATOR),
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    strokeWidth = 3.dp
                 )
             }
         } else if (searchResults.isNotEmpty()) {
@@ -256,7 +260,7 @@ fun SearchProductOrIngredientContent(
                                 .testTag(TestTags.V2.Search.LOGO_ICON)
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
                     Text(
                         text = "Search Database",
                         style = MaterialTheme.typography.titleLarge,

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material3.CardDefaults
@@ -85,16 +86,16 @@ fun ProductItem(
             .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onClick(product) }
             .testTag(TestTags.V2.Components.ProductItem.container(product.barcode)),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val imageUrl = product.imageUrl?.takeIf { it.isNotBlank() }
@@ -102,8 +103,8 @@ fun ProductItem(
 
             Box(
                 modifier = Modifier
-                    .size(64.dp)
-                    .clip(MaterialTheme.shapes.small)
+                    .size(70.dp)
+                    .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .testTag(TestTags.V2.Components.ProductItem.IMAGE),
                 contentAlignment = Alignment.Center
@@ -112,7 +113,7 @@ fun ProductItem(
                     imageVector = Icons.Default.Eco,
                     contentDescription = "Default Product Icon",
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(28.dp)
+                    modifier = Modifier.size(32.dp)
                 )
 
                 if (imageUrl != null) {
@@ -136,7 +137,7 @@ fun ProductItem(
                 Text(
                     text = product.name ?: "Unnamed Product",
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -145,29 +146,30 @@ fun ProductItem(
                 Text(
                     text = (product.brands ?: "Unknown Brand").uppercase(),
                     style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
                     letterSpacing = 0.8.sp,
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.testTag(TestTags.V2.Components.ProductItem.BRAND)
                 )
-                Spacer(modifier = Modifier.size(6.dp))
+                Spacer(modifier = Modifier.size(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         color = badgeContainer,
-                        shape = MaterialTheme.shapes.extraSmall
+                        shape = RoundedCornerShape(50)
                     ) {
                         Row(
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(6.dp)
+                                    .size(7.dp)
                                     .background(statusColor, CircleShape)
                                     .testTag(TestTags.V2.Components.ProductItem.statusDot(product.barcode))
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = statusText,
                                 style = MaterialTheme.typography.labelSmall,

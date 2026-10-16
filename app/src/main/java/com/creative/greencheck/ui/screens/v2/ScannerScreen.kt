@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.outlined.Vibration
@@ -141,13 +142,13 @@ fun ScannerScreen(
                     .padding(20.dp)
                     .testTag(TestTags.V2.Scanner.INSTRUCTIONS_OVERLAY),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.92f)
                 ),
                 shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -160,7 +161,7 @@ fun ScannerScreen(
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
-                        text = if (isScanComplete) "Detected" else "Align Barcode",
+                        text = if (isScanComplete) "Detected" else "Align Barcode in Frame",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = if (isScanComplete) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
@@ -171,7 +172,7 @@ fun ScannerScreen(
                     FilledTonalIconButton(
                         onClick = { isVibrationEnabled = !isVibrationEnabled },
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(38.dp)
                             .testTag(TestTags.V2.Scanner.BTN_TOGGLE_VIBRATION)
                     ) {
                         Icon(
@@ -194,17 +195,17 @@ fun ScannerScreen(
                     .align(Alignment.CenterHorizontally)
                     .testTag(TestTags.V2.Scanner.QUOTA_OVERLAY),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.92f)
                 ),
-                shape = MaterialTheme.shapes.small
+                shape = RoundedCornerShape(50)
             ) {
                 Text(
                     text = "Free Plan: $remainingScans of 10 Scans today",
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 18.dp, vertical = 8.dp)
                         .testTag(TestTags.V2.Scanner.QUOTA_TEXT)
                 )
             }
@@ -219,12 +220,12 @@ fun ScannerScreen(
         ) {
             Surface(
                 modifier = Modifier
-                    .size(width = 260.dp, height = 180.dp)
+                    .size(width = 270.dp, height = 180.dp)
                     .testTag(TestTags.V2.Scanner.VIEWFINDER_WINDOW),
                 color = Color.Transparent,
                 border = BorderStroke(
-                    width = 2.dp,
-                    color = if (isScanComplete) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.7f)
+                    width = 2.5.dp,
+                    color = if (isScanComplete) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.8f)
                 ),
                 shape = MaterialTheme.shapes.extraLarge
             ) {}
