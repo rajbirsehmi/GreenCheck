@@ -45,6 +45,7 @@ class RobotProductScreen : ComposeRuleScope {
         assertTagDisplayed(TestTags.V2.Product.ALL_INGREDIENTS_CARD)
     }
 
+    /*
     fun verifyVeganAlternativesSection() {
         scrollToTag("vegan_alternatives_section")
         assertTagDisplayed("vegan_alternatives_section")
@@ -65,6 +66,7 @@ class RobotProductScreen : ComposeRuleScope {
         scrollToTag("btn_close_alternative_sheet")
         clickOnTag("btn_close_alternative_sheet")
     }
+    */
 
     fun clickClose() {
         scrollToTag(TestTags.V2.Product.BTN_CLOSE)

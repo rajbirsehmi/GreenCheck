@@ -8,7 +8,6 @@ import com.creative.greencheck.data.local.entity.ProductEntity
 import com.creative.greencheck.data.remote.OpenFoodFactsApi
 import com.creative.greencheck.data.remote.dto.ProductDetails
 import com.creative.greencheck.data.remote.dto.ProductResponse
-import com.creative.greencheck.data.remote.dto.SearchResponse
 import com.creative.greencheck.testing.TestTags
 import com.creative.greencheck.testing.robots.RobotHomeScreen
 import com.creative.greencheck.testing.robots.RobotManualEntryScreen
@@ -121,9 +120,8 @@ class TestProductScreen {
     }
 
     @Test
-    fun testProductScreen_DisplayNonVeganProduct_And_FetchVeganAlternatives() {
+    fun testProductScreen_DisplayNonVeganProduct() {
         val barcode = "88888888"
-        val altBarcode = "77777777"
         val nonVeganProduct = ProductEntity(
             barcode = barcode,
             name = "Milk Chocolate",
@@ -132,22 +130,9 @@ class TestProductScreen {
             ingredientsAnalysisTags = listOf("en:non-vegan")
         )
 
-        val veganAltProduct = ProductDetails(
-            barcode = altBarcode,
-            name = "Vegan Dark Chocolate",
-            brands = "EcoChoc",
-            ingredientsAnalysisTags = listOf("en:vegan")
-        )
-
         runBlocking {
             productDao.insertProduct(nonVeganProduct)
         }
-
-        coEvery {
-            api.searchVeganAlternatives(any(), any(), any(), any(), any(), any())
-        } returns SearchResponse(
-            products = listOf(veganAltProduct)
-        )
 
         UiTestEngine.withRobot(RobotWelcomeScreen()) {
             clickGetStartedIfVisible()
@@ -163,7 +148,7 @@ class TestProductScreen {
         UiTestEngine.withRobot(RobotProductScreen()) {
             waitForProductLoaded()
             verifyProductHero()
-            verifyVeganAlternativesSection()
+            verifyStatusBanner()
         }
     }
 }

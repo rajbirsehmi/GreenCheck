@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -43,7 +44,7 @@ fun HistoryScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp)
         ) {
             items(products) { product ->
-                Column(modifier = Modifier.padding(bottom = 12.dp)) {
+                Column(modifier = Modifier.padding(bottom = 8.dp)) {
                     ProductItem(
                         product = product,
                         onClick = onProductClick
@@ -57,7 +58,7 @@ fun HistoryScreen(
                 .fillMaxWidth()
                 .testTag(TestTags.V2.History.CLEAR_CONTAINER),
             color = MaterialTheme.colorScheme.surfaceContainerLow,
-            tonalElevation = 1.dp
+            tonalElevation = 2.dp
         ) {
             OutlinedButton(
                 onClick = onClearHistoryClick,
@@ -66,7 +67,7 @@ fun HistoryScreen(
                     .padding(horizontal = 24.dp, vertical = 16.dp)
                     .height(50.dp)
                     .testTag(TestTags.V2.History.BTN_CLEAR),
-                shape = MaterialTheme.shapes.medium,
+                shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.error,
                     containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.3f)

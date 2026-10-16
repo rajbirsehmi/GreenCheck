@@ -38,7 +38,7 @@ fun EmptyHistoryScreen() {
     ) {
         Box(
             modifier = Modifier
-                .size(90.dp)
+                .size(100.dp)
                 .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 .testTag(TestTags.V2.EmptyHistory.LOGO_CONTAINER),
             contentAlignment = Alignment.Center
@@ -47,7 +47,7 @@ fun EmptyHistoryScreen() {
                 imageVector = Icons.Default.History,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(48.dp)
                     .testTag(TestTags.V2.EmptyHistory.LOGO_ICON),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer
             )

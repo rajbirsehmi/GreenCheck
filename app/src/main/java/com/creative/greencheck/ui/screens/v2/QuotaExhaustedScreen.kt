@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassTop
 import androidx.compose.material3.Button
@@ -103,7 +104,7 @@ fun QuotaExhaustedScreen(
                     .fillMaxWidth()
                     .height(50.dp)
                     .testTag(TestTags.V2.QuotaExhausted.BTN_UNDERSTOOD),
-                shape = MaterialTheme.shapes.medium
+                shape = RoundedCornerShape(50)
             ) {
                 Text(
                     text = "Understood",

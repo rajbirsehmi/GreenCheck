@@ -1,7 +1,9 @@
 package com.creative.greencheck.ui.screens.v2
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,11 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Dialpad
 import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -62,26 +66,36 @@ fun HomeScreen(
             colors = CardDefaults.elevatedCardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp)
+                    .padding(26.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.leaves),
-                        contentDescription = "Botanical Logo",
+                    Box(
                         modifier = Modifier
-                            .size(44.dp)
-                            .testTag(TestTags.V2.Home.LOGO),
-                        contentScale = ContentScale.Fit
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
+                            .size(52.dp)
+                            .background(
+                                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
+                                CircleShape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.leaves),
+                            contentDescription = "Botanical Logo",
+                            modifier = Modifier
+                                .size(32.dp)
+                                .testTag(TestTags.V2.Home.LOGO),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(14.dp))
                     Column {
                         Text(
                             text = "GreenCheck",
@@ -97,7 +111,7 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(22.dp))
 
                 Text(
                     text = "Discover Conscious Eating",
@@ -123,7 +137,8 @@ fun HomeScreen(
                     icon = {
                         Icon(
                             painter = painterResource(id = R.drawable.barcode_scanner),
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
                         )
                     },
                     text = {
@@ -135,8 +150,10 @@ fun HomeScreen(
                     },
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(52.dp)
                         .testTag(TestTags.V2.Home.FAB_SCAN_NOW)
                 )
             }
@@ -149,7 +166,7 @@ fun HomeScreen(
             text = "FEATURES",
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.2.sp,
+            letterSpacing = 1.4.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag(TestTags.V2.Home.QUICK_ACTIONS_TITLE)
         )
@@ -231,13 +248,13 @@ fun MinimalistActionCard(
 ) {
     ElevatedCard(
         onClick = onClick,
-        modifier = modifier.height(84.dp),
-        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.height(88.dp),
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.elevatedCardColors(
             containerColor = containerColor,
             contentColor = contentColor
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
@@ -245,14 +262,21 @@ fun MinimalistActionCard(
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                modifier = Modifier.size(28.dp),
-                tint = contentColor
-            )
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(contentColor.copy(alpha = 0.12f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = title,
+                    modifier = Modifier.size(24.dp),
+                    tint = contentColor
+                )
+            }
             Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -266,6 +290,12 @@ fun MinimalistActionCard(
                     color = contentColor.copy(alpha = 0.8f)
                 )
             }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = contentColor.copy(alpha = 0.6f),
+                modifier = Modifier.size(18.dp)
+            )
         }
     }
 }
@@ -277,14 +307,14 @@ fun MinimalistInfoSection(title: String, content: String, modifier: Modifier = M
             text = title.uppercase(),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 1.2.sp,
+            letterSpacing = 1.4.sp,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag(TestTags.V2.Home.infoSectionTitle(title))
         )
         Spacer(modifier = Modifier.height(8.dp))
         ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
+            shape = MaterialTheme.shapes.large,
             colors = CardDefaults.elevatedCardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow
             ),
@@ -295,7 +325,7 @@ fun MinimalistInfoSection(title: String, content: String, modifier: Modifier = M
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(20.dp)
                     .testTag(TestTags.V2.Home.infoSectionContent(title))
             )
         }

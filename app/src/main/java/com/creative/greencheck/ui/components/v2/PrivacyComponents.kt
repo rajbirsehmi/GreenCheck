@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.DeviceUnknown
@@ -110,7 +111,7 @@ fun TransparencyInfoSheet(
                     .weight(1f)
                     .height(50.dp)
                     .testTag(TestTags.V2.Components.Privacy.BTN_AUDIT_CODE),
-                shape = MaterialTheme.shapes.medium,
+                shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -140,7 +141,7 @@ fun TransparencyInfoSheet(
                     .weight(1f)
                     .height(50.dp)
                     .testTag(TestTags.V2.Components.Privacy.BTN_ODBL_LICENSE),
-                shape = MaterialTheme.shapes.medium,
+                shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -173,7 +174,7 @@ private fun TransparencyItem(
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(44.dp)
                 .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 .testTag(TestTags.V2.Components.Privacy.itemIconContainer(title)),
             contentAlignment = Alignment.Center
@@ -183,7 +184,7 @@ private fun TransparencyItem(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(22.dp)
                     .testTag(TestTags.V2.Components.Privacy.itemIcon(title))
             )
         }

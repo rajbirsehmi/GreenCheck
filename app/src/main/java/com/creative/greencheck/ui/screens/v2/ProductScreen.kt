@@ -19,13 +19,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -107,12 +113,41 @@ fun ProductScreen(
     ) {
         when (state) {
             is ProductUiState.Loading -> {
-                CircularProgressIndicator(
+                Box(
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .testTag(TestTags.V2.Product.LOADING),
-                    color = MaterialTheme.colorScheme.primary
-                )
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ElevatedCard(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        colors = CardDefaults.elevatedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(32.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .testTag(TestTags.V2.Product.LOADING),
+                                color = MaterialTheme.colorScheme.primary,
+                                strokeWidth = 3.dp
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "Analyzing product details...",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
             }
 
             is ProductUiState.Success -> {
@@ -143,12 +178,14 @@ fun ProductScreen(
             }
         }
 
+        /*
         selectedAlternative?.let { altProduct ->
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             ModalBottomSheet(
                 onDismissRequest = { selectedAlternative = null },
                 sheetState = sheetState,
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.testTag(TestTags.V2.Product.ALTERNATIVE_SHEET)
             ) {
                 AlternativeProductDetailSheet(
@@ -161,6 +198,7 @@ fun ProductScreen(
                 )
             }
         }
+        */
     }
 }
 
@@ -176,7 +214,7 @@ fun ProductContent(
         modifier = Modifier
             .fillMaxSize()
             .testTag(TestTags.V2.Product.CONTENT_LIST),
-        contentPadding = PaddingValues(bottom = 32.dp)
+        contentPadding = PaddingValues(top = 16.dp, bottom = 36.dp)
     ) {
         item {
             ProductHeroSection(product)
@@ -192,6 +230,7 @@ fun ProductContent(
             CategoriesAndLabelsSection(product)
         }
 
+        /*
         if (product.isNonVegan) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -202,6 +241,7 @@ fun ProductContent(
                 )
             }
         }
+        */
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
@@ -233,18 +273,26 @@ fun ProductHeroSection(product: Product) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp)
+                .padding(horizontal = 20.dp)
+                .height(260.dp)
                 .clip(MaterialTheme.shapes.extraLarge)
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.surfaceContainerHighest,
+                            MaterialTheme.colorScheme.surfaceContainerLow
+                        )
+                    )
+                )
                 .testTag(TestTags.V2.Product.IMAGE_CONTAINER),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Eco,
                 contentDescription = "Default Product Icon",
-                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
                 modifier = Modifier
-                    .size(64.dp)
+                    .size(80.dp)
                     .testTag(TestTags.V2.Product.IMAGE)
             )
 
@@ -257,30 +305,29 @@ fun ProductHeroSection(product: Product) {
                     contentDescription = "Product Image",
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(20.dp)
                         .testTag(TestTags.V2.Product.IMAGE),
                     contentScale = ContentScale.Fit
                 )
             }
 
             // Branding Overlay Badge
-            Card(
+            Surface(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(16.dp)
                     .testTag(TestTags.V2.Product.BRAND_OVERLAY),
-                shape = MaterialTheme.shapes.small,
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                shape = RoundedCornerShape(50),
+                color = MaterialTheme.colorScheme.primaryContainer,
+                tonalElevation = 4.dp,
+                shadowElevation = 2.dp
             ) {
                 Text(
                     text = (product.brands ?: "Unknown Brand").uppercase(),
                     modifier = Modifier
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                         .testTag(TestTags.V2.Product.BRAND_NAME),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 1.2.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -288,7 +335,7 @@ fun ProductHeroSection(product: Product) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Column(
             modifier = Modifier
@@ -298,89 +345,107 @@ fun ProductHeroSection(product: Product) {
         ) {
             Text(
                 text = product.name ?: "Unnamed Product",
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.testTag(TestTags.V2.Product.NAME)
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "UPC: ${product.barcode}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                letterSpacing = 0.5.sp,
-                modifier = Modifier.testTag(TestTags.V2.Product.BARCODE)
-            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                shape = RoundedCornerShape(50)
+            ) {
+                Text(
+                    text = "UPC: ${product.barcode}",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = 0.5.sp,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                        .testTag(TestTags.V2.Product.BARCODE)
+                )
+            }
         }
     }
 }
 
 @Composable
 fun ProductStatusBanner(product: Product) {
-    val (statusColor, containerColor, onContainerColor, statusTitle, statusDesc) = when {
-        product.isVegan -> Quintuple(
+    val (statusColor, containerColor, onContainerColor, statusTitle, statusDesc, statusIcon) = when {
+        product.isVegan -> Sextuple(
             VeganStatusGreen,
             MaterialTheme.colorScheme.primaryContainer,
             MaterialTheme.colorScheme.onPrimaryContainer,
             "VEGAN CERTIFIED",
-            "Plant-based goodness. No animal derivatives detected."
+            "Plant-based goodness. No animal derivatives detected.",
+            Icons.Default.CheckCircle
         )
 
-        product.isNonVegan -> Quintuple(
+        product.isNonVegan -> Sextuple(
             NonVeganStatusRed,
             MaterialTheme.colorScheme.errorContainer,
             MaterialTheme.colorScheme.onErrorContainer,
             "NON-VEGAN",
-            "Contains animal-derived ingredients."
+            "Contains animal-derived ingredients.",
+            Icons.Default.Warning
         )
 
-        else -> Quintuple(
+        else -> Sextuple(
             UncertainStatusYellow,
             MaterialTheme.colorScheme.tertiaryContainer,
             MaterialTheme.colorScheme.onTertiaryContainer,
             "UNCERTAIN STATUS",
-            "Source of some ingredients could not be verified."
+            "Source of some ingredients could not be verified.",
+            Icons.AutoMirrored.Filled.HelpOutline
         )
     }
 
-    Card(
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 20.dp)
             .testTag(TestTags.V2.Product.STATUS_BANNER),
         shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = containerColor),
+        colors = CardDefaults.elevatedCardColors(containerColor = containerColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
-            modifier = Modifier.padding(18.dp),
+            modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .background(statusColor.copy(alpha = 0.2f), CircleShape)
+                    .size(52.dp)
+                    .background(statusColor.copy(alpha = 0.18f), CircleShape)
                     .testTag(TestTags.V2.Product.STATUS_ICON_CONTAINER),
                 contentAlignment = Alignment.Center
             ) {
+                Icon(
+                    imageVector = statusIcon,
+                    contentDescription = null,
+                    tint = statusColor,
+                    modifier = Modifier.size(28.dp)
+                )
                 Box(
                     modifier = Modifier
-                        .size(14.dp)
+                        .size(12.dp)
+                        .align(Alignment.TopEnd)
                         .background(statusColor, CircleShape)
                         .testTag(TestTags.V2.Product.STATUS_DOT)
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = statusTitle,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    letterSpacing = 0.8.sp,
+                    letterSpacing = 1.sp,
                     color = onContainerColor,
                     modifier = Modifier.testTag(TestTags.V2.Product.STATUS_TITLE)
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = statusDesc,
                     style = MaterialTheme.typography.bodyMedium,
@@ -402,7 +467,7 @@ fun CategoriesAndLabelsSection(product: Product) {
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 20.dp)
             .testTag("categories_and_labels_section")
     ) {
         SectionTitle("Categories & Labels")
@@ -410,7 +475,7 @@ fun CategoriesAndLabelsSection(product: Product) {
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = 2.dp),
+            contentPadding = PaddingValues(vertical = 4.dp),
             modifier = Modifier.testTag("categories_and_labels_list")
         ) {
             palmOilStatus?.let { status ->
@@ -432,6 +497,7 @@ fun CategoriesAndLabelsSection(product: Product) {
                             containerColor = chipContainer,
                             labelColor = chipContent
                         ),
+                        shape = RoundedCornerShape(50),
                         modifier = Modifier.testTag("chip_palm_oil")
                     )
                 }
@@ -445,6 +511,7 @@ fun CategoriesAndLabelsSection(product: Product) {
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         labelColor = MaterialTheme.colorScheme.onSecondaryContainer
                     ),
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier.testTag("chip_label_$label")
                 )
             }
@@ -457,6 +524,7 @@ fun CategoriesAndLabelsSection(product: Product) {
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                         labelColor = MaterialTheme.colorScheme.onSurfaceVariant
                     ),
+                    shape = RoundedCornerShape(50),
                     modifier = Modifier.testTag("chip_category_$category")
                 )
             }
@@ -474,7 +542,7 @@ fun IngredientsAnalysisSection(product: Product) {
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 20.dp)
             .testTag(TestTags.V2.Product.INGREDIENTS_ANALYSIS_SECTION)
     ) {
         SectionTitle("Ingredients Analysis")
@@ -496,15 +564,15 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
             .testTag(TestTags.V2.Product.analysisCard(tagSuffix)),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.outlinedCardColors(
-            containerColor = color.copy(alpha = 0.08f)
+            containerColor = color.copy(alpha = 0.06f)
         ),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.25f))
+        border = BorderStroke(1.dp, color.copy(alpha = 0.3f))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(18.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
-                        .size(8.dp)
+                        .size(10.dp)
                         .background(color, CircleShape)
                         .testTag(TestTags.V2.Product.analysisCardDot(tagSuffix))
                 )
@@ -518,10 +586,10 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                 )
             }
             if (items.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Column(
                     modifier = Modifier.testTag(TestTags.V2.Product.analysisCardItems(tagSuffix)),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items.forEachIndexed { index, item ->
                         Row(
@@ -535,14 +603,15 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                         ) {
                             Text(
                                 text = "•",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = color.copy(alpha = 0.8f),
-                                modifier = Modifier.padding(end = 8.dp)
+                                style = MaterialTheme.typography.titleMedium,
+                                color = color,
+                                modifier = Modifier.padding(end = 10.dp)
                             )
                             Text(
                                 text = item.replaceFirstChar { c -> c.uppercase() },
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.testTag(
                                     TestTags.V2.Product.analysisCardItemText(
                                         tagSuffix,
@@ -554,7 +623,7 @@ fun AnalysisCard(title: String, color: Color, items: List<String>, tagSuffix: St
                     }
                 }
             } else {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "None detected",
                     style = MaterialTheme.typography.bodyMedium,
@@ -573,7 +642,7 @@ fun DetailedIngredientsSection(product: Product) {
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 20.dp)
             .testTag("detailed_ingredients_section")
     ) {
         SectionTitle("Ingredients Breakdown")
@@ -588,13 +657,13 @@ fun DetailedIngredientsSection(product: Product) {
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Column(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(vertical = 8.dp)
             ) {
                 ingredients.forEachIndexed { index, ingredient ->
                     IngredientDetailRow(ingredient = ingredient, index = index)
                     if (index < ingredients.lastIndex) {
                         HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
@@ -618,7 +687,7 @@ fun IngredientDetailRow(ingredient: Ingredient, index: Int) {
         leadingContent = {
             Box(
                 modifier = Modifier
-                    .size(8.dp)
+                    .size(10.dp)
                     .background(statusColor, CircleShape)
             )
         },
@@ -626,7 +695,7 @@ fun IngredientDetailRow(ingredient: Ingredient, index: Int) {
             Text(
                 text = (ingredient.text ?: "Unknown").replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface
             )
         },
@@ -634,14 +703,14 @@ fun IngredientDetailRow(ingredient: Ingredient, index: Int) {
             ingredient.formattedPercentage?.let { pct ->
                 Surface(
                     color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = MaterialTheme.shapes.extraSmall
+                    shape = RoundedCornerShape(50)
                 ) {
                     Text(
                         text = pct,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
                 }
             }
@@ -649,15 +718,16 @@ fun IngredientDetailRow(ingredient: Ingredient, index: Int) {
         supportingContent = {
             ingredient.subIngredients?.takeIf { it.isNotEmpty() }?.let { subs ->
                 Column(
-                    modifier = Modifier.padding(top = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    modifier = Modifier.padding(top = 6.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     subs.forEach { sub ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = "└ ",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
                             )
                             Text(
                                 text = (sub.text ?: "").replaceFirstChar { it.uppercase() },
@@ -688,7 +758,7 @@ fun AllIngredientsSection(product: Product) {
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 20.dp)
             .testTag(TestTags.V2.Product.ALL_INGREDIENTS_SECTION)
     ) {
         SectionTitle("Full Ingredient List")
@@ -707,7 +777,7 @@ fun AllIngredientsSection(product: Product) {
                 modifier = Modifier
                     .padding(20.dp)
                     .testTag(TestTags.V2.Product.ALL_INGREDIENTS_LIST),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (ingredients.isNotEmpty()) {
                     ingredients.forEachIndexed { index, ingredient ->
@@ -717,9 +787,9 @@ fun AllIngredientsSection(product: Product) {
                         ) {
                             Text(
                                 text = "•",
-                                style = MaterialTheme.typography.bodyMedium,
+                                style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(end = 8.dp)
+                                modifier = Modifier.padding(end = 10.dp)
                             )
                             Text(
                                 text = ingredient.replaceFirstChar { c -> c.uppercase() },
@@ -751,7 +821,7 @@ fun SectionTitle(title: String) {
         text = title.uppercase(),
         style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.Bold,
-        letterSpacing = 1.2.sp,
+        letterSpacing = 1.4.sp,
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.testTag(TestTags.V2.Product.sectionTitle(title))
     )
@@ -767,14 +837,21 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Icon(
-            imageVector = Icons.Default.Warning,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.error,
+        Box(
             modifier = Modifier
-                .size(64.dp)
-                .testTag(TestTags.V2.Product.ERROR_STATE_ICON)
-        )
+                .size(80.dp)
+                .background(MaterialTheme.colorScheme.errorContainer, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onErrorContainer,
+                modifier = Modifier
+                    .size(40.dp)
+                    .testTag(TestTags.V2.Product.ERROR_STATE_ICON)
+            )
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "An unexpected error occurred",
@@ -786,6 +863,7 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier
                 .padding(top = 8.dp)
                 .testTag(TestTags.V2.Product.ERROR_STATE_MESSAGE)
@@ -793,8 +871,10 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = onRetry,
-            shape = MaterialTheme.shapes.medium,
-            modifier = Modifier.testTag(TestTags.V2.Product.BTN_ERROR_RETRY)
+            shape = RoundedCornerShape(50),
+            modifier = Modifier
+                .height(48.dp)
+                .testTag(TestTags.V2.Product.BTN_ERROR_RETRY)
         ) {
             Icon(
                 Icons.Default.Refresh,
@@ -804,12 +884,14 @@ fun ErrorState(message: String, onRetry: () -> Unit) {
             Spacer(Modifier.width(8.dp))
             Text(
                 text = "Try Again",
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.testTag(TestTags.V2.Product.BTN_ERROR_RETRY_TEXT)
             )
         }
     }
 }
 
+/*
 @Composable
 fun VeganAlternativesSection(
     alternativesState: AlternativesUiState,
@@ -819,7 +901,7 @@ fun VeganAlternativesSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .padding(horizontal = 20.dp)
             .testTag("vegan_alternatives_section")
     ) {
         SectionTitle("Plant-Based Alternatives")
@@ -837,7 +919,7 @@ fun VeganAlternativesSection(
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(16.dp)
+                            .padding(20.dp)
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -849,17 +931,21 @@ fun VeganAlternativesSection(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = "Discover certified vegan alternatives in this category.",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
+                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
                             )
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Button(
                             onClick = onFetchAlternatives,
-                            shape = MaterialTheme.shapes.medium
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Eco,
@@ -891,12 +977,13 @@ fun VeganAlternativesSection(
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = MaterialTheme.colorScheme.primary,
-                            strokeWidth = 2.dp
+                            strokeWidth = 2.5.dp
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = "Finding vegan alternatives...",
                             style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -941,7 +1028,7 @@ fun VeganAlternativesSection(
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(
                             onClick = onFetchAlternatives,
-                            shape = MaterialTheme.shapes.medium
+                            shape = RoundedCornerShape(50)
                         ) {
                             Text("Retry")
                         }
@@ -962,24 +1049,22 @@ fun AlternativeProductItem(
 
     ElevatedCard(
         modifier = Modifier
-            .width(160.dp)
+            .width(170.dp)
             .clickable { onClick() }
             .testTag("alternative_product_item_${product.barcode}"),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
-                    .background(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.shapes.small
-                    ),
+                    .height(110.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
                 if (imageUrl != null) {
@@ -1026,7 +1111,7 @@ fun AlternativeProductItem(
 
             Surface(
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = MaterialTheme.shapes.extraSmall
+                shape = RoundedCornerShape(50)
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -1105,7 +1190,7 @@ fun AlternativeProductDetailSheet(
                         .weight(1f)
                         .height(50.dp)
                         .testTag("btn_close_alternative_sheet"),
-                    shape = MaterialTheme.shapes.medium
+                    shape = RoundedCornerShape(50)
                 ) {
                     Text(
                         text = "Close Preview",
@@ -1122,19 +1207,26 @@ fun AlternativeProductDetailSheet(
                         .weight(1f)
                         .height(50.dp)
                         .testTag("btn_open_full_screen_alternative"),
-                    shape = MaterialTheme.shapes.medium
+                    shape = RoundedCornerShape(50)
                 ) {
                     Text(
                         text = "Full Page",
                         fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
                     )
                 }
             }
         }
     }
 }
+*/
 
-private data class Quintuple<A, B, C, D, E>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E)
+private data class Sextuple<A, B, C, D, E, F>(val first: A, val second: B, val third: C, val fourth: D, val fifth: E, val sixth: F)
 
 @Composable
 @Preview(showBackground = true)

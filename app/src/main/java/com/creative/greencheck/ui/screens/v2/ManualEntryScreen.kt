@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -87,7 +88,7 @@ fun ManualEntryScreen(
     ) {
         Box(
             modifier = Modifier
-                .size(72.dp)
+                .size(80.dp)
                 .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
                 .testTag(TestTags.V2.ManualEntry.LOGO_CONTAINER),
             contentAlignment = Alignment.Center
@@ -97,7 +98,7 @@ fun ManualEntryScreen(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(40.dp)
                     .testTag(TestTags.V2.ManualEntry.LOGO_ICON)
             )
         }
@@ -135,12 +136,12 @@ fun ManualEntryScreen(
             colors = CardDefaults.elevatedCardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedTextField(
@@ -191,7 +192,7 @@ fun ManualEntryScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(22.dp))
 
                 Button(
                     onClick = { handleSearch() },
@@ -199,7 +200,7 @@ fun ManualEntryScreen(
                         .fillMaxWidth()
                         .height(50.dp)
                         .testTag(TestTags.V2.ManualEntry.BTN_IDENTIFY),
-                    shape = MaterialTheme.shapes.medium
+                    shape = RoundedCornerShape(50)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -226,14 +227,15 @@ fun ManualEntryScreen(
                 .align(Alignment.CenterHorizontally)
                 .testTag(TestTags.V2.ManualEntry.QUOTA_CONTAINER),
             color = MaterialTheme.colorScheme.primaryContainer,
-            shape = MaterialTheme.shapes.small
+            shape = RoundedCornerShape(50)
         ) {
             Text(
                 text = "Quota: $remainingManual of 5 entries remaining",
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
                     .testTag(TestTags.V2.ManualEntry.QUOTA_TEXT)
             )
         }
