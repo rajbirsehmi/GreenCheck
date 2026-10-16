@@ -46,13 +46,14 @@ interface OpenFoodFactsApi {
 
     /**
      * Search vegan alternative products by category or search terms.
-     * Endpoint: https://world.openfoodfacts.org/api/v2/search?categories_tags_en=<category>&ingredients_analysis_tags=en:vegan&page_size=15&fields=...
+     * Endpoint: https://world.openfoodfacts.org/api/v2/search?categories_tags_en=<category>&ingredients_analysis_tags=en:vegan&countries_tags=<countryTag>&page_size=15&fields=...
      */
     @GET("api/v2/search")
     suspend fun searchVeganAlternatives(
         @Query("categories_tags_en") category: String? = null,
         @Query("search_terms") searchTerms: String? = null,
         @Query("ingredients_analysis_tags") veganTag: String = "en:vegan",
+        @Query("countries_tags") countryTag: String? = null,
         @Query("page_size") pageSize: Int = 15,
         @Query("fields") fields: String? = PRODUCT_FIELDS
     ): SearchResponse

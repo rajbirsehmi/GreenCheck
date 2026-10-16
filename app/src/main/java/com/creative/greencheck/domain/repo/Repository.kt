@@ -1,5 +1,6 @@
 package com.creative.greencheck.domain.repo
 
+import com.creative.greencheck.data.remote.LocaleDetector
 import com.creative.greencheck.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
@@ -7,7 +8,11 @@ interface Repository {
     suspend fun getProduct(barcode: String): Result<Product>
     suspend fun searchProducts(query: String): Result<List<Product>>
     suspend fun searchByIngredient(ingredient: String): Result<List<Product>>
-    suspend fun getVeganAlternatives(category: String? = null, searchQuery: String? = null): Result<List<Product>>
+    suspend fun getVeganAlternatives(
+        category: String? = null,
+        searchQuery: String? = null,
+        countryTag: String? = LocaleDetector.currentDeviceCountryTag,
+    ): Result<List<Product>>
     suspend fun saveProduct(product: Product)
     suspend fun getProductFromDb(barcode: String): Product?
     fun getAllProducts(): Flow<List<Product>>

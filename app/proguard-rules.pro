@@ -1,21 +1,41 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Preserve line numbers and source file attributes for stack trace de-obfuscation
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Preserve Annotations, Signatures, and Inner Classes for reflection/serialization
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Data Transfer Objects (DTOs) & Kotlinx Serialization
+-keep class com.creative.greencheck.data.remote.dto.** { *; }
+-keepclassmembers class * {
+    @kotlinx.serialization.SerialName <fields>;
+}
+-keepclassmembers class * implements kotlinx.serialization.KSerializer {
+    public static final ** INSTANCE;
+}
+-keepclassmembers class **$Companion {
+    *** serializer(...);
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Room Database Entities and Converters
+-keep class com.creative.greencheck.data.local.entity.** { *; }
+-keep class com.creative.greencheck.data.local.converters.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+
+# Domain Models
+-keep class com.creative.greencheck.domain.model.** { *; }
+
+# Retrofit & OkHttp
+-dontwarn retrofit2.**
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+
+# ML Kit Barcode Scanning & CameraX
+-keep class com.google.mlkit.** { *; }
+-dontwarn com.google.mlkit.**
+
+# Coil Image Loading
+-dontwarn coil.**
+
+# Google Credentials & Auth
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
